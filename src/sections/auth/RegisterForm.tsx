@@ -31,18 +31,17 @@ const RegisterForm = () => {
       defaultValues
     });
   
-    const {reset, setError, handleSubmit, formState:{errors, isSubmitting, isSubmitSuccessful}}
+    const {reset, setError, handleSubmit, formState:{errors, }}
      = methods;
   
-     const onSubmit = async (data) =>{
+     const onSubmit = async () =>{
           try {
               //submit data to backend
           } catch (error) {
               console.log(error);
               reset();
-              setError('afterSubmit',{
-                  ...error,
-                  message: error.message
+              setError("root",{
+                  message: "error"
               })
           }
      }
@@ -50,22 +49,28 @@ const RegisterForm = () => {
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>
-        {!!errors.afterSubmit && <Alert severity='error'>{errors.afterSubmit.message}</Alert>}
+        {!!errors.email && <Alert severity='error'>{errors.email.message}</Alert>}
         <Stack direction={{xs:'column', sm:'row'}} spacing={2}>
             <RHFTextField name="firstName" label='First Name'/>
             <RHFTextField name="lastName" label='Last Name'/>
         </Stack>
         <RHFTextField name='email' label='Email address'/>
         <RHFTextField name='password' label='Password' type={showPassword ? 'text' : 'password'}
-        InputProps={{endAdornment:(
-            <InputAdornment>
+        InputProps={
+          {startAdornment : (
+            <InputAdornment position="start" component="div">
+            $
+          </InputAdornment>
+          ), endAdornment: (
+            <InputAdornment position="end">
             <IconButton onClick={()=>{
                 setShowPassword(!showPassword);
             }}>
                 {showPassword ? <Eye/>: <EyeSlash/>}
             </IconButton>
             </InputAdornment>
-        )}}/>
+          )}
+        }/>
         <Button fullWidth color='inherit' size='large' type='submit' variant='contained'
         sx={{bgcolor:'text.primary', color:(theme)=> theme.palette.mode === 'light' ?
          'common.white':'grey.800',

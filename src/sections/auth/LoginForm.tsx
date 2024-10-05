@@ -19,7 +19,7 @@ const LoginForm = () => {
   });
 
   const defaultValues = {
-    email:'dulanjali@gmail.com',
+    email:'dulanjali.JamesOcampo@gmail.com',
     password:'dula@123'
   };
 
@@ -27,39 +27,49 @@ const LoginForm = () => {
     resolver: yupResolver(loginSchema),
     defaultValues
   });
-
-  const {reset, setError, handleSubmit, formState:{errors, isSubmitting, isSubmitSuccessful}}
+  
+  const {reset, setError, handleSubmit, formState:{errors,}}
    = methods;
 
-   const onSubmit = async (data) =>{
+   const onSubmit = async () =>{
         try {
             //submit data to backend
         } catch (error) {
             console.log(error);
             reset();
-            setError('afterSubmit',{
-                ...error,
-                message: error.message
-            })
+            setError("email", {message: "wrong", } )
+            
+            // setError('afterSubmit',{
+            //     ...error,
+            //     message: error.message
+            // })
         }
    }
 
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>
-            {!!errors.afterSubmit && <Alert severity='error'>{errors.afterSubmit.message}</Alert>}
+            {!!errors.email && <Alert severity='error'>{errors.email.message}</Alert>}
         
         <RHFTextField name='email' label='Email address'/>
         <RHFTextField name='password' label='Password' type={showPassword ? 'text' : 'password'}
-        InputProps={{endAdornment:(
-            <InputAdornment>
-            <IconButton onClick={()=>{
-                setShowPassword(!showPassword);
-            }}>
-                {showPassword ? <Eye/>: <EyeSlash/>}
-            </IconButton>
-            </InputAdornment>
-        )}}/>
+        InputProps={{
+         startAdornment: (
+            <InputAdornment position="start" component="div">
+                        $
+                    </InputAdornment>
+         ), 
+         endAdornment: (
+          <InputAdornment position="end">
+          <IconButton onClick={()=>{
+              setShowPassword(!showPassword);
+          }}>
+              {showPassword ? <Eye/>: <EyeSlash/>}
+          </IconButton>
+          </InputAdornment>
+         )
+        }
+      }/>
         </Stack>
         <Stack alignItems={'flex-end'} sx={{my:2}}>
             <Link component={RouterLink} to='/auth/reset-password'

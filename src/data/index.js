@@ -48,35 +48,35 @@ const Nav_Setting = [
 
 const CallLogs = [
   {
-    id:0,
+    id: 0,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     missed: false,
     incoming: true,
   },
   {
-    id:1,
+    id: 1,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     missed: true,
     incoming: true,
   },
   {
-    id:2,
+    id: 2,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     missed: false,
     incoming: false,
   },
   {
-    id:3,
+    id: 3,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     missed: false,
     incoming: true,
   },
   {
-    id:4,
+    id: 4,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     missed: true,
@@ -86,31 +86,31 @@ const CallLogs = [
 
 const MembersList = [
   {
-    id:0,
+    id: 0,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     online: true
   },
   {
-    id:1,
+    id: 1,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     online: false
   },
   {
-    id:2,
+    id: 2,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     online: true
   },
   {
-    id:3,
+    id: 3,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     online: false
   },
   {
-    id:4,
+    id: 4,
     img: faker.image.avatar(),
     name: faker.name.firstName(),
     online: true
@@ -355,18 +355,18 @@ const SHARED_DOCS = [
     incoming: true,
     outgoing: false,
   },
- 
+
 ]
 
 export {
   Profile_Menu,
   Nav_Setting,
   Nav_Buttons,
-  ChatList,
-  Chat_History,
-  Message_options,
-  SHARED_DOCS,
-  SHARED_LINKS,
-  CallLogs,
-  MembersList
+  // ChatList,
+  // Chat_History,
+  // Message_options,
+  // SHARED_DOCS,
+  // SHARED_LINKS,
+  // CallLogs,
+  // MembersList
 };

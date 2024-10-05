@@ -7,8 +7,9 @@ import reportWebVitals from "./reportWebVitals";
 
 // contexts
 import SettingsProvider from "./contexts/SettingsContext";
-import { store } from "./redux/store";
-import { Provider as ReduxProvider} from "react-redux";
+import { store } from "./redux/store"
+
+import { Provider as ReduxProvider } from "react-redux";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -16,11 +17,11 @@ root.render(
   <React.StrictMode>
     <HelmetProvider>
       <ReduxProvider store={store}>
-      <SettingsProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </SettingsProvider>
+        <SettingsProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </SettingsProvider>
       </ReduxProvider>
     </HelmetProvider>
   </React.StrictMode>
