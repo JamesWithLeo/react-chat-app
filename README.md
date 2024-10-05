@@ -19,10 +19,9 @@ You can change theming colors and dark and light modes by clicking settings icon
 ## What I used
 
 - [React](https://reactjs.org/)
-- [MAterial UI](https://mui.com/)
+- [Material UI](https://mui.com/)
 - [React Context API](https://legacy.reactjs.org/docs/context.html)
-- [Redux](https://redux.js.org/)
-- [Faker js](https://fakerjs.dev/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
 - [phosphor-react](https://www.npmjs.com/package/phosphor-react)
 - [Emoji Mart](https://www.npmjs.com/package/emoji-mart)
 - [React Hook Form](https://react-hook-form.com/)
@@ -31,7 +30,7 @@ You can change theming colors and dark and light modes by clicking settings icon
 
 ## Requirements
 
-- Basic ReactJs knowledge
+- Basic ReactJs & Ts knowledge
 - Basic HTML, CSS knowledge
 
 ## Getting Started
@@ -59,7 +58,7 @@ npm run start
 
 ### Q: What are the prerequisites?
 
-basics of html, css, javascript and some basic knowledge of react is enough to start this project. Rest you will learn in the tutorial.
+basics of html, css, javascript/typescript, and some basic knowledge of react is enough to start this project. Rest you will learn in the tutorial.
 
 ### Q: Who the project is for?
 
