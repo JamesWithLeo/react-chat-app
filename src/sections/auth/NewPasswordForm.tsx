@@ -27,7 +27,7 @@ const NewPasswordForm = () => {
     defaultValues
   });
 
-  const {reset, setError, handleSubmit, formState:{errors}}
+  const {reset, setError,handleSubmit, formState:{errors}}
    = methods;
 
    const onSubmit = async () =>{

@@ -11,7 +11,7 @@ const Register = () => {
             Get Started With WeChat
         </Typography>
         <Stack direction={'row'} spacing={0.5}>
-            <Typography variant='body2'>Allready have an account?</Typography>
+            <Typography variant='body2'>Already have an account?</Typography>
             <Link component={RouterLink} to='/auth/login' variant='subtitle2'>Sign in</Link>
         </Stack>
         {/* Register Form */}

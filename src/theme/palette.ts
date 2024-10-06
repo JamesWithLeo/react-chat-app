@@ -1,8 +1,7 @@
 import { alpha } from '@mui/material/styles';
 
-// ----------------------------------------------------------------------
-
-function createGradient(color1, color2) {
+// Helper to create gradients
+function createGradient(color1: string, color2: string) {
   return `linear-gradient(to bottom, ${color1}, ${color2})`;
 }
 
@@ -87,6 +86,17 @@ const CHART_COLORS = {
   red: ['#FF6C40', '#FF8F6D', '#FFBD98', '#FFF2D4'],
 };
 
+// ACTIONS FOR COMMON PALETTE
+const ACTION = {
+  hover: GREY[500_8],
+  selected: GREY[500_16],
+  disabled: GREY[500_80],
+  disabledBackground: GREY[500_24],
+  focus: GREY[500_24],
+  hoverOpacity: 0.08,
+  disabledOpacity: 0.48,
+};
+
 const COMMON = {
   common: { black: '#000', white: '#fff' },
   primary: { ...PRIMARY, contrastText: '#fff' },
@@ -99,32 +109,50 @@ const COMMON = {
   gradients: GRADIENTS,
   chart: CHART_COLORS,
   divider: GREY[500_24],
+  action: ACTION,
+};
+
+interface Palette {
+  mode: 'light' | 'dark';
+  text: {
+    primary: string;
+    secondary: string;
+    disabled: string;
+  };
+  background: {
+    paper: string;
+    default: string;
+    neutral: string;
+  };
   action: {
-    hover: GREY[500_8],
-    selected: GREY[500_16],
-    disabled: GREY[500_80],
-    disabledBackground: GREY[500_24],
-    focus: GREY[500_24],
-    hoverOpacity: 0.08,
-    disabledOpacity: 0.48,
-  },
+    active: string;
+    hover: string;
+    selected: string;
+    disabled: string;
+    disabledBackground: string;
+    focus: string;
+    hoverOpacity: number;
+    disabledOpacity: number;
+  };
+}
+
+const lightPalette: Palette = {
+  mode: 'light',
+  text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
+  background: { paper: '#fff', default: '#fff', neutral: GREY[200] },
+  action: { active: GREY[600], ...ACTION },
+};
+
+const darkPalette: Palette = {
+  mode: 'dark',
+  text: { primary: '#fff', secondary: GREY[500], disabled: GREY[600] },
+  background: { paper: GREY[800], default: GREY[900], neutral: GREY[500_16] },
+  action: { active: GREY[500], ...ACTION },
 };
 
 const palette = {
-  light: {
-    ...COMMON,
-    mode: 'light',
-    text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
-    background: { paper: '#fff', default: '#fff', neutral: GREY[200] },
-    action: { active: GREY[600], ...COMMON.action },
-  },
-  dark: {
-    ...COMMON,
-    mode: 'dark',
-    text: { primary: '#fff', secondary: GREY[500], disabled: GREY[600] },
-    background: { paper: GREY[800], default: GREY[900], neutral: GREY[500_16] },
-    action: { active: GREY[500], ...COMMON.action },
-  },
+  light: { ...COMMON, ...lightPalette },
+  dark: { ...COMMON, ...darkPalette },
 };
 
 export default palette;

@@ -1,7 +1,7 @@
 // theme
 import palette from "../theme/palette";
 
-export const colorPresets = [
+export const colorPresets: IColorPreset[] = [
   // DEFAULT
   {
     name: "default",
@@ -59,7 +59,15 @@ export const colorPresets = [
     contrastText: "#fff",
   },
 ];
-
+export interface IColorPreset {
+  contrastText: string;
+  lighter: string;
+  light: string;
+  main: string;
+  dark: string;
+  darker: string;
+  name: string;
+}
 export const defaultPreset = colorPresets[0];
 export const purplePreset = colorPresets[1];
 export const cyanPreset = colorPresets[2];
@@ -67,7 +75,7 @@ export const bluePreset = colorPresets[3];
 export const orangePreset = colorPresets[4];
 export const redPreset = colorPresets[5];
 
-export default function getColorPresets(presetsKey) {
+export default function getColorPresets(presetsKey:string) {
   return {
     purple: purplePreset,
     cyan: cyanPreset,

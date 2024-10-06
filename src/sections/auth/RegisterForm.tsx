@@ -9,41 +9,35 @@ import { Eye, EyeSlash } from 'phosphor-react';
 
 const RegisterForm = () => {
 
-    const [showPassword, setShowPassword] = useState(false);
-
+    const [isShowingPassword, setIsShowPassword] = useState<boolean>(false);
+    const [isShowingConfirmPassword, setIsShowingConfirmPassword] = useState<boolean>(false)
     //validation rules 
     const registerSchema = Yup.object().shape({
       firstName:Yup.string().required('First Name is required'),
       lastName:Yup.string().required('Last Name is required'),
       email:Yup.string().required('Email is required').email('Email must be a valid email address'),
-      password:Yup.string().required('Password is required')
+      password:Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+    confirmPassword:Yup.string().required("Confirm your password").oneOf([Yup.ref("password")], "Password must match")
     });
   
-    const defaultValues = {
-      firstName:'',
-      lastName:'',
-      email:'dulanjali@gmail.com',
-      password:'dula@123'
-    };
-  
+
     const methods = useForm({
       resolver: yupResolver(registerSchema),
-      defaultValues
     });
   
     const {reset, setError, handleSubmit, formState:{errors, }}
      = methods;
   
      const onSubmit = async () =>{
-          try {
-              //submit data to backend
-          } catch (error) {
-              console.log(error);
-              reset();
-              setError("root",{
-                  message: "error"
-              })
-          }
+      try {
+        console.log("create account")
+      } catch (error) {
+          console.log(error);
+          reset();
+          setError("root",{
+              message: "error"
+          })
+      }
      }
 
   return (
@@ -55,18 +49,26 @@ const RegisterForm = () => {
             <RHFTextField name="lastName" label='Last Name'/>
         </Stack>
         <RHFTextField name='email' label='Email address'/>
-        <RHFTextField name='password' label='Password' type={showPassword ? 'text' : 'password'}
+        <RHFTextField name='password' label='Password' type={isShowingPassword ? 'text' : 'password'}
         InputProps={
-          {startAdornment : (
-            <InputAdornment position="start" component="div">
-            $
-          </InputAdornment>
-          ), endAdornment: (
+          {endAdornment: (
             <InputAdornment position="end">
             <IconButton onClick={()=>{
-                setShowPassword(!showPassword);
+                setIsShowPassword(!isShowingPassword);
             }}>
-                {showPassword ? <Eye/>: <EyeSlash/>}
+                {isShowingPassword ? <Eye/>: <EyeSlash/>}
+            </IconButton>
+            </InputAdornment>
+          )}
+        }/>
+        <RHFTextField name='confirmPassword' label='Confirm password' type={isShowingConfirmPassword ? 'text' : 'password'}
+        InputProps={
+          {endAdornment: (
+            <InputAdornment position="end">
+            <IconButton onClick={()=>{
+                setIsShowingConfirmPassword(!isShowingConfirmPassword);
+            }}>
+                {isShowingConfirmPassword ? <Eye/>: <EyeSlash/>}
             </IconButton>
             </InputAdornment>
           )}

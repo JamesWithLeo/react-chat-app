@@ -14,13 +14,9 @@ const ResetPasswordForm = () => {
 
   });
 
-  const defaultValues = {
-    email: 'dulanjali@gmail.com',
-  };
 
   const methods = useForm({
     resolver: yupResolver(ResetPasswordSchema),
-    defaultValues
   });
 
   const { reset, setError, handleSubmit, formState: { errors, } }

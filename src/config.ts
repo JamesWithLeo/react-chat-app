@@ -4,7 +4,15 @@ import { enUS, frFR, zhCN, viVN, arSD } from '@mui/material/locale';
 // routes
 import { PATH_DASHBOARD } from "./routes/paths";
 
-export const defaultSettings = {
+interface ISettings {
+  themeMode: "light" | "dark",
+  themeDirection : "ltr" | "rtl",
+  themeContrast: string,
+  themeLayout: "horizontal" | "vertical",
+  themeColorPresets: string,
+  themeStretch: boolean,
+}
+export const defaultSettings: ISettings = {
   themeMode: "light",
   themeDirection: "ltr",
   themeContrast: "default",

@@ -1,10 +1,46 @@
-import { Box, Divider, IconButton, Link, Stack, Typography, Menu, MenuItem } from '@mui/material';
+import { Box, Divider, IconButton,  Stack, Typography, Menu, MenuItem  } from '@mui/material';
 import { useTheme } from '@mui/material/styles'
 import { DotsThreeVertical, DownloadSimple, Image } from 'phosphor-react';
 import React from 'react';
-// import {Message_options} from '../../data'
 
-const DocMsg = ({ el, menu }) => {
+interface IMessageBase {
+    type: "msg" | "divider";         // Common property for all message types
+    incoming?: boolean;   // Indicates if the message is incoming
+    outgoing?: boolean;   // Indicates if the message is outgoing
+}
+
+
+export interface IChatMessage extends IMessageBase {
+    subtype?: "text" | "doc" | "link" | "img" | "reply"  ; // Optional subtype for messages
+    message?: string;              // Text of the message
+    img?: string;                 // Optional image URL
+    preview?: string;             // Optional link preview image
+    reply?: string;               // Optional reply text
+    text?: string
+}
+
+const Message_options = [
+    {
+    title: "Reply",
+    },
+    {
+        title: "React to message",
+    },
+    {
+      title: "Forward message",
+    },
+    {
+      title: "Star message",
+    },
+    {
+      title: "Report",
+    },
+    {
+      title: "Delete Message",
+    },
+]
+
+const DocMsg = ({ el, menu }: {el:IChatMessage, menu:any}) => {
     const theme = useTheme();
     return (
         <Stack direction='row' justifyContent={el.incoming ? 'start' : 'end'}>
@@ -23,7 +59,7 @@ const DocMsg = ({ el, menu }) => {
                             <DownloadSimple />
                         </IconButton>
                     </Stack>
-                    <Typography variant='body2' sx={{ color: el.incoming ? theme.palette.text : '#fff' }} >
+                    <Typography variant='body2' sx={{ color: el.incoming ? theme.palette.text.primary : '#fff' }} >
                         {el.message}
                     </Typography>
                 </Stack>
@@ -34,7 +70,7 @@ const DocMsg = ({ el, menu }) => {
     )
 }
 
-const LinkMsg = ({ el, menu }) => {
+const LinkMsg =  ({ el, menu }: {el:IChatMessage, menu:any}) => {
     const theme = useTheme();
     return (
         <Stack direction='row' justifyContent={el.incoming ? 'start' : 'end'}>
@@ -47,11 +83,12 @@ const LinkMsg = ({ el, menu }) => {
                         sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 1 }}>
                         <img src={el.preview} alt={el.message} style={{ maxHeight: 210, borderRadius: '10px' }} />
                         <Stack spacing={2}>
-                            <Typography variant='subtitle2'>Creating Chat App</Typography>
-                            <Typography variant='subtitle2' sx={{ color: theme.palette.primary.main }}
-                                component={Link} to="//https://www.youtube.com">www.youtube.com</Typography>
+                            <Typography variant="subtitle1">Creating Chat App</Typography>
+                            <Typography variant="subtitle2" sx={{ color: theme.palette.primary.main }}
+                                >www.youtube.com
+                            </Typography>
                         </Stack>
-                        <Typography variant='body2' color={el.incoming ? theme.palette.text : '#fff'}>
+                        <Typography variant='body2' color={el.incoming ? theme.palette.text.primary : '#fff'}>
                             {el.message}
                         </Typography>
                     </Stack>
@@ -62,7 +99,7 @@ const LinkMsg = ({ el, menu }) => {
     )
 }
 
-const ReplyMsg = ({ el, menu }) => {
+const ReplyMsg = ({ el, menu }: {el:IChatMessage, menu:any}) => {
     const theme = useTheme();
     return (
         <Stack direction='row' justifyContent={el.incoming ? 'start' : 'end'}>
@@ -73,11 +110,11 @@ const ReplyMsg = ({ el, menu }) => {
                 <Stack spacing={2}>
                     <Stack p={2} direction='column' spacing={3} alignItems='center'
                         sx={{ backgroundColor: theme.palette.background.paper, borderRadius: 1 }}>
-                        <Typography variant='body2' color={theme.palette.text}>
+                        <Typography variant='body2' color={theme.palette.text.primary}>
                             {el.message}
                         </Typography>
                     </Stack>
-                    <Typography variant='body2' color={el.incoming ? theme.palette.text : '#fff'}>
+                    <Typography variant='body2' color={el.incoming ? theme.palette.text.primary : '#fff'}>
                         {el.reply}
                     </Typography>
                 </Stack>
@@ -87,7 +124,7 @@ const ReplyMsg = ({ el, menu }) => {
     )
 }
 
-const MediaMsg = ({ el, menu }) => {
+const MediaMsg =  ({ el, menu }: {el:IChatMessage, menu:any}) => {
     const theme = useTheme();
     return (
         <Stack direction='row' justifyContent={el.incoming ? 'start' : 'end'}>
@@ -97,7 +134,7 @@ const MediaMsg = ({ el, menu }) => {
             }}>
                 <Stack spacing={1}>
                     <img src={el.img} alt={el.message} style={{ maxHeight: 210, borderRadius: '10px' }} />
-                    <Typography variant='body2' color={el.incoming ? theme.palette.text : '#fff'}>
+                    <Typography variant='body2' color={el.incoming ? theme.palette.text.primary : '#fff'}>
                         {el.message}
                     </Typography>
                 </Stack>
@@ -107,7 +144,7 @@ const MediaMsg = ({ el, menu }) => {
     )
 }
 
-const TextMsg = ({ el, menu }) => {
+const TextMsg =  ({ el, menu }: {el:IChatMessage, menu:any}) => {
     const theme = useTheme();
     return (
         <Stack direction='row' justifyContent={el.incoming ? 'start' : 'end'}>
@@ -115,7 +152,7 @@ const TextMsg = ({ el, menu }) => {
                 backgroundColor: el.incoming ? theme.palette.background.default :
                     theme.palette.primary.main, borderRadius: 1.5, width: 'max-content'
             }}>
-                <Typography variant='body2' color={el.incoming ? theme.palette.text : '#fff'}>
+                <Typography variant='body2' color={el.incoming ? theme.palette.text.primary : '#fff'}>
                     {el.message}
                 </Typography>
             </Box>
@@ -124,23 +161,25 @@ const TextMsg = ({ el, menu }) => {
     )
 }
 
-const TimeLine = ({ el }) => {
+const TimeLine =  ({ el, }: {el:IChatMessage,}) => {
     const theme = useTheme();
     return <Stack direction='row' alignItems='center' justifyContent='space-between'>
-        <Divider width='46%' />
-        <Typography variant='caption' sx={{ color: theme.palette.text }}>
+        <Divider  />
+        <Typography variant='caption' sx={{ color: theme.palette.text.primary }}>
             {el.text}
         </Typography>
-        <Divider width='46%' />
+        <Divider  />
     </Stack>
 }
 
 const MessageOptions = () => {
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
     const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
+    
+    const handleClick = () => {
+        const el = document.getElementById("basic-menu") as HTMLElement    
+        setAnchorEl(el);
     };
     const handleClose = () => {
         setAnchorEl(null);
@@ -159,16 +198,16 @@ const MessageOptions = () => {
             <Menu
                 id="basic-menu"
                 anchorEl={anchorEl}
-                open={open}
+                open={Boolean(anchorEl)}
                 onClose={handleClose}
                 MenuListProps={{
                     'aria-labelledby': 'basic-button',
                 }}
             >
                 <Stack spacing={1} px={1}>
-                    {/* {Message_options.map((el) => (
+                    {Message_options.map((el) => (
                         <MenuItem onClick={handleClick}>{el.title}</MenuItem>
-                    ))} */}
+                    ))}
                 </Stack>
             </Menu>
         </>
@@ -176,5 +215,4 @@ const MessageOptions = () => {
 }
 
 
-// should not be default export, because we need to export multiple things
 export { TimeLine, TextMsg, MediaMsg, ReplyMsg, LinkMsg, DocMsg }

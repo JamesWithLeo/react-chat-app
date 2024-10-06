@@ -6,17 +6,16 @@ const isAuthenticated = true;
 
 const DashboardLayout = () => {
 
-if(!isAuthenticated){
-  return <Navigate to='/auth/login'/>;
-}
+  if (!isAuthenticated) {
+    return <Navigate to='/auth/login' />;
+  }
 
   return (
     <Stack direction='row'>
-      {/* SideBar */}
-      <SideBar/>
+      <SideBar />
       <Outlet />
     </Stack>
-    
+
   );
 };
 
