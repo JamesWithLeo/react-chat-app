@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
+import { ISettingsContextProps } from '../contexts/SettingsContext';
 
 
-export default function useLocalStorage(key:string, defaultValue:any) {
+export default function useLocalStorage(key:string, defaultValue:ISettingsContextProps) {
   const [value, setValue] = useState(() => {
     const storedValue = localStorage.getItem(key);
-
-    return storedValue === null ? defaultValue : JSON.parse(storedValue);
+    
+    return storedValue ? JSON.parse(storedValue) :defaultValue;
   });
 
   useEffect(() => {

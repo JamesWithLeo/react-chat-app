@@ -4,7 +4,7 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import getColorPresets, { defaultPreset, colorPresets, IColorPreset } from "../utils/getColorPresets";
 
 // Define settings state interface
-interface SettingsContextProps {
+ interface ISettingsContextProps {
   themeMode: string;
   themeLayout: string;
   themeStretch: boolean;
@@ -14,13 +14,13 @@ interface SettingsContextProps {
   onToggleMode: () => void;
   onChangeMode: (e: ChangeEvent<HTMLInputElement>) => void;
   onToggleDirection: () => void;
-  onChangeDirection: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeDirection: (event: ChangeEvent<HTMLInputElement>) => void;
   onChangeDirectionByLang: (lang: string) => void;
   onToggleLayout: () => void;
   onChangeLayout: (e: ChangeEvent<HTMLInputElement>) => void;
   onToggleContrast: () => void;
   onChangeContrast: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeColor: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChangeColor: (event: ChangeEvent<HTMLInputElement>) => void;
   onToggleStretch: () => void;
   onResetSetting: () => void;
   setColor: IColorPreset;
@@ -28,18 +28,18 @@ interface SettingsContextProps {
 }
 
 // Initial state object
-const initialState: SettingsContextProps = {
+const initialState: ISettingsContextProps = {
   ...defaultSettings,
   onToggleMode: () => {},
-  onChangeMode: () => {},
+  onChangeMode: (e: ChangeEvent<HTMLInputElement>) => {},
   onToggleDirection: () => {},
-  onChangeDirection: () => {},
-  onChangeDirectionByLang: () => {},
+  onChangeDirection: (event: ChangeEvent<HTMLInputElement>) =>{},
+  onChangeDirectionByLang: (lang: string) => {},
   onToggleLayout: () => {},
-  onChangeLayout: () => {},
+  onChangeLayout: (e: ChangeEvent<HTMLInputElement>) => {},
   onToggleContrast: () => {},
-  onChangeContrast: () => {},
-  onChangeColor: () => {},
+  onChangeContrast: (e: ChangeEvent<HTMLInputElement>) => {},
+  onChangeColor: (event: ChangeEvent<HTMLInputElement>) => {},
   onToggleStretch: () => {},
   onResetSetting: () => {},
   setColor: defaultPreset,
@@ -55,14 +55,7 @@ interface SettingsProviderProps {
 
 // SettingsProvider component
 const SettingsProvider = ({ children }: SettingsProviderProps) => {
-  const [settings, setSettings] = useLocalStorage("settings", {
-    themeMode: initialState.themeMode,
-    themeLayout: initialState.themeLayout,
-    themeStretch: initialState.themeStretch,
-    themeContrast: initialState.themeContrast,
-    themeDirection: initialState.themeDirection,
-    themeColorPresets: initialState.themeColorPresets,
-  });
+  const [settings, setSettings] = useLocalStorage("settings", initialState);
 
   const isArabic = localStorage.getItem("i18nextLng") === "ar";
 
@@ -73,9 +66,8 @@ const SettingsProvider = ({ children }: SettingsProviderProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isArabic]);
 
-  // Mode
   const onToggleMode = () => {
-    setSettings((prev:SettingsContextProps) => ({
+    setSettings((prev:ISettingsContextProps) => ({
       ...prev,
       themeMode: prev.themeMode === "light" ? "dark" : "light",
     }));
@@ -87,8 +79,39 @@ const SettingsProvider = ({ children }: SettingsProviderProps) => {
       themeMode: event.target.value,
     });
   };
+  const onToggleDirection = () => {
 
-  // Similar logic for other handlers
+  }
+  const onChangeColor = (event:ChangeEvent<HTMLInputElement>) => {
+    setSettings({...settings, themeColorPresets: event.target.value})
+  }
+
+  const onChangeDirection = (event:ChangeEvent<HTMLInputElement>) => {
+    setSettings({...settings, themeDirection: event.target.value})
+  }
+  
+  const onChangeDirectionByLang = () => {}
+
+  const onToggleLayout = () => {}
+
+  const onChangeLayout = () => {}
+  
+  const onChangeContrast = () => {}
+  
+  const onToggleContrast = () => {}
+
+  const onToggleStretch = () => {}
+
+  const onResetSetting = () => {
+    setSettings({
+      themeMode: initialState.themeMode,
+      themeLayout: initialState.themeLayout,
+      themeStretch: initialState.themeStretch,
+      themeContrast: initialState.themeContrast,
+      themeDirection: initialState.themeDirection,
+      themeColorPresets: initialState.themeColorPresets,
+    })
+  }
 
   return (
     <SettingsContext.Provider
@@ -96,21 +119,21 @@ const SettingsProvider = ({ children }: SettingsProviderProps) => {
         ...settings,
         onToggleMode,
         onChangeMode,
-        // onToggleDirection,
-        // onChangeDirection,
-        // onChangeDirectionByLang,
-        // onToggleLayout,
-        // onChangeLayout,
-        // onChangeContrast,
-        // onToggleContrast,
-        // onToggleStretch,
-        // onChangeColor,
+        onToggleDirection,
+        onChangeDirection,
+        onChangeDirectionByLang,
+        onToggleLayout,
+        onChangeLayout,
+        onChangeContrast,
+        onToggleContrast,
+        onToggleStretch,
+        onChangeColor,
         setColor: getColorPresets(settings.themeColorPresets),
         colorOption: colorPresets.map((color) => ({
           name: color.name,
           value: color.main,
         })),
-        // onResetSetting,
+        onResetSetting,
       }}
     >
       {children}
@@ -118,5 +141,5 @@ const SettingsProvider = ({ children }: SettingsProviderProps) => {
   );
 };
 
-export { SettingsContext };
+export { SettingsContext, ISettingsContextProps };
 export default SettingsProvider;

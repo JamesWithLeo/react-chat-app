@@ -18,7 +18,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "emoji-mart": "^5.5.2",
-    "framer-motion": "^7.5.3",
+    "framer-motion": "^7.10.3",
     "phosphor-react": "^1.4.1",
     "prop-types": "^15.8.1",
     "react": "^17.0.0 || ^18.0.0",
