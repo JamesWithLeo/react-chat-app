@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";// use to loading , loading screen until full page is load
+import { Suspense, lazy } from "react"; // use to loading , loading screen until full page is load
 import { Navigate, useRoutes } from "react-router-dom";
 
 // layouts
@@ -12,7 +12,7 @@ import LoadingScreen from "../components/LoadingScreen";
 
 const Loadable = (Component) => (props) => {
   return (
-    <Suspense fallback={<LoadingScreen />}> 
+    <Suspense fallback={<LoadingScreen />}>
       <Component {...props} />
     </Suspense>
   );
@@ -21,21 +21,25 @@ const Loadable = (Component) => (props) => {
 export default function Router() {
   return useRoutes([
     {
-      path: '/auth',
-      element: <MainLayout/>,
-      children:[
-        {element: <LoginPage/>, path:'login'},
-        {element: <RegisterPage/>, path:'register'},
-        {element: <ResetPasswordPage/>, path:'reset-password'},
-        {element: <NewPasswordPage/>, path:'new-password'},
-      ]
+      path: "/auth",
+      element: <MainLayout />,
+      children: [
+        { element: <LoginPage />, path: "login" },
+        { element: <RegisterPage />, path: "register" },
+        { element: <ResetPasswordPage />, path: "reset-password" },
+        { element: <NewPasswordPage />, path: "new-password" },
+      ],
     },
     {
       path: "/",
       element: <DashboardLayout />,
       children: [
-        { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
-        { path: "app", element: <GeneralApp /> },
+        {
+          element: <Navigate to={DEFAULT_PATH} replace />,
+          index: true,
+        },
+        { path: "home", element: <GeneralApp /> },
+        { path: "chats", element: <Chats /> },
         { path: "settings", element: <Settings /> },
         { path: "group", element: <GroupPage /> },
         { path: "call", element: <CallPage /> },
@@ -51,14 +55,13 @@ export default function Router() {
 const GeneralApp = Loadable(
   lazy(() => import("../pages/dashboard/GeneralApp")),
 );
+const Chats = Loadable(
+  lazy(() => import("../pages/dashboard/Chats"))
+)
 
-const LoginPage = Loadable(
-  lazy(() => import("../pages/auth/Login")),
-);
+const LoginPage = Loadable(lazy(() => import("../pages/auth/Login")));
 
-const RegisterPage = Loadable(
-  lazy(() => import("../pages/auth/Register")),
-);
+const RegisterPage = Loadable(lazy(() => import("../pages/auth/Register")));
 
 const ResetPasswordPage = Loadable(
   lazy(() => import("../pages/auth/ResetPassword")),
@@ -68,19 +71,11 @@ const NewPasswordPage = Loadable(
   lazy(() => import("../pages/auth/NewPassword")),
 );
 
-const GroupPage = Loadable(
-  lazy(() => import("../pages/dashboard/Group")),
-);
+const GroupPage = Loadable(lazy(() => import("../pages/dashboard/Group")));
 
-const Settings = Loadable(
-  lazy(() => import("../pages/dashboard/Settings")),
-);
+const Settings = Loadable(lazy(() => import("../pages/dashboard/Settings")));
 
-const CallPage = Loadable(
-  lazy(() => import("../pages/dashboard/Call")),
-);
+const CallPage = Loadable(lazy(() => import("../pages/dashboard/Call")));
 
-const ProfilePage = Loadable(
-  lazy(() => import("../pages/dashboard/Profile")),
-);
+const ProfilePage = Loadable(lazy(() => import("../pages/dashboard/Profile")));
 const Page404 = Loadable(lazy(() => import("../pages/Page404")));

@@ -1,36 +1,41 @@
-import { useState, useEffect } from 'react';
-import { ISettingsContextProps } from '../contexts/SettingsContext';
+import { useState, useEffect } from "react";
+import { ISettingsContextProps } from "../contexts/SettingsContext";
 
+export default function useLocalStorage(
+	key: string,
+	defaultValue: ISettingsContextProps,
+) {
+	const [value, setValue] = useState(() => {
+		const storedValue = localStorage.getItem(key);
 
-export default function useLocalStorage(key:string, defaultValue:ISettingsContextProps) {
-  const [value, setValue] = useState(() => {
-    const storedValue = localStorage.getItem(key);
-    
-    return storedValue ? JSON.parse(storedValue) :defaultValue;
-  });
+		return storedValue ? JSON.parse(storedValue) : defaultValue;
+	});
 
-  useEffect(() => {
-    const listener = (e:StorageEvent) => {
-      if (e.storageArea === localStorage && e.key === key && e.newValue) {
-        setValue(JSON.parse(e.newValue));
-      }
-    };
-    window.addEventListener('storage', listener);
+	useEffect(() => {
+		const listener = (e: StorageEvent) => {
+			if (e.storageArea === localStorage && e.key === key && e.newValue) {
+				setValue(JSON.parse(e.newValue));
+			}
+		};
+		window.addEventListener("storage", listener);
 
-    return () => {
-      window.removeEventListener('storage', listener);
-    };
-  }, [key, defaultValue]);
+		return () => {
+			window.removeEventListener("storage", listener);
+		};
+	}, [key, defaultValue]);
 
-  const setValueInLocalStorage = (newValue:any) => {
-    setValue((currentValue:any) => {
-      const result = typeof newValue === 'function' ? newValue(currentValue) : newValue;
+	const setValueInLocalStorage = (newValue: any) => {
+		setValue((currentValue: any) => {
+			const result =
+				typeof newValue === "function"
+					? newValue(currentValue)
+					: newValue;
 
-      localStorage.setItem(key, JSON.stringify(result));
+			localStorage.setItem(key, JSON.stringify(result));
 
-      return result;
-    });
-  };
+			return result;
+		});
+	};
 
-  return [value, setValueInLocalStorage];
+	return [value, setValueInLocalStorage];
 }

@@ -5,33 +5,36 @@
 ---
 
 ### Made with ❤️ by [Dulanjali Senarathna](https://www.linkedin.com/in/dulanjali-senarathna/)
+
 ### Fork by [James Leo Ocampo](https://www.linkedin.com/in/james-leo-ocampo-888686307)
+
 ---
 
 ## Project Description
+
 Dulanjali:
 Mainly focused on react js front-end development. I used css for styling. Also, this application used React Context API and redux for state management.
 
-This chat app has basic chat app functionalities such as login, register, reset password, chat, conversation, group call, contact, starred messages, medial, files and links, settings, profile, edit profile, emoji pickers and etc. We can implement all the features using backend in future. 
+This chat app has basic chat app functionalities such as login, register, reset password, chat, conversation, group call, contact, starred messages, medial, files and links, settings, profile, edit profile, emoji pickers and etc. We can implement all the features using backend in future.
 
 You can change theming colors and dark and light modes by clicking settings icon in bottom-left cornaer.
 
 ## What I used
 
-- [React](https://reactjs.org/)
-- [Material UI](https://mui.com/)
-- [React Context API](https://legacy.reactjs.org/docs/context.html)
-- [Redux Toolkit](https://redux-toolkit.js.org/)
-- [phosphor-react](https://www.npmjs.com/package/phosphor-react)
-- [Emoji Mart](https://www.npmjs.com/package/emoji-mart)
-- [React Hook Form](https://react-hook-form.com/)
-- [Yup js](https://www.npmjs.com/package/yup)
-- More...
+-   [React](https://reactjs.org/)
+-   [Material UI](https://mui.com/)
+-   [React Context API](https://legacy.reactjs.org/docs/context.html)
+-   [Redux Toolkit](https://redux-toolkit.js.org/)
+-   [phosphor-react](https://www.npmjs.com/package/phosphor-react)
+-   [Emoji Mart](https://www.npmjs.com/package/emoji-mart)
+-   [React Hook Form](https://react-hook-form.com/)
+-   [Yup js](https://www.npmjs.com/package/yup)
+-   More...
 
 ## Requirements
 
-- Basic ReactJs & Ts knowledge
-- Basic HTML, CSS knowledge
+-   Basic ReactJs & Ts knowledge
+-   Basic HTML, CSS knowledge
 
 ## Getting Started
 
