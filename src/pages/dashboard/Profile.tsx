@@ -2,7 +2,7 @@ import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { CaretLeft } from "phosphor-react";
 import React from "react";
 import ProfileForm from "../../sections/settings/ProfileForm";
-import Conversation from "../../components/Conversation";
+// import Conversation from "../../components/Conversation";
 
 const Profile = () => {
 	return (
@@ -14,13 +14,12 @@ const Profile = () => {
 						backgroundColor: (theme) =>
 							theme.palette.mode === "light"
 								? "#F8FAFF"
-								: theme.palette.background,
+								: theme.palette.background.default,
 						width: 320,
 						boxShadow: "0px 0px 2px rgba(0,0,0,0.25)",
 					}}
 				>
 					<Stack p={4} spacing={5}>
-						{/* Header */}
 						<Stack
 							direction={"row"}
 							alignItems="center"
@@ -32,7 +31,6 @@ const Profile = () => {
 							<Typography variant="h5">Profile</Typography>
 						</Stack>
 
-						{/* Profile Form */}
 						<ProfileForm />
 					</Stack>
 				</Box>

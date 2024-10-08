@@ -14,7 +14,7 @@ import useSettings from "../../hooks/useSettings";
 import AntSwitch from "../../components/AntSwitch";
 import Logo from "../../assets/Images/logo.ico";
 import { useNavigate } from "react-router-dom";
-import { ChatCircleDots, User, DoorOpen, Gear } from "@phosphor-icons/react";
+import { ChatCircleDots, User, Gear } from "@phosphor-icons/react";
 
 const Nav_Buttons = [{ index: 0, icon: <ChatCircleDots /> }];
 const Profile_Menu = [
@@ -22,16 +22,11 @@ const Profile_Menu = [
 		title: "Profile",
 		icon: <User />,
 	},
-	{ title: "Settings", icon: <Gear /> },
-	{
-		title: "logout",
-		icon: <DoorOpen />,
-	},
 ];
 const getPath = (index: number) => {
 	switch (index) {
 		case 0:
-			return "/home";
+			return "/chats";
 
 		case 1:
 			return "/group";
@@ -121,7 +116,11 @@ export default function SideBar() {
 						{Nav_Buttons.map((el) =>
 							el.index === selected ? (
 								<Box
-									key={""}
+									onClick={() => {
+										setSelected(el.index);
+										navigate(getPath(el.index));
+									}}
+									key={crypto.randomUUID()}
 									sx={{
 										backgroundColor:
 											theme.palette.primary.main,
@@ -227,11 +226,14 @@ export default function SideBar() {
 					>
 						<Stack spacing={1} px={1}>
 							{Profile_Menu.map((el, index) => (
-								<MenuItem onClick={handleClose}>
+								<MenuItem
+									onClick={() => {
+										navigate(getMenuPath(index));
+										handleClose();
+									}}
+									key={index}
+								>
 									<Stack
-										onClick={() => {
-											navigate(getMenuPath(index));
-										}}
 										sx={{ width: 100 }}
 										direction="row"
 										alignItems={"center"}

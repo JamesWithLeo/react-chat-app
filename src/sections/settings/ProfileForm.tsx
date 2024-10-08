@@ -11,17 +11,11 @@ const ProfileForm = () => {
 	const loginSchema = Yup.object().shape({
 		name: Yup.string().required("Name is required"),
 		about: Yup.string().required("About is required"),
-		avatarUrl: Yup.string().required("Avatar is required").nullable(true),
+		avatarUrl: Yup.string().required("Avatar is required").nullable(),
 	});
-
-	const defaultValues = {
-		name: "",
-		about: "",
-	};
 
 	const methods = useForm({
 		resolver: yupResolver(loginSchema),
-		defaultValues,
 	});
 
 	const {
@@ -31,17 +25,18 @@ const ProfileForm = () => {
 		formState: { errors },
 	} = methods;
 
-	const onSubmit = async (data) => {
+	const onSubmit = async (data: any) => {
 		try {
 			//submit data to backend
 			console.log("Data", data);
 		} catch (error) {
 			console.log(error);
 			reset();
-			setError("afterSubmit", {
-				...error,
-				message: error.message,
-			});
+			setError("name", { message: "error" });
+			// setError("afterSubmit", {
+			// 	...error,
+			// 	message: error.message,
+			// });
 		}
 	};
 
@@ -49,10 +44,8 @@ const ProfileForm = () => {
 		<FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
 			<Stack spacing={3}>
 				<Stack spacing={3}>
-					{!!errors.afterSubmit && (
-						<Alert severity="error">
-							{errors.afterSubmit.message}
-						</Alert>
+					{!!errors.name && (
+						<Alert severity="error">{errors.name.message}</Alert>
 					)}
 
 					<RHFTextField
@@ -63,7 +56,7 @@ const ProfileForm = () => {
 					<RHFTextField
 						multiline
 						rows={3}
-						maxRow={5}
+						// maxRow={5}
 						name="about"
 						label="About"
 					/>

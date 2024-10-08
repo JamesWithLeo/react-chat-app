@@ -21,7 +21,6 @@ import {
 } from "phosphor-react";
 import { faker } from "@faker-js/faker";
 import Shortcuts from "../../sections/settings/Shortcuts";
-import Conversation from "../../components/Conversation";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
@@ -101,8 +100,8 @@ const Settings = () => {
 					className="scrollbar"
 					sx={{
 						overflow: "scroll",
-						height: "100vh",
-						width: 320,
+						height: "100dvh",
+						width: "100%",
 						backgroundColor:
 							theme.palette.mode === "light"
 								? "#F8FAFF"
@@ -119,7 +118,7 @@ const Settings = () => {
 						>
 							<IconButton
 								onClick={() => {
-									navigate("/home");
+									navigate("/chats");
 								}}
 							>
 								<CaretLeft size={24} color="#4B4B4B" />
@@ -127,25 +126,24 @@ const Settings = () => {
 							<Typography variant="h6">Settings</Typography>
 						</Stack>
 						{/* Profile */}
-						<Stack direction="row" spacing={3}>
-							{faker.image.people() ? (
-								<Avatar>{faker.name.firstName()[0]}</Avatar>
-							) : (
-								<Avatar
-									sx={{ height: 56, width: 56 }}
-									src={faker.image.people()}
-									alt={faker.name.firstName()}
-								/>
-							)}
-							<Stack spacing={0.5}>
-								<Typography variant="caption">
-									{faker.name.fullName()}
-								</Typography>
-								<Typography variant="body2">
-									{faker.random.words()}
-								</Typography>
+						{user ? (
+							<Stack direction="row" spacing={3}>
+								{faker.image.people() ? (
+									<Avatar>{faker.name.firstName()[0]}</Avatar>
+								) : (
+									<Avatar
+										sx={{ height: 56, width: 56 }}
+										src={user.photoUrl}
+										alt={faker.name.firstName()}
+									/>
+								)}
+								<Stack spacing={0.5}>
+									<Typography variant="caption">
+										{user.firstName[0]}
+									</Typography>
+								</Stack>
 							</Stack>
-						</Stack>
+						) : null}
 						{/* List of options */}
 						<Stack spacing={4}>
 							{list.map(({ key, icon, title, onclick }) => (

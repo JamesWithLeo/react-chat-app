@@ -2,7 +2,8 @@
 import { useTheme } from "@mui/material/styles";
 // hooks
 import useResponsive from "../hooks/useResponsive";
-
+import { pxToRem } from "../utils/pxToRem"
+import { remToPx } from "../utils/remToPx"
 // ----------------------------------------------------------------------
 
 export default function GetFontValue(variant) {
@@ -36,15 +37,7 @@ export default function GetFontValue(variant) {
 	return { fontSize, lineHeight, fontWeight, letterSpacing };
 }
 
-// ----------------------------------------------------------------------
 
-export function remToPx(value) {
-	return Math.round(parseFloat(value) * 16);
-}
-
-export function pxToRem(value) {
-	return `${value / 16}rem`;
-}
 
 export function responsiveFontSizes({ sm, md, lg }) {
 	return {

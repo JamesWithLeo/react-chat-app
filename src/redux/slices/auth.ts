@@ -7,6 +7,9 @@ const currentUser: IUser | null = userWeChat ? JSON.parse(userWeChat) : null;
 
 interface IUser {
 	email: string | null;
+	firstName: string;
+	lastName: string;
+	photoUrl: string;
 }
 
 interface IAuth {

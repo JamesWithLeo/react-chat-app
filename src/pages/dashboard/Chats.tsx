@@ -9,19 +9,25 @@ import {
 } from "@mui/material";
 import { ArchiveBox, CircleDashed, MagnifyingGlass } from "phosphor-react";
 import { Theme, useTheme } from "@mui/material/styles";
-import React from "react";
+import React, { useState } from "react";
 // import {ChatList} from '../../data';
 import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
 import { List } from "@phosphor-icons/react";
-import ChatElement from "../../components/ChatElement";
+import { useSelector } from "react-redux";
+import { AppState } from "../../redux/store";
+import { useNavigate } from "react-router-dom";
+// import ChatElement from "../../components/ConvoCard";
 
 const Chats = () => {
 	const theme = useTheme();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
+	const user = useSelector((state: AppState) => state.auth.user);
+	const [chats, setChats] = useState<string[]>([]);
+	const navigate = useNavigate();
 	return (
 		<Box
 			sx={{
@@ -44,12 +50,7 @@ const Chats = () => {
 					alignItems="center"
 					justifyContent="space-between"
 				>
-					<Stack
-						spacing={2}
-						direction={"row"}
-						component={"div"}
-						alignItems={"center"}
-					>
+					<Stack spacing={2} direction={"row"} alignItems={"center"}>
 						{isSmallScreen ? (
 							<IconButton>
 								<List />
@@ -82,36 +83,71 @@ const Chats = () => {
 					<Divider />
 				</Stack>
 
-				<Stack
-					className="scrollbar"
-					spacing={2}
-					direction="column"
-					sx={{ flexGrow: 1, overflow: "scroll", height: "100%" }}
-				>
-					<Stack spacing={2.4}>
-						<Typography
-							variant="subtitle2"
-							sx={{ color: "#676767" }}
-						>
-							Pinned
-						</Typography>
-						{/* {ChatList.filter((el) => el.pinned).map((el) => {
+				{!user ? (
+					<Box
+						width={"100%"}
+						height={"100%"}
+						display={"flex"}
+						flexDirection={"column"}
+						alignItems={"center"}
+						justifyContent={"center"}
+					>
+						<Stack direction={"row"} spacing={2}>
+							<Button
+								onClick={() => {
+									navigate("/auth/login");
+								}}
+								variant="contained"
+								sx={{
+									":hover": {
+										backgroundColor:
+											theme.palette.primary.main,
+									},
+								}}
+							>
+								Sign in
+							</Button>
+							<Button
+								variant="outlined"
+								onClick={() => {
+									navigate("/auth/register");
+								}}
+							>
+								Sign up
+							</Button>
+						</Stack>
+					</Box>
+				) : (
+					<Stack
+						spacing={2}
+						direction="column"
+						sx={{ flexGrow: 1, overflow: "scroll", height: "100%" }}
+					>
+						<Stack spacing={2.4}>
+							<Typography
+								variant="subtitle2"
+								sx={{ color: "#676767" }}
+							>
+								Pinned
+							</Typography>
+							{/* {ChatList.filter((el) => el.pinned).map((el) => {
               return <ChatElement  {...el} />
             })} */}
-					</Stack>
+						</Stack>
 
-					<Stack spacing={2.4}>
-						<Typography
-							variant="subtitle2"
-							sx={{ color: "#676767" }}
-						>
-							All Chats
-						</Typography>
-						{/* {ChatList.filter((el) => !el.pinned).map((el) => {
+						<Stack spacing={2.4}>
+							<Typography
+								variant="subtitle2"
+								sx={{ color: "#676767" }}
+							>
+								All Chats
+							</Typography>
+							{/* {ChatList.filter((el) => !el.pinned).map((el) => {
               return <ChatElement {...el} />
-            })} */}
+              })} */}
+						</Stack>
 					</Stack>
-				</Stack>
+				)}
 			</Stack>
 		</Box>
 	);

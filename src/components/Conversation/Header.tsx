@@ -104,11 +104,6 @@ const Header = ({
 							fontSize={isSmallScreen ? "small" : "large"}
 						/>
 					</IconButton>
-					{/* <IconButton sx={{ fontSize: isSmallScreen ? 20 : 30 }}>
-						<MagnifyingGlass
-							fontSize={isSmallScreen ? "small" : "large"}
-						/>
-					</IconButton> */}
 					<Divider orientation="vertical" flexItem />
 					<IconButton sx={{ fontSize: isSmallScreen ? 20 : 30 }}>
 						<CaretDown
