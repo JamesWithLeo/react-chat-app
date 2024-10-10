@@ -39,8 +39,8 @@ export default function Router() {
 					element: <Navigate to={DEFAULT_PATH} replace />,
 					index: true,
 				},
-				{ path: "home", element: <GeneralApp /> },
-				{ path: "chats", element: <Chats /> },
+				{ path: "chats", element: <GeneralChats /> },
+				{ path: "chat", element: <Chat /> },
 				{ path: "settings", element: <Settings /> },
 				{ path: "group", element: <GroupPage /> },
 				{ path: "call", element: <CallPage /> },
@@ -53,10 +53,10 @@ export default function Router() {
 	]);
 }
 
-const GeneralApp = Loadable(
-	lazy(() => import("../pages/dashboard/GeneralApp")),
+const Chat = Loadable(lazy(() => import("../pages/dashboard/Chat")));
+const GeneralChats = Loadable(
+	lazy(() => import("../pages/dashboard/generalChat")),
 );
-const Chats = Loadable(lazy(() => import("../pages/dashboard/Chats")));
 
 const LoginPage = Loadable(lazy(() => import("../pages/auth/Login")));
 

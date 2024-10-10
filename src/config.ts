@@ -3,10 +3,11 @@ import { enUS, frFR, zhCN, viVN, arSD } from "@mui/material/locale";
 
 // routes
 import { PATH_DASHBOARD } from "./routes/paths";
+import { Direction } from "@mui/material";
 
 interface ISettings {
 	themeMode: "light" | "dark";
-	themeDirection: "ltr" | "rtl";
+	themeDirection: Direction;
 	themeContrast: string;
 	themeLayout: "horizontal" | "vertical";
 	themeColorPresets: string;

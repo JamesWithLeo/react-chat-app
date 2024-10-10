@@ -1,3 +1,5 @@
+import { Color } from "@mui/material";
+
 import { alpha } from "@mui/material/styles";
 
 // Helper to create gradients
@@ -48,8 +50,27 @@ const ERROR = {
 	dark: "#B72136",
 	darker: "#7A0C2E",
 };
-
-const GREY = {
+export interface IGrey {
+	0: string;
+	100: string;
+	200: string;
+	300: string;
+	400: string;
+	500: string;
+	600: string;
+	700: string;
+	800: string;
+	900: string;
+	500_8: string;
+	500_12: string;
+	500_16: string;
+	500_24: string;
+	500_32: string;
+	500_48: string;
+	500_56: string;
+	500_80: string;
+}
+export const GREY = {
 	0: "#FFFFFF",
 	100: "#F9FAFB",
 	200: "#F4F6F8",
@@ -114,6 +135,26 @@ const COMMON = {
 
 interface Palette {
 	mode: "light" | "dark";
+	grey: {
+		0: string;
+		100: string;
+		200: string;
+		300: string;
+		400: string;
+		500: string;
+		600: string;
+		700: string;
+		800: string;
+		900: string;
+		500_8: string;
+		500_12: string;
+		500_16: string;
+		500_24: string;
+		500_32: string;
+		500_48: string;
+		500_56: string;
+		500_80: string;
+	};
 	text: {
 		primary: string;
 		secondary: string;
@@ -141,6 +182,7 @@ const lightPalette: Palette = {
 	text: { primary: GREY[800], secondary: GREY[600], disabled: GREY[500] },
 	background: { paper: "#fff", default: "#fff", neutral: GREY[200] },
 	action: { active: GREY[600], ...ACTION },
+	grey: GREY,
 };
 
 const darkPalette: Palette = {
@@ -148,7 +190,15 @@ const darkPalette: Palette = {
 	text: { primary: "#fff", secondary: GREY[500], disabled: GREY[600] },
 	background: { paper: GREY[800], default: GREY[900], neutral: GREY[500_16] },
 	action: { active: GREY[500], ...ACTION },
+	grey: GREY,
 };
+export type ColorType =
+	| "primary"
+	| "secondary"
+	| "info"
+	| "success"
+	| "warning"
+	| "error";
 
 const palette = {
 	light: { ...COMMON, ...lightPalette },

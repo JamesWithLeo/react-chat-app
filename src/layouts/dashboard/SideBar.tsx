@@ -15,6 +15,8 @@ import AntSwitch from "../../components/AntSwitch";
 import Logo from "../../assets/Images/logo.ico";
 import { useNavigate } from "react-router-dom";
 import { ChatCircleDots, User, Gear } from "@phosphor-icons/react";
+import { useSelector } from "react-redux";
+import { AppState } from "../../redux/store";
 
 const Nav_Buttons = [{ index: 0, icon: <ChatCircleDots /> }];
 const Profile_Menu = [
@@ -76,7 +78,7 @@ export default function SideBar() {
 	const [selected, setSelected] = useState(0);
 	//switch themes
 	const { onToggleMode } = useSettings();
-
+	const user = useSelector((state: AppState) => state.auth.user);
 	return (
 		<Box
 			p={2}
@@ -197,16 +199,16 @@ export default function SideBar() {
 						}}
 						defaultChecked
 					/>
-
-					<Avatar
-						sx={{ cursor: "pointer" }}
-						src={faker.image.people()}
-						aria-controls={open ? "basic-menu" : undefined}
-						aria-haspopup="true"
-						aria-expanded={open ? "true" : undefined}
-						onClick={handleClick}
-					/>
-
+					{user ? (
+						<Avatar
+							sx={{ cursor: "pointer" }}
+							src={faker.image.people()}
+							aria-controls={open ? "basic-menu" : undefined}
+							aria-haspopup="true"
+							aria-expanded={open ? "true" : undefined}
+							onClick={handleClick}
+						/>
+					) : null}
 					<Menu
 						id="basic-menu"
 						anchorEl={anchorEl}

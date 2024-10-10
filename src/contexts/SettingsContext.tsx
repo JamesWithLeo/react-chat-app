@@ -6,6 +6,7 @@ import getColorPresets, {
 	colorPresets,
 	IColorPreset,
 } from "../utils/getColorPresets";
+import { Direction } from "@mui/material";
 
 // Define settings state interface
 interface ISettingsContextProps {
@@ -13,7 +14,7 @@ interface ISettingsContextProps {
 	themeLayout: string;
 	themeStretch: boolean;
 	themeContrast: string;
-	themeDirection: string;
+	themeDirection: Direction;
 	themeColorPresets: string;
 	onToggleMode: () => void;
 	onChangeMode: (e: ChangeEvent<HTMLInputElement>) => void;
