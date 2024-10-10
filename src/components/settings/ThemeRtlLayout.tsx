@@ -1,20 +1,13 @@
-import PropTypes from "prop-types";
-import { useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 // rtl
 import rtlPlugin from "stylis-plugin-rtl";
 // emotion
-import createCache from "@emotion/cache";
+import createCache, { StylisPlugin } from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
 // @mui
 import { useTheme } from "@mui/material/styles";
 
-// ----------------------------------------------------------------------
-
-ThemeRtlLayout.propTypes = {
-	children: PropTypes.node,
-};
-
-export default function ThemeRtlLayout({ children }) {
+export default function ThemeRtlLayout({ children }: { children: ReactNode }) {
 	const theme = useTheme();
 
 	useEffect(() => {
@@ -23,7 +16,11 @@ export default function ThemeRtlLayout({ children }) {
 
 	const cacheRtl = createCache({
 		key: theme.direction === "rtl" ? "rtl" : "css",
-		stylisPlugins: theme.direction === "rtl" ? [rtlPlugin] : [],
+		// Use type assertion to avoid type error
+		stylisPlugins:
+			theme.direction === "rtl"
+				? [rtlPlugin as unknown as StylisPlugin]
+				: undefined,
 	});
 
 	return <CacheProvider value={cacheRtl}>{children}</CacheProvider>;

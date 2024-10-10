@@ -6,6 +6,7 @@ import ThemeContrast from "./ThemeContrast";
 import ThemeRtlLayout from "./ThemeRtlLayout";
 import ThemeColorPresets from "./ThemeColorPresets";
 import ThemeLocalization from "./ThemeLocalization";
+import { ReactNode } from "react";
 
 // ----------------------------------------------------------------------
 
@@ -13,7 +14,7 @@ ThemeSettings.propTypes = {
 	children: PropTypes.node.isRequired,
 };
 
-export default function ThemeSettings({ children }) {
+export default function ThemeSettings({ children }: { children: ReactNode }) {
 	return (
 		<ThemeColorPresets>
 			<ThemeContrast>

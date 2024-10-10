@@ -39,7 +39,7 @@ export default function ThemeColorPresets({
 						primary: `0 8px 16px 0 ${alpha(setColor.main, 0.24)}`,
 					},
 		}),
-		[setColor, defaultTheme],
+		[setColor, defaultTheme, isDarkMode],
 	);
 
 	const theme = createTheme(themeOptions);

@@ -2,10 +2,11 @@ import { Navigate, Outlet } from "react-router-dom";
 import { Stack, Theme, useMediaQuery } from "@mui/material";
 import SideBar from "./SideBar";
 import { useEffect } from "react";
-
-const isAuthenticated = true;
+import { useSelector } from "react-redux";
+import { AppState } from "../../redux/store";
 
 const DashboardLayout = () => {
+	const user = useSelector((state: AppState) => state.auth.user);
 	const iSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
@@ -18,7 +19,7 @@ const DashboardLayout = () => {
 		}
 		fetchChats();
 	}, []);
-	if (!isAuthenticated) {
+	if (!user) {
 		return <Navigate to="/auth/login" />;
 	}
 	return (

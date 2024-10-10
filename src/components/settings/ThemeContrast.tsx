@@ -1,5 +1,4 @@
-import PropTypes from "prop-types";
-import { useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 // @mui
 import { CssBaseline } from "@mui/material";
 import {
@@ -7,22 +6,19 @@ import {
 	ThemeProvider,
 	createTheme,
 	useTheme,
+	ThemeOptions,
 } from "@mui/material/styles";
 // hooks
 import useSettings from "../../hooks/useSettings";
 //
 import componentsOverride from "../../theme/overrides";
+import palette from "../../theme/palette";
+import { customShadows } from "../../theme/shadows";
 
-// ----------------------------------------------------------------------
-
-ThemeContrast.propTypes = {
-	children: PropTypes.node,
-};
-
-export default function ThemeContrast({ children }) {
+export default function ThemeContrast({ children }: { children: ReactNode }) {
 	const defaultTheme = useTheme();
 
-	const { themeContrast } = useSettings();
+	const { themeContrast, themeMode } = useSettings();
 
 	const isLight = defaultTheme.palette.mode === "light";
 
@@ -43,27 +39,55 @@ export default function ThemeContrast({ children }) {
 			boxShadow: `0 0 1px 0 ${alpha(shadowColor, 0.48)}, 0 2px 4px -1px ${alpha(shadowColor, 0.24)}`,
 		},
 	};
+	const isDarkMode = themeMode === "dark";
 
-	const themeOptions = useMemo(
+	const themeOptions: ThemeOptions = useMemo(
 		() => ({
 			...defaultTheme,
-			palette: {
-				...defaultTheme.palette,
-				background: {
-					...defaultTheme.palette.background,
-					default:
-						themeContrast === "bold"
-							? styles.bgBold
-							: styles.bgDefault,
-				},
-			},
+			palette: isDarkMode
+				? {
+						...palette.dark,
+						background: {
+							...defaultTheme.palette.background,
+							default:
+								themeContrast === "bold"
+									? styles.bgBold
+									: styles.bgDefault,
+						},
+					}
+				: {
+						...palette.light,
+						background: {
+							...defaultTheme.palette.background,
+							default:
+								themeContrast === "bold"
+									? styles.bgBold
+									: styles.bgDefault,
+						},
+					},
+			customShadows: isDarkMode
+				? customShadows.dark
+				: customShadows.light,
+
 			components: {
 				MuiCard: {
 					styleOverrides: {
-						root:
-							themeContrast === "bold"
-								? styles.cardBold
-								: styles.cardDefault,
+						root: {
+							zIndex: 1,
+							position: "relative",
+							borderRadius: 12,
+							boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+
+							variants: [
+								{
+									props: { raised: true },
+									style: {
+										boxShadow:
+											"0px 6px 30px rgba(0, 0, 0, 0.2)",
+									},
+								},
+							],
+						},
 					},
 				},
 			},
@@ -72,10 +96,11 @@ export default function ThemeContrast({ children }) {
 		[
 			defaultTheme,
 			themeContrast,
+			isDarkMode,
 			styles.bgBold,
 			styles.bgDefault,
-			styles.cardBold,
-			styles.cardDefault,
+			// styles.cardBold,
+			// styles.cardDefault,
 		],
 	);
 
