@@ -85,8 +85,14 @@ const SettingsProvider = ({ children }: SettingsProviderProps) => {
 		});
 	};
 	const onToggleDirection = () => {};
+
 	const onChangeColor = (event: ChangeEvent<HTMLInputElement>) => {
-		setSettings({ ...settings, themeColorPresets: event.target.value });
+		console.log(event.target.value);
+		setSettings({
+			...settings,
+			themeColorPresets: event.target.value,
+			setColor: getColorPresets(event.target.value),
+		});
 	};
 
 	const onChangeDirection = (event: ChangeEvent<HTMLInputElement>) => {

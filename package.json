@@ -21,6 +21,7 @@
 		"@types/react-dom": "^18.3.0",
 		"emoji-mart": "^5.5.2",
 		"framer-motion": "^7.10.3",
+		"numeral": "^2.0.6",
 		"phosphor-react": "^1.4.1",
 		"prettier": "^3.3.3",
 		"prop-types": "^15.8.1",
@@ -74,6 +75,7 @@
 		"@types/connect": "^3.4.38",
 		"@types/connect-history-api-fallback": "^1.5.4",
 		"@types/estree": "^1.0.6",
+		"@types/numeral": "^2.0.5",
 		"@types/testing-library__jest-dom": "^5.14.9",
 		"@types/trusted-types": "^2.0.7",
 		"@types/yup": "^0.29.14"

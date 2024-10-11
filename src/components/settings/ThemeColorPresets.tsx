@@ -22,12 +22,15 @@ export default function ThemeColorPresets({
 
 	const { setColor, themeMode } = useSettings();
 	const isDarkMode = themeMode === "dark";
+	console.log(setColor);
 	const themeOptions: ThemeOptions = useMemo(
 		() => ({
 			...defaultTheme,
 			palette: {
 				...defaultTheme.palette,
-				primary: setColor,
+				primary: {
+					...setColor,
+				},
 			},
 			customShadows: isDarkMode
 				? {

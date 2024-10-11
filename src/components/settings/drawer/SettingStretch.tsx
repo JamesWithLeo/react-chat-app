@@ -6,8 +6,6 @@ import useSettings from "../../../hooks/useSettings";
 //
 import Iconify from "../../Iconify";
 
-// ----------------------------------------------------------------------
-
 const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	padding: theme.spacing(2),
 	color: theme.palette.text.disabled,
@@ -15,8 +13,6 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	backgroundColor: theme.palette.background.neutral,
 	borderRadius: Number(theme.shape.borderRadius) * 1.25,
 }));
-
-// ----------------------------------------------------------------------
 
 export default function SettingStretch() {
 	const { themeStretch, onToggleStretch } = useSettings();
