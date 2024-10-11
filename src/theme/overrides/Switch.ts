@@ -7,7 +7,7 @@ export default function Switch(theme: Theme) {
 		MuiSwitch: {
 			styleOverrides: {
 				thumb: {
-					boxShadow: theme.customShadows.z1,
+					boxShadow: theme.customShadows[1],
 				},
 				track: {
 					opacity: 1,
