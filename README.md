@@ -1,23 +1,28 @@
 # WeChat - React Js Chat App
 
-**live demo by Dulanjali Senarathna: [https://react-chat-app-kohl.vercel.app/app](https://react-chat-app-kohl.vercel.app/app)**
-
----
-
 ### Made with ❤️ by [Dulanjali Senarathna](https://www.linkedin.com/in/dulanjali-senarathna/)
+
+**live demo by Dulanjali Senarathna: [https://react-chat-app-kohl.vercel.app/app](https://react-chat-app-kohl.vercel.app/app)**
 
 ### Fork by [James Leo Ocampo](https://www.linkedin.com/in/james-leo-ocampo-888686307)
 
----
+**live demo by James Leo Ocampo: [https://react-chat-app-seven-murex.vercel.app/](https://react-chat-app-seven-murex.vercel.app/)**
 
 ## Project Description
 
 Dulanjali:
 Mainly focused on react js front-end development. I used css for styling. Also, this application used React Context API and redux for state management.
 
+James Leo:
+Converted the javascript files to typescript just to ensure typesafety and improve readability, implemented the redux toolkit to authentication.
+
 This chat app has basic chat app functionalities such as login, register, reset password, chat, conversation, group call, contact, starred messages, medial, files and links, settings, profile, edit profile, emoji pickers and etc. We can implement all the features using backend in future.
 
-You can change theming colors and dark and light modes by clicking settings icon in bottom-left cornaer.
+You can change theming colors and dark and light modes by clicking settings icon in bottom-left corner.
+
+## To do
+
+Add functionalities 🔃
 
 ## What I used
 
