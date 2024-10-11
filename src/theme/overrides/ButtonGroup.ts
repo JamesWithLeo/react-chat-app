@@ -4,9 +4,9 @@ import { Theme } from "@mui/material";
 import { customShadowType } from "../shadows";
 
 export default function ButtonGroup(theme: Theme) {
-	const styleContained = (color: customShadowType) => ({
+	const styleContained = (color: customShadowType, index: number) => ({
 		props: { variant: "contained", color },
-		style: { boxShadow: theme.customShadows[color] },
+		style: { boxShadow: theme.customShadows[index] },
 	});
 
 	return {
@@ -14,14 +14,14 @@ export default function ButtonGroup(theme: Theme) {
 			variants: [
 				{
 					props: { variant: "contained", color: "inherit" },
-					style: { boxShadow: theme.customShadows.z8 },
+					style: { boxShadow: theme.customShadows[2] },
 				},
-				styleContained("primary"),
-				styleContained("secondary"),
-				styleContained("info"),
-				styleContained("success"),
-				styleContained("warning"),
-				styleContained("error"),
+				styleContained("primary", 7),
+				styleContained("info", 8),
+				styleContained("secondary", 9),
+				styleContained("success", 10),
+				styleContained("warning", 11),
+				styleContained("error", 12),
 
 				{
 					props: { disabled: true },
