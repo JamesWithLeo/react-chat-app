@@ -5,7 +5,7 @@ export default function Autocomplete(theme: Theme) {
 		MuiAutocomplete: {
 			styleOverrides: {
 				paper: {
-					boxShadow: theme.customShadows.dropdown,
+					boxShadow: theme.customShadows[15],
 				},
 				listbox: {
 					padding: theme.spacing(0, 1),
