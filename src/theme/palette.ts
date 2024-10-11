@@ -1,5 +1,3 @@
-import { Color } from "@mui/material";
-
 import { alpha } from "@mui/material/styles";
 
 // Helper to create gradients

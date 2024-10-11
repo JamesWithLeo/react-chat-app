@@ -19,42 +19,39 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	borderRadius: Number(theme.shape.borderRadius) * 1.25,
 }));
 
-// ----------------------------------------------------------------------
-
-export default function SettingMode() {
-	const { themeMode, onChangeMode } = useSettings();
+export default function SettingContrast() {
+	const { themeContrast, onChangeContrast } = useSettings();
 
 	return (
-		<RadioGroup name="themeMode" value={themeMode} onChange={onChangeMode}>
+		<RadioGroup
+			name="themeContrast"
+			value={themeContrast}
+			onChange={onChangeContrast}
+		>
 			<Grid dir="ltr" container spacing={2.5}>
-				{["light", "dark"].map((mode, index) => {
-					const isSelected = themeMode === mode;
+				{["default", "bold"].map((contrast, index) => {
+					const isSelected = themeContrast === contrast;
 
 					return (
-						<Grid key={mode} item xs={6}>
+						<Grid key={contrast} item xs={6}>
 							<BoxStyle
 								sx={{
-									bgcolor:
-										mode === "light"
-											? "common.white"
-											: "grey.800",
 									...(isSelected && {
 										color: "primary.main",
 										boxShadow: (theme) =>
-											theme.customShadows.z20,
+											theme.customShadows[5],
 									}),
 								}}
 							>
 								<Iconify
 									icon={
 										index === 0
-											? "ph:sun-duotone"
-											: "ph:moon-duotone"
+											? "cil:contrast"
+											: "ion:contrast-outline"
 									}
-									width={28}
-									height={28}
+									sx={{ width: 28, height: 28 }}
 								/>
-								<BoxMask value={mode} />
+								<BoxMask value={contrast} />
 							</BoxStyle>
 						</Grid>
 					);

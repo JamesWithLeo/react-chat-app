@@ -8,13 +8,17 @@ import {
 	ThemeOptions,
 } from "@mui/material/styles";
 // hooks
-import useSettings from "../hooks/useSettings";
+import useSettings from "../../hooks/useSettings";
 //
-import palette from "./palette";
-import typography from "./typography";
-import breakpoints from "./breakpoints";
-import componentsOverride from "./overrides";
-import { customShadows, shadows } from "./shadows";
+// import palette from "./palette";
+import palette from "../../theme/palette";
+// import typography from "./typography";
+import typography from "../../theme/typography";
+// import breakpoints from "./breakpoints";
+import breakpoints from "../../theme/breakpoints";
+// import componentsOverride from "./overrides";
+import componentsOverride from "../../theme/overrides";
+import { customShadows, shadows } from "../../theme/shadows";
 
 declare module "@mui/material" {
 	interface Color {

@@ -20,7 +20,7 @@ const DashboardLayout = () => {
 		fetchChats();
 	}, []);
 	if (!user) {
-		return <Navigate to="/auth/login" />;
+		// return <Navigate to="/auth/login" />;
 	}
 	return (
 		<Stack direction={{ xs: "column", sm: "row" }}>

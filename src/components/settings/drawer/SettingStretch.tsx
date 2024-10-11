@@ -47,7 +47,7 @@ export default function SettingStretch() {
 					borderRadius: 1,
 					color: "action.active",
 					bgcolor: "background.default",
-					boxShadow: (theme) => theme.customShadows.z12,
+					boxShadow: (theme) => theme.customShadows[3],
 					transition: (theme) => theme.transitions.create("width"),
 					...(themeStretch && {
 						width: 1,
@@ -61,7 +61,9 @@ export default function SettingStretch() {
 							? "eva:arrow-ios-back-fill"
 							: "eva:arrow-ios-forward-fill"
 					}
-					{...ICON_SIZE}
+					sx={{
+						...ICON_SIZE,
+					}}
 				/>
 				<Iconify
 					icon={
@@ -69,7 +71,9 @@ export default function SettingStretch() {
 							? "eva:arrow-ios-forward-fill"
 							: "eva:arrow-ios-back-fill"
 					}
-					{...ICON_SIZE}
+					sx={{
+						...ICON_SIZE,
+					}}
 				/>
 			</Stack>
 		</BoxStyle>

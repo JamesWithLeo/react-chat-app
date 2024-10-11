@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 // @mui
 import { styled, alpha } from "@mui/material/styles";
 import { Grid, RadioGroup, CardActionArea, Box, Stack } from "@mui/material";
@@ -6,8 +5,6 @@ import { Grid, RadioGroup, CardActionArea, Box, Stack } from "@mui/material";
 import useSettings from "../../../hooks/useSettings";
 //
 import BoxMask from "./BoxMask";
-
-// ----------------------------------------------------------------------
 
 const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	display: "flex",
@@ -17,8 +14,6 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	border: `solid 1px ${theme.palette.grey[500_12]}`,
 	borderRadius: Number(theme.shape.borderRadius) * 1.25,
 }));
-
-// ----------------------------------------------------------------------
 
 export default function SettingLayout() {
 	const { themeLayout, onChangeLayout } = useSettings();
@@ -41,7 +36,7 @@ export default function SettingLayout() {
 									...(isSelected && {
 										color: "primary.main",
 										boxShadow: (theme) =>
-											theme.customShadows.z20,
+											theme.customShadows[5],
 									}),
 								}}
 							>
@@ -60,19 +55,13 @@ export default function SettingLayout() {
 	);
 }
 
-// ----------------------------------------------------------------------
-
-VerticalBox.propTypes = {
-	isSelected: PropTypes.bool,
-};
-
 const style = {
 	width: 1,
 	height: 32,
 	borderRadius: 0.5,
 };
 
-function VerticalBox({ isSelected }) {
+function VerticalBox({ isSelected }: { isSelected: boolean }) {
 	return (
 		<>
 			<Box
@@ -106,11 +95,7 @@ function VerticalBox({ isSelected }) {
 	);
 }
 
-HorizontalBox.propTypes = {
-	isSelected: PropTypes.bool,
-};
-
-function HorizontalBox({ isSelected }) {
+function HorizontalBox({ isSelected }: { isSelected: boolean }) {
 	return (
 		<>
 			<Box

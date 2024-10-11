@@ -44,33 +44,33 @@ declare module "@mui/material/styles" {
 	}
 
 	interface Theme {
-		customShadows: {
-			none: string;
-			z1: string;
-			z8: string;
-			z12: string;
-			z16: string;
-			z20: string;
-			z24: string;
-			primary: string;
-			info: string;
-			secondary: string;
-			success: string;
-			warning: string;
-			error: string;
-			card: string;
-			dialog: string;
-			dropdown: string;
-			button: string;
-			tooltip: string;
-			popover: string;
-			navbar: string;
-			sidebar: string;
-			modal: string;
-			hover: string;
-			focus: string;
-			input: string;
-		};
+		customShadows: [
+			none: string,
+			z1: string,
+			z8: string,
+			z12: string,
+			z16: string,
+			z20: string,
+			z24: string,
+			primary: string,
+			info: string,
+			secondary: string,
+			success: string,
+			warning: string,
+			error: string,
+			card: string,
+			dialog: string,
+			dropdown: string,
+			button: string,
+			tooltip: string,
+			popover: string,
+			navbar: string,
+			sidebar: string,
+			modal: string,
+			hover: string,
+			focus: string,
+			input: string,
+		];
 	}
 	// allow configuration using `createTheme`
 	interface ThemeOptions {

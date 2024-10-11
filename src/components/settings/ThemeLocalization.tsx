@@ -1,15 +1,8 @@
-import PropTypes from "prop-types";
 // @mui
 import { ThemeProvider, createTheme, useTheme } from "@mui/material/styles";
 // hooks
 import useLocales from "../../hooks/useLocales";
 import { ReactNode } from "react";
-
-// ----------------------------------------------------------------------
-
-ThemeLocalization.propTypes = {
-	children: PropTypes.node.isRequired,
-};
 
 export default function ThemeLocalization({
 	children,

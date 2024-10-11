@@ -7,8 +7,6 @@ import useSettings from "../../../hooks/useSettings";
 import Iconify from "../../Iconify";
 import BoxMask from "./BoxMask";
 
-// ----------------------------------------------------------------------
-
 const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	height: 72,
 	display: "flex",
@@ -19,42 +17,42 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	borderRadius: Number(theme.shape.borderRadius) * 1.25,
 }));
 
-// ----------------------------------------------------------------------
-
-export default function SettingContrast() {
-	const { themeContrast, onChangeContrast } = useSettings();
+export default function SettingMode() {
+	const { themeMode, onChangeMode } = useSettings();
 
 	return (
-		<RadioGroup
-			name="themeContrast"
-			value={themeContrast}
-			onChange={onChangeContrast}
-		>
+		<RadioGroup name="themeMode" value={themeMode} onChange={onChangeMode}>
 			<Grid dir="ltr" container spacing={2.5}>
-				{["default", "bold"].map((contrast, index) => {
-					const isSelected = themeContrast === contrast;
+				{["light", "dark"].map((mode, index) => {
+					const isSelected = themeMode === mode;
 
 					return (
-						<Grid key={contrast} item xs={6}>
+						<Grid key={mode} item xs={6}>
 							<BoxStyle
 								sx={{
+									bgcolor:
+										mode === "light"
+											? "common.white"
+											: "grey.800",
 									...(isSelected && {
 										color: "primary.main",
 										boxShadow: (theme) =>
-											theme.customShadows.z20,
+											theme.customShadows[5],
 									}),
 								}}
 							>
 								<Iconify
 									icon={
 										index === 0
-											? "cil:contrast"
-											: "ion:contrast-outline"
+											? "ph:sun-duotone"
+											: "ph:moon-duotone"
 									}
-									width={28}
-									height={28}
+									sx={{
+										width: 28,
+										height: 28,
+									}}
 								/>
-								<BoxMask value={contrast} />
+								<BoxMask value={mode} />
 							</BoxStyle>
 						</Grid>
 					);
