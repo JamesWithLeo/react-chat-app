@@ -21,22 +21,22 @@ export default function Button(theme: Theme) {
 					},
 				},
 				containedPrimary: {
-					boxShadow: theme.customShadows.primary,
+					boxShadow: theme.customShadows[7],
 				},
 				containedSecondary: {
-					boxShadow: theme.customShadows.secondary,
+					boxShadow: theme.customShadows[9],
 				},
 				containedInfo: {
-					boxShadow: theme.customShadows.info,
+					boxShadow: theme.customShadows[8],
 				},
 				containedSuccess: {
-					boxShadow: theme.customShadows.success,
+					boxShadow: theme.customShadows[10],
 				},
 				containedWarning: {
-					boxShadow: theme.customShadows.warning,
+					boxShadow: theme.customShadows[11],
 				},
 				containedError: {
-					boxShadow: theme.customShadows.error,
+					boxShadow: theme.customShadows[12],
 				},
 				// outlined
 				outlinedInherit: {
