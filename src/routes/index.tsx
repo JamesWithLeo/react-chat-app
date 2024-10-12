@@ -27,6 +27,7 @@ export default function Router() {
 			children: [
 				{ element: <LoginPage />, path: "login" },
 				{ element: <RegisterPage />, path: "register" },
+				{ element: <SetupPage />, path: "setup" },
 				{ element: <ResetPasswordPage />, path: "reset-password" },
 				{ element: <NewPasswordPage />, path: "new-password" },
 			],
@@ -61,6 +62,7 @@ const GeneralChats = Loadable(
 const LoginPage = Loadable(lazy(() => import("../pages/auth/Login")));
 
 const RegisterPage = Loadable(lazy(() => import("../pages/auth/Register")));
+const SetupPage = Loadable(lazy(() => import("../pages/auth/SetUp")));
 
 const ResetPasswordPage = Loadable(
 	lazy(() => import("../pages/auth/ResetPassword")),

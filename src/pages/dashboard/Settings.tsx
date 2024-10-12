@@ -19,15 +19,17 @@ import {
 	Note,
 	PencilCircle,
 } from "phosphor-react";
-import { faker } from "@faker-js/faker";
 import Shortcuts from "../../sections/settings/Shortcuts";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { AppState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, AppState } from "../../redux/store";
+import { Door } from "@phosphor-icons/react";
+import { LogoutThunk } from "../../redux/slices/auth";
 
 const Settings = () => {
 	const theme = useTheme();
 	const user = useSelector((state: AppState) => state.auth.user);
+	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 
 	const [openShortcuts, setOpenShortcuts] = useState(false);
@@ -40,7 +42,7 @@ const Settings = () => {
 		setOpenShortcuts(false);
 	};
 
-	const list = [
+	const options = [
 		{
 			key: 0,
 			icon: <Bell size={20} />,
@@ -90,6 +92,14 @@ const Settings = () => {
 			title: "Help",
 			onclick: () => {},
 		},
+		{
+			key: 8,
+			icon: <Door size={20} />,
+			title: "Logout",
+			onclick: () => {
+				dispatch(LogoutThunk());
+			},
+		},
 	];
 
 	return (
@@ -126,42 +136,55 @@ const Settings = () => {
 							<Typography variant="h6">Settings</Typography>
 						</Stack>
 						{/* Profile */}
+
 						{user ? (
-							<Stack direction="row" spacing={3}>
-								{faker.image.people() ? (
-									<Avatar>{faker.name.firstName()[0]}</Avatar>
-								) : (
+							<Stack direction="row" spacing={3} key={user.uid}>
+								{user.photoUrl ? (
 									<Avatar
-										sx={{ height: 56, width: 56 }}
+										sx={{
+											md: { height: 56, width: 56 },
+											xs: { height: 32, width: 32 },
+										}}
 										src={user.photoUrl}
-										alt={faker.name.firstName()}
+										alt={user.uid}
 									/>
+								) : (
+									<Avatar>{user.email}</Avatar>
 								)}
-								<Stack spacing={0.5}>
-									<Typography variant="caption">
-										{user.firstName[0]}
+
+								<Stack
+									spacing={0.5}
+									display={"flex"}
+									justifyContent={"center"}
+								>
+									<Typography
+										variant="caption"
+										fontSize={{ sm: 16, md: 18 }}
+									>
+										{user.firstName || user.lastName
+											? `${user.firstName} ${user.lastName}`
+											: user.email}
 									</Typography>
 								</Stack>
 							</Stack>
 						) : null}
 						{/* List of options */}
 						<Stack spacing={4}>
-							{list.map(({ key, icon, title, onclick }) => (
-								<>
-									<Stack
-										spacing={2}
-										sx={{ cursor: "pointer" }}
-										onClick={onclick}
-									>
-										<Stack direction="row" spacing={2}>
-											{icon}
-											<Typography variant="body2">
-												{title}
-											</Typography>
-										</Stack>
-										{key !== 7 && <Divider />}
+							{options.map(({ key, icon, title, onclick }) => (
+								<Stack
+									key={title}
+									spacing={2}
+									sx={{ cursor: "pointer" }}
+									onClick={onclick}
+								>
+									<Stack direction="row" spacing={2}>
+										{icon}
+										<Typography variant="body2">
+											{title}
+										</Typography>
 									</Stack>
-								</>
+									{key !== options.length && <Divider />}
+								</Stack>
 							))}
 						</Stack>
 					</Stack>

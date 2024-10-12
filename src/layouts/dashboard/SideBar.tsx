@@ -202,7 +202,7 @@ export default function SideBar() {
 					{user ? (
 						<Avatar
 							sx={{ cursor: "pointer" }}
-							src={faker.image.people()}
+							src={user.photoUrl}
 							aria-controls={open ? "basic-menu" : undefined}
 							aria-haspopup="true"
 							aria-expanded={open ? "true" : undefined}

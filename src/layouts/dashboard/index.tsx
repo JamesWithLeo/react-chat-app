@@ -19,9 +19,13 @@ const DashboardLayout = () => {
 		}
 		fetchChats();
 	}, []);
-	// if (!user) {
-	// 	return <Navigate to="/auth/login" />;
-	// }
+	if (!user || !user.email || !user.uid || !user.id) {
+		return <Navigate to="/auth/login" />;
+	}
+	if ((user && !user.firstName) || !user.lastName || !user.gender) {
+		return <Navigate to={"/auth/setup"} />;
+	}
+	console.log(user);
 	return (
 		<Stack direction={{ xs: "column", sm: "row" }}>
 			{!iSmallScreen ? <SideBar /> : null}
