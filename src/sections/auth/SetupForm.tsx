@@ -6,8 +6,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import RHFSelect from "../../components/hook-form/RHFSelect";
 import RHFDate from "../../components/hook-form/RHFDate";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, AppState } from "../../redux/store";
+import { Navigate, useNavigate } from "react-router-dom";
+import { SetupThunk } from "../../redux/slices/auth";
 
-type Gender = "male" | "female" | "others";
+export type Gender = "male" | "female" | "others";
 
 const genderOptions: { value: Gender; label: string }[] = [
 	{ value: "male", label: "Male" },
@@ -27,7 +31,12 @@ const eighteenYearsAgo = new Date(
 	today.getMonth(),
 	today.getDate(),
 );
+
 export default function SetupForm() {
+	const user = useSelector((state: AppState) => state.auth.user);
+	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
+
 	const setupSchema = Yup.object().shape({
 		firstName: Yup.string().required("First name is required"),
 		lastName: Yup.string().required("Last name is required"),
@@ -45,9 +54,27 @@ export default function SetupForm() {
 	const { handleSubmit } = methods;
 
 	const submitSetup: SubmitHandler<ISetupSchema> = async (data) => {
-		console.log(data);
-		console.log("submitted");
+		if (!user) return;
+		dispatch(SetupThunk({ email: user.email, ...data }))
+			.unwrap()
+			.then((result) => {
+				console.log("Updated values:", result);
+				navigate("/", { replace: true });
+			});
 	};
+
+	if (!user || !user.email || !user.uid || !user.id) {
+		return <Navigate to={"/signin"} replace />;
+	}
+	if (
+		user &&
+		user.firstName &&
+		user.lastName &&
+		user.gender &&
+		user.birthDate
+	) {
+		return <Navigate to={"/"} replace />;
+	}
 
 	return (
 		<FormProvider methods={methods} onSubmit={handleSubmit(submitSetup)}>

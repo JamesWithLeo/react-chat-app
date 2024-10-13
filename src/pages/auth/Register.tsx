@@ -3,8 +3,15 @@ import { Link as RouterLink } from "react-router-dom";
 import React from "react";
 import RegisterForm from "../../sections/auth/RegisterForm";
 import AuthSocial from "../../sections/auth/AuthSocial";
+import { useSelector } from "react-redux";
+import { AppState } from "../../redux/store";
+import { Navigate } from "react-router-dom";
 
 const Register = () => {
+	const user = useSelector((state: AppState) => state.auth.user);
+	if (user) {
+		return <Navigate to={"/"} />;
+	}
 	return (
 		<Stack spacing={2} sx={{ mb: 5, position: "relative" }}>
 			<Typography variant="h4">Get Started With WeChat</Typography>

@@ -13,6 +13,7 @@ export default function RHFDate({ name, label, helperText }: RHFSelectProps) {
 		<>
 			<Controller
 				name={name}
+				defaultValue={""}
 				control={control}
 				render={({ field, fieldState }) => (
 					<>
@@ -20,6 +21,11 @@ export default function RHFDate({ name, label, helperText }: RHFSelectProps) {
 							{...field}
 							fullWidth
 							error={!!fieldState.error}
+							helperText={
+								fieldState.error
+									? fieldState.error.message
+									: helperText
+							}
 							label={label}
 							type="date"
 							InputProps={{

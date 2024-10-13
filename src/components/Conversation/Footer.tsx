@@ -108,6 +108,7 @@ const ChatInput = ({
 						</InputAdornment>
 					</Stack>
 				),
+
 				endAdornment: (
 					<InputAdornment position="end">
 						<IconButton

@@ -3,7 +3,7 @@ import { Navigate, useRoutes } from "react-router-dom";
 
 // layouts
 import DashboardLayout from "../layouts/dashboard";
-import MainLayout from "../layouts/main";
+import AuthLayout from "../layouts/auth";
 
 // config
 import { DEFAULT_PATH } from "../config";
@@ -23,7 +23,7 @@ export default function Router() {
 	return useRoutes([
 		{
 			path: "/auth",
-			element: <MainLayout />,
+			element: <AuthLayout />,
 			children: [
 				{ element: <LoginPage />, path: "login" },
 				{ element: <RegisterPage />, path: "register" },

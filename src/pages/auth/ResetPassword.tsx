@@ -3,8 +3,15 @@ import { CaretLeft } from "phosphor-react";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import ResetPasswordForm from "../../sections/auth/ResetPasswordForm";
+import { useSelector } from "react-redux";
+import { AppState } from "../../redux/store";
+import { Navigate } from "react-router-dom";
 
 const ResetPassword = () => {
+	const user = useSelector((state: AppState) => state.auth.user);
+	if (user) {
+		return <Navigate to={"/"} />;
+	}
 	return (
 		<>
 			<Stack spacing={2} sx={{ mb: 5, position: "relative" }}>

@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { SigninFetch, SignupFetch } from "../../services/fetch";
+import { SetupFetch, SigninFetch, SignupFetch } from "../../services/fetch";
 import { LogoutFirebase } from "../../services/firebase";
 
 const localStorageKey = "userWeChat";
@@ -25,14 +25,17 @@ interface IUser {
 	lastLogin: Date;
 	gender: Gender;
 	status: Status;
+	birthDate: Date;
 }
 
 interface IAuth {
 	user: IUser | null;
+	errorMessage: string | null;
 }
 
 const authInit: IAuth = {
 	user: currentUser,
+	errorMessage: null,
 };
 
 const authSlice = createSlice({
@@ -54,6 +57,7 @@ const authSlice = createSlice({
 				createdAt,
 				updatedAt,
 				lastLogin,
+				birthDate,
 			} = action.payload;
 
 			localStorage.setItem(
@@ -76,6 +80,7 @@ const authSlice = createSlice({
 					createdAt,
 					updatedAt,
 					lastLogin,
+					birthDate,
 				},
 			};
 		});
@@ -94,6 +99,7 @@ const authSlice = createSlice({
 				createdAt,
 				updatedAt,
 				lastLogin,
+				birthDate,
 			} = action.payload;
 
 			localStorage.setItem(
@@ -116,6 +122,7 @@ const authSlice = createSlice({
 					createdAt,
 					updatedAt,
 					lastLogin,
+					birthDate,
 				},
 			};
 		});
@@ -125,6 +132,44 @@ const authSlice = createSlice({
 				...state,
 				user: null,
 			};
+		});
+		builder.addCase(SetupThunk.fulfilled, (state, action) => {
+			const user = state.user;
+			const { payload } = action;
+			if (user) {
+				localStorage.setItem(
+					localStorageKey,
+					JSON.stringify({
+						...state,
+						user: {
+							...state.user,
+							firstName: payload.firstName,
+							lastName: payload.lastName,
+							gender: payload.gender,
+							birthDate: payload.birthDate,
+						},
+					}),
+				);
+				return {
+					...state,
+					user: {
+						...user,
+						firstName: payload.firstName,
+						lastName: payload.lastName,
+						gender: payload.gender,
+						birthDate: payload.birthDate,
+					},
+				};
+			} else return state;
+		});
+		builder.addCase(SetupThunk.rejected, (state, action) => {
+			if (action.payload) {
+				const { errorMessage } = action.payload;
+				return {
+					...state,
+					errorMessage,
+				};
+			} else return state;
 		});
 	},
 });
@@ -143,17 +188,17 @@ export const SigninThunk = createAsyncThunk(
 				id: rawUser.id,
 				email: rawUser.email,
 				uid: rawUser.uid,
-				firstName: rawUser.firstname,
-				lastName: rawUser.lastname,
-				photoUrl: rawUser.photourl,
-				phoneNumber: rawUser.phonenumber,
+				firstName: rawUser.firstName,
+				lastName: rawUser.lastName,
+				photoUrl: rawUser.photoUrl,
+				phoneNumber: rawUser.phoneNumber,
 				status: rawUser.status,
 				gender: rawUser.gender,
-				createdAt: rawUser.createdat,
-				updatedAt: rawUser.updatedat,
-				lastLogin: rawUser.lastlogin,
+				createdAt: rawUser.createdAt,
+				updatedAt: rawUser.updatedAt,
+				lastLogin: rawUser.lastLogin,
+				birthDate: rawUser.birthDate,
 			};
-
 			return user;
 		} catch (error) {
 			console.log("Signin error", error);
@@ -197,15 +242,16 @@ export const SignupThunk = createAsyncThunk(
 				id: rawUser.id,
 				email: rawUser.email,
 				uid: rawUser.uid,
-				firstName: rawUser.firstname,
-				lastName: rawUser.lastname,
-				photoUrl: rawUser.photourl,
-				phoneNumber: rawUser.phonenumber,
+				firstName: rawUser.firstName,
+				lastName: rawUser.lastName,
+				photoUrl: rawUser.photoUrl,
+				phoneNumber: rawUser.phoneNumber,
 				status: rawUser.status,
 				gender: rawUser.gender,
-				createdAt: rawUser.createdat,
-				updatedAt: rawUser.updatedat,
+				createdAt: rawUser.createdAt,
+				updatedAt: rawUser.updatedAt,
 				lastLogin: rawUser.lastLogin,
+				birthDate: rawUser.birthDate,
 			};
 			return user;
 		} catch (error) {
@@ -220,4 +266,48 @@ export const LogoutThunk = createAsyncThunk("auth/Logout", () => {
 		return Promise.resolve();
 	});
 });
+
+interface SetupArguments {
+	email: string;
+	firstName: string;
+	lastName: string;
+	gender: Gender;
+	birthDate: Date;
+}
+interface SetupFulfilledValue {
+	firstName: string;
+	lastName: string;
+	gender: Gender;
+	birthDate: Date;
+}
+interface SetupRejectValue {
+	errorMessage: string;
+}
+export const SetupThunk = createAsyncThunk<
+	SetupFulfilledValue,
+	SetupArguments,
+	{ rejectValue: SetupRejectValue }
+>(
+	"auth/Setup",
+	async ({ email, firstName, lastName, gender, birthDate }, thunkApi) => {
+		const response = await SetupFetch({
+			email,
+			firstName,
+			lastName,
+			gender,
+			birthDate,
+		});
+		if (!response.user) {
+			return thunkApi.rejectWithValue({ errorMessage: response });
+		} else {
+			const user = response.user;
+			return {
+				firstName: user.firstName,
+				lastName: user.lastName,
+				gender: user.gender,
+				birthDate: user.birthDate,
+			};
+		}
+	},
+);
 export default authSlice.reducer;
