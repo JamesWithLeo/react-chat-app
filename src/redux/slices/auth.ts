@@ -128,6 +128,7 @@ const authSlice = createSlice({
 		});
 
 		builder.addCase(LogoutThunk.fulfilled, (state, action) => {
+			localStorage.removeItem(localStorageKey);
 			return {
 				...state,
 				user: null,
