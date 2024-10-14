@@ -42,6 +42,7 @@ const authSlice = createSlice({
 	name: "auth",
 	initialState: authInit,
 	reducers: {},
+
 	extraReducers: (builder) => {
 		builder.addCase(SigninThunk.fulfilled, (state, action) => {
 			const {
@@ -83,6 +84,18 @@ const authSlice = createSlice({
 					birthDate,
 				},
 			};
+		});
+
+		builder.addCase(SigninThunk.rejected, (state, action) => {
+			localStorage.removeItem(localStorageKey);
+			if (action.payload) {
+				return {
+					...state,
+					user: null,
+					errorMessage: action.payload.errorMessage,
+				};
+			}
+			return state;
 		});
 
 		builder.addCase(SignupThunk.fulfilled, (state, action) => {
@@ -127,6 +140,18 @@ const authSlice = createSlice({
 			};
 		});
 
+		builder.addCase(SignupThunk.rejected, (state, action) => {
+			localStorage.removeItem(localStorageKey);
+			if (action.payload) {
+				return {
+					...state,
+					user: null,
+					errorMessage: action.payload.errorMessage,
+				};
+			}
+			return state;
+		});
+
 		builder.addCase(LogoutThunk.fulfilled, (state, action) => {
 			localStorage.removeItem(localStorageKey);
 			return {
@@ -134,6 +159,7 @@ const authSlice = createSlice({
 				user: null,
 			};
 		});
+
 		builder.addCase(SetupThunk.fulfilled, (state, action) => {
 			const user = state.user;
 			const { payload } = action;
@@ -163,6 +189,7 @@ const authSlice = createSlice({
 				};
 			} else return state;
 		});
+
 		builder.addCase(SetupThunk.rejected, (state, action) => {
 			if (action.payload) {
 				const { errorMessage } = action.payload;
@@ -175,13 +202,25 @@ const authSlice = createSlice({
 	},
 });
 
-export const SigninThunk = createAsyncThunk(
+interface SigninArg {
+	email: string;
+	uid: string;
+}
+interface rejectValue {
+	errorMessage: string;
+}
+
+export const SigninThunk = createAsyncThunk<
+	IUser,
+	SigninArg,
+	{ rejectValue: rejectValue }
+>(
 	"auth/Signin",
-	async ({ email, uid }: { email: string; uid: string }) => {
+	async ({ email, uid }: { email: string; uid: string }, thunkApi) => {
 		try {
 			const response = await SigninFetch({ email, uid });
-			if (!response.ok) {
-				throw new Error(response.errorMessage);
+			if (!response.ok || !response.user) {
+				throw thunkApi.rejectWithValue({ errorMessage: response });
 			}
 
 			const rawUser = response.user;
@@ -207,24 +246,25 @@ export const SigninThunk = createAsyncThunk(
 		}
 	},
 );
+interface SignupArgs {
+	email: string;
+	uid: string;
+	photoUrl: string | null;
+	phoneNumber: string | null;
+	firstName: string | null;
+	lastName: string | null;
+}
 
-export const SignupThunk = createAsyncThunk(
+export const SignupThunk = createAsyncThunk<
+	IUser,
+	SignupArgs,
+	{ rejectValue: rejectValue }
+>(
 	"auth/Signup",
-	async ({
-		email,
-		uid,
-		photoUrl,
-		phoneNumber,
-		firstName,
-		lastName,
-	}: {
-		email: string;
-		uid: string;
-		photoUrl: string | null;
-		phoneNumber: string | null;
-		firstName: string | null;
-		lastName: string | null;
-	}) => {
+	async (
+		{ email, uid, photoUrl, phoneNumber, firstName, lastName },
+		thunkApi,
+	) => {
 		try {
 			const response = await SignupFetch({
 				email,
@@ -235,7 +275,7 @@ export const SignupThunk = createAsyncThunk(
 				lastName,
 			});
 			if (!response.ok || !response.user) {
-				throw new Error(response.errorMessage);
+				return thunkApi.rejectWithValue({ errorMessage: response });
 			}
 
 			const rawUser = response.user;
@@ -281,13 +321,11 @@ interface SetupFulfilledValue {
 	gender: Gender;
 	birthDate: Date;
 }
-interface SetupRejectValue {
-	errorMessage: string;
-}
+
 export const SetupThunk = createAsyncThunk<
 	SetupFulfilledValue,
 	SetupArguments,
-	{ rejectValue: SetupRejectValue }
+	{ rejectValue: rejectValue }
 >(
 	"auth/Setup",
 	async ({ email, firstName, lastName, gender, birthDate }, thunkApi) => {
