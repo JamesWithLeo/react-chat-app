@@ -220,7 +220,7 @@ export const SigninThunk = createAsyncThunk<
 		try {
 			const response = await SigninFetch({ email, uid });
 			if (!response.ok || !response.user) {
-				throw thunkApi.rejectWithValue({ errorMessage: response });
+				return thunkApi.rejectWithValue({ errorMessage: response });
 			}
 
 			const rawUser = response.user;
