@@ -228,16 +228,16 @@ export const SigninThunk = createAsyncThunk<
 				id: rawUser.id,
 				email: rawUser.email,
 				uid: rawUser.uid,
-				firstName: rawUser.firstName,
-				lastName: rawUser.lastName,
-				photoUrl: rawUser.photoUrl,
-				phoneNumber: rawUser.phoneNumber,
+				firstName: rawUser.first_name,
+				lastName: rawUser.last_name,
+				photoUrl: rawUser.photo_url,
+				phoneNumber: rawUser.phone_number,
 				status: rawUser.status,
 				gender: rawUser.gender,
-				createdAt: rawUser.createdAt,
-				updatedAt: rawUser.updatedAt,
-				lastLogin: rawUser.lastLogin,
-				birthDate: rawUser.birthDate,
+				createdAt: rawUser.created_at,
+				updatedAt: rawUser.updated_at,
+				lastLogin: rawUser.last_login,
+				birthDate: rawUser.birth_date,
 			};
 			return user;
 		} catch (error) {
@@ -283,16 +283,16 @@ export const SignupThunk = createAsyncThunk<
 				id: rawUser.id,
 				email: rawUser.email,
 				uid: rawUser.uid,
-				firstName: rawUser.firstName,
-				lastName: rawUser.lastName,
-				photoUrl: rawUser.photoUrl,
-				phoneNumber: rawUser.phoneNumber,
+				firstName: rawUser.first_name,
+				lastName: rawUser.last_name,
+				photoUrl: rawUser.photo_url,
+				phoneNumber: rawUser.phone_number,
 				status: rawUser.status,
 				gender: rawUser.gender,
-				createdAt: rawUser.createdAt,
-				updatedAt: rawUser.updatedAt,
-				lastLogin: rawUser.lastLogin,
-				birthDate: rawUser.birthDate,
+				createdAt: rawUser.created_at,
+				updatedAt: rawUser.updated_at,
+				lastLogin: rawUser.last_login,
+				birthDate: rawUser.birth_date,
 			};
 			return user;
 		} catch (error) {
@@ -341,10 +341,10 @@ export const SetupThunk = createAsyncThunk<
 		} else {
 			const user = response.user;
 			return {
-				firstName: user.firstName,
-				lastName: user.lastName,
+				firstName: user.first_name,
+				lastName: user.last_name,
 				gender: user.gender,
-				birthDate: user.birthDate,
+				birthDate: user.birth_date,
 			};
 		}
 	},
