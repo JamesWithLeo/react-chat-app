@@ -4,7 +4,6 @@ import {
 	Stack,
 	Typography,
 	Button,
-	Divider,
 	useMediaQuery,
 } from "@mui/material";
 import { ArchiveBox, CircleDashed, MagnifyingGlass } from "phosphor-react";
@@ -15,9 +14,10 @@ import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
 import { List } from "@phosphor-icons/react";
-import { useSelector } from "react-redux";
-import { AppState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, AppState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import { ToggleSidebarOff, ToggleSidebarOn } from "../../redux/slices/app";
 // import ChatElement from "../../components/ConvoCard";
 
 const Chats = () => {
@@ -26,8 +26,11 @@ const Chats = () => {
 		theme.breakpoints.down("sm"),
 	);
 	const user = useSelector((state: AppState) => state.auth.user);
-	const [chats, setChats] = useState<string[]>([]);
 	const navigate = useNavigate();
+
+	const [chats, setChats] = useState<string[]>([]);
+	const dispatch = useDispatch<AppDispatch>();
+
 	return (
 		<Box
 			sx={{
@@ -52,7 +55,12 @@ const Chats = () => {
 				>
 					<Stack spacing={2} direction={"row"} alignItems={"center"}>
 						{isSmallScreen ? (
-							<IconButton>
+							<IconButton
+								onClick={() => {
+									dispatch(ToggleSidebarOn("NAVBAR"));
+									// dispatch(ToggleSidebarOff());
+								}}
+							>
 								<List />
 							</IconButton>
 						) : null}
@@ -73,14 +81,6 @@ const Chats = () => {
 							inputProps={{ "aria-label": "search" }}
 						/>
 					</Search>
-				</Stack>
-
-				<Stack spacing={1}>
-					<Stack direction="row" alignItems="center" spacing={1.5}>
-						<ArchiveBox size={24} />
-						<Button>Archive</Button>
-					</Stack>
-					<Divider />
 				</Stack>
 
 				{!user ? (

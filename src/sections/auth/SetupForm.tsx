@@ -55,7 +55,7 @@ export default function SetupForm() {
 
 	const submitSetup: SubmitHandler<ISetupSchema> = async (data) => {
 		if (!user) return;
-		dispatch(SetupThunk({ email: user.email, ...data }))
+		dispatch(SetupThunk({ uid: user.uid, ...data }))
 			.unwrap()
 			.then((result) => {
 				console.log("Updated values:", result);

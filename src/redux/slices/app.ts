@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type SideBarType = "CONTACT" | "STARRED" | "SHARED";
+type SideBarType = "CONTACT" | "STARRED" | "SHARED" | "NAVBAR" | "THEME";
 
 // define initial state
 interface ISiderBar {
@@ -17,7 +17,7 @@ interface IApp {
 const initialState: IApp = {
 	sidebar: {
 		isOpen: false,
-		type: "CONTACT", // can be CONTACT, STARRED,SHARED
+		type: "THEME", // can be CONTACT, STARRED,SHARED
 	},
 	convobar: {
 		isOpen: false,
@@ -30,9 +30,25 @@ const appSlice = createSlice({
 	initialState,
 	reducers: {
 		//Toggle sidebar
-		ToggleSidebar(state) {
-			state.sidebar.isOpen = !state.sidebar.isOpen;
+		ToggleSidebarOff(state) {
+			return {
+				...state,
+				sidebar: {
+					isOpen: !state.sidebar.isOpen,
+					type: "THEME",
+				},
+			};
 		},
+		ToggleSidebarOn(state, action: PayloadAction<SideBarType>) {
+			return {
+				...state,
+				sidebar: {
+					isOpen: !state.sidebar.isOpen,
+					type: action.payload,
+				},
+			};
+		},
+
 		UpdateSidebarType(state, action: PayloadAction<SideBarType>) {
 			state.sidebar.type = action.payload;
 			state.sidebar.isOpen = true;
@@ -47,5 +63,9 @@ const appSlice = createSlice({
 // export reducer
 export default appSlice.reducer;
 
-export const { ToggleSidebar, UpdateSidebarType, ToggleConvobar } =
-	appSlice.actions;
+export const {
+	ToggleSidebarOff,
+	UpdateSidebarType,
+	ToggleConvobar,
+	ToggleSidebarOn,
+} = appSlice.actions;

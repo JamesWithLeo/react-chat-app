@@ -135,39 +135,7 @@ const Settings = () => {
 							</IconButton>
 							<Typography variant="h6">Settings</Typography>
 						</Stack>
-						{/* Profile */}
 
-						{user ? (
-							<Stack direction="row" spacing={3} key={user.uid}>
-								{user.photoUrl ? (
-									<Avatar
-										sx={{
-											md: { height: 56, width: 56 },
-											xs: { height: 32, width: 32 },
-										}}
-										src={user.photoUrl}
-										alt={user.uid}
-									/>
-								) : (
-									<Avatar>{user.email}</Avatar>
-								)}
-
-								<Stack
-									spacing={0.5}
-									display={"flex"}
-									justifyContent={"center"}
-								>
-									<Typography
-										variant="caption"
-										fontSize={{ sm: 16, md: 18 }}
-									>
-										{user.firstName || user.lastName
-											? `${user.firstName} ${user.lastName}`
-											: user.email}
-									</Typography>
-								</Stack>
-							</Stack>
-						) : null}
 						{/* List of options */}
 						<Stack spacing={4}>
 							{options.map(({ key, icon, title, onclick }) => (

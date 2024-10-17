@@ -3,7 +3,7 @@ import Router from "./routes";
 // theme
 import ThemeProvider from "./theme";
 // components
-import ThemeSettings from "./components/settings/index";
+import ThemeSettings from "./components/settings";
 
 function App() {
 	return (

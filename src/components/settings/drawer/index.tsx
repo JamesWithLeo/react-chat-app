@@ -25,8 +25,8 @@ import ToggleButton from "./ToggleButton";
 import SettingDirection from "./SettingDirection";
 import SettingFullscreen from "./SettingFullscreen";
 import SettingColorPresets from "./SettingColorPresets";
-
-// ----------------------------------------------------------------------
+import { useSelector } from "react-redux";
+import { AppState } from "../../../redux/store";
 
 const RootStyle = styled(m.div)(({ theme }) => ({
 	...cssStyles(theme).bgBlur({
@@ -67,6 +67,7 @@ export default function SettingsDrawer() {
 	} = useSettings();
 
 	const [open, setOpen] = useState(false);
+	const sidebar = useSelector((state: AppState) => state.app.sidebar);
 
 	const notDefault =
 		themeMode !== defaultSettings.themeMode ||
@@ -103,7 +104,7 @@ export default function SettingsDrawer() {
 				}}
 			/>
 
-			{!open && (
+			{!open && sidebar.type === "THEME" && (
 				<ToggleButton
 					open={open}
 					notDefault={notDefault}

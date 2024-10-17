@@ -1,13 +1,17 @@
-import { initializeApp } from "firebase/app";
+import { FirebaseOptions, initializeApp } from "firebase/app";
 import {
 	GoogleAuthProvider,
 	signInWithPopup,
 	getAuth,
 	getAdditionalUserInfo,
+	OAuthCredential,
 } from "firebase/auth";
+import GetProviders, {
+	GetCredentialFromResult,
+	validProvider,
+} from "../utils/firebase/getProviders";
 
-const googleProvider = new GoogleAuthProvider();
-const firebaseConfig = {
+const firebaseConfig: FirebaseOptions = {
 	apiKey: "AIzaSyDvkb8dIEot0mNF8ak82iBKVHTjcP8zMDs",
 	authDomain: "chatapp-61fa6.firebaseapp.com",
 	projectId: "chatapp-61fa6",
@@ -19,37 +23,60 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-export const SigninGooglePopup = async () => {
-	return await signInWithPopup(auth, googleProvider)
+export const ERROR_CODES = {
+	ACCOUNT_EXISTS: "auth/account-exists-with-different-credential",
+	USER_NOT_FOUND: "auth/user-not-found",
+};
+
+export const SigninWithPopup = async (provider: validProvider) => {
+	let authProvider = GetProviders(provider);
+
+	return await signInWithPopup(auth, authProvider)
 		.then(async (result) => {
-			// This gives you a Google Access Token. You can use it to access the Google API.
-			const credential = GoogleAuthProvider.credentialFromResult(result);
+			const {
+				user,
+				// providerId,
+				//  operationType
+			} = result;
+
+			let credential: OAuthCredential | null = GetCredentialFromResult(
+				provider,
+				result,
+			);
+
 			const token = credential?.accessToken;
 			// The signed-in user info.
-			const user = result.user;
 
 			const idp = getAdditionalUserInfo(result);
-			console.log("user toker:", token);
 
 			return { user, isNewUser: idp?.isNewUser };
 		})
-		.catch((error) => {
-			// Handle Errors here.
+		.catch(async (error) => {
+			const email = error.customData.email;
 			const errorCode = error.code;
 			const errorMessage = error.message;
-			// The email of the user's account used.
-			const email = error.customData.email;
-			// The AuthCredential type that was used.
-			const credential = GoogleAuthProvider.credentialFromError(error);
-			// ...
-			console.log(errorCode);
-			console.log(errorMessage);
-			console.log(email);
-			console.log("credentital", credential);
-			return null;
+
+			if (error.code === ERROR_CODES.ACCOUNT_EXISTS) {
+				return { isNewUser: false, user: null };
+			} else if (error.code === ERROR_CODES.USER_NOT_FOUND) {
+				console.log(error.code);
+				return null;
+			} else {
+				const credential =
+					GoogleAuthProvider.credentialFromError(error);
+				console.log(errorCode);
+				console.log(errorMessage);
+				console.log(email);
+				console.log("credentital", credential);
+				return null;
+			}
 		});
 };
 
+auth.onAuthStateChanged(function (user) {
+	console.log("firebase.auth().onAuthStateChanged", user);
+});
+console.log("event handlers registerd.");
 export const LogoutFirebase = () => {
 	return auth.signOut();
 };

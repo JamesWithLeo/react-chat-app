@@ -9,7 +9,6 @@ import {
 	Stack,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { faker } from "@faker-js/faker";
 import useSettings from "../../hooks/useSettings";
 import AntSwitch from "../../components/AntSwitch";
 import Logo from "../../assets/Images/logo.ico";

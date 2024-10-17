@@ -6,8 +6,6 @@ import cssStyles from "../../../utils/cssStyles";
 import Iconify from "../../Iconify";
 import { IconButtonAnimate } from "../../animate";
 
-// ----------------------------------------------------------------------
-
 const RootStyle = styled("span")(({ theme }) => ({
 	...cssStyles(theme).bgBlur({ opacity: 0.64 }),
 	right: 0,
@@ -46,7 +44,7 @@ export default function ToggleButton({
 }) {
 	return (
 		<RootStyle>
-			{notDefault && !open && <DotStyle />}
+			{/* {notDefault && !open && <DotStyle />} */}
 
 			<Tooltip title="Settings" placement="left">
 				<IconButtonAnimate

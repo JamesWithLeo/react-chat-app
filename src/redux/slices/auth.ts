@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SetupFetch, SigninFetch, SignupFetch } from "../../services/fetch";
 import { LogoutFirebase } from "../../services/firebase";
 
@@ -12,7 +12,7 @@ type Gender = "male" | "female" | "others";
 
 interface IUser {
 	id: string;
-	email: string;
+	email: string | null;
 	uid: string;
 	photoUrl: string;
 	phoneNumber: string | null;
@@ -41,7 +41,14 @@ const authInit: IAuth = {
 const authSlice = createSlice({
 	name: "auth",
 	initialState: authInit,
-	reducers: {},
+	reducers: {
+		setError: (state, action: PayloadAction<string>) => {
+			return {
+				...state,
+				errorMessage: action.payload,
+			};
+		},
+	},
 
 	extraReducers: (builder) => {
 		builder.addCase(SigninThunk.fulfilled, (state, action) => {
@@ -203,7 +210,6 @@ const authSlice = createSlice({
 });
 
 interface SigninArg {
-	email: string;
 	uid: string;
 }
 interface rejectValue {
@@ -214,40 +220,37 @@ export const SigninThunk = createAsyncThunk<
 	IUser,
 	SigninArg,
 	{ rejectValue: rejectValue }
->(
-	"auth/Signin",
-	async ({ email, uid }: { email: string; uid: string }, thunkApi) => {
-		try {
-			const response = await SigninFetch({ email, uid });
-			if (!response.ok || !response.user) {
-				return thunkApi.rejectWithValue({ errorMessage: response });
-			}
-
-			const rawUser = response.user;
-			const user: IUser = {
-				id: rawUser.id,
-				email: rawUser.email,
-				uid: rawUser.uid,
-				firstName: rawUser.first_name,
-				lastName: rawUser.last_name,
-				photoUrl: rawUser.photo_url,
-				phoneNumber: rawUser.phone_number,
-				status: rawUser.status,
-				gender: rawUser.gender,
-				createdAt: rawUser.created_at,
-				updatedAt: rawUser.updated_at,
-				lastLogin: rawUser.last_login,
-				birthDate: rawUser.birth_date,
-			};
-			return user;
-		} catch (error) {
-			console.log("Signin error", error);
-			return Promise.reject(error);
+>("auth/Signin", async ({ uid }: { uid: string }, thunkApi) => {
+	try {
+		const response = await SigninFetch({ uid });
+		if (!response.ok || !response.user) {
+			return thunkApi.rejectWithValue({ errorMessage: response });
 		}
-	},
-);
+
+		const rawUser = response.user;
+		const user: IUser = {
+			id: rawUser.id,
+			email: rawUser.email,
+			uid: rawUser.uid,
+			firstName: rawUser.first_name,
+			lastName: rawUser.last_name,
+			photoUrl: rawUser.photo_url,
+			phoneNumber: rawUser.phone_number,
+			status: rawUser.status,
+			gender: rawUser.gender,
+			createdAt: rawUser.created_at,
+			updatedAt: rawUser.updated_at,
+			lastLogin: rawUser.last_login,
+			birthDate: rawUser.birth_date,
+		};
+		return user;
+	} catch (error) {
+		console.log("Signin error", error);
+		return Promise.reject(error);
+	}
+});
 interface SignupArgs {
-	email: string;
+	email: string | null;
 	uid: string;
 	photoUrl: string | null;
 	phoneNumber: string | null;
@@ -309,7 +312,7 @@ export const LogoutThunk = createAsyncThunk("auth/Logout", () => {
 });
 
 interface SetupArguments {
-	email: string;
+	uid: string;
 	firstName: string;
 	lastName: string;
 	gender: Gender;
@@ -328,9 +331,9 @@ export const SetupThunk = createAsyncThunk<
 	{ rejectValue: rejectValue }
 >(
 	"auth/Setup",
-	async ({ email, firstName, lastName, gender, birthDate }, thunkApi) => {
+	async ({ uid, firstName, lastName, gender, birthDate }, thunkApi) => {
 		const response = await SetupFetch({
-			email,
+			uid,
 			firstName,
 			lastName,
 			gender,
@@ -349,4 +352,5 @@ export const SetupThunk = createAsyncThunk<
 		}
 	},
 );
+export const { setError } = authSlice.actions;
 export default authSlice.reducer;

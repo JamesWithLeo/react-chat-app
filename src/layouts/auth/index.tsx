@@ -1,12 +1,14 @@
-import { Alert, Box, Container, Stack } from "@mui/material";
+import { Alert, Box, Container, IconButton, Stack } from "@mui/material";
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Logo from "../../assets/Images/logo.ico";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
+import { setError } from "../../redux/slices/auth";
 
 const AuthLayout = () => {
 	const auth = useSelector((state: AppState) => state.auth);
+	const dispatch = useDispatch();
 
 	return (
 		<>
@@ -18,7 +20,15 @@ const AuthLayout = () => {
 						right={"1rem"}
 						top={"1rem"}
 					>
-						<Alert severity="error">{auth.errorMessage}</Alert>
+						<Alert
+							severity="error"
+							onClose={() => {
+								dispatch(setError(""));
+							}}
+							sx={{ mb: 2 }}
+						>
+							{auth.errorMessage}
+						</Alert>
 					</Box>
 				) : null}
 				<Stack

@@ -1,15 +1,9 @@
 import { Gender } from "../sections/auth/SetupForm";
 const apiUrl = process.env.REACT_APP_API_URL;
-export async function SigninFetch({
-	email,
-	uid,
-}: {
-	email: string;
-	uid: string;
-}) {
+export async function SigninFetch({ uid }: { uid: string }) {
 	const response = await fetch(`${apiUrl}signin`, {
 		method: "POST",
-		body: JSON.stringify({ email, uid }),
+		body: JSON.stringify({ uid }),
 		headers: {
 			"Content-Type": "application/json",
 		},
@@ -30,7 +24,7 @@ export async function SignupFetch({
 	firstName,
 	lastName,
 }: {
-	email: string;
+	email: string | null;
 	uid: string;
 	phoneNumber: string | null;
 	photoUrl: string | null;
@@ -60,13 +54,13 @@ export async function SignupFetch({
 }
 
 export async function SetupFetch({
-	email,
+	uid,
 	firstName,
 	lastName,
 	gender,
 	birthDate,
 }: {
-	email: string;
+	uid: string;
 	firstName: string;
 	lastName: string;
 	gender: Gender;
@@ -75,7 +69,7 @@ export async function SetupFetch({
 	const response = await fetch(`${apiUrl}setup`, {
 		method: "POST",
 		body: JSON.stringify({
-			email,
+			uid,
 			firstName,
 			lastName,
 			gender,

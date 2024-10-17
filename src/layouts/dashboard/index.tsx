@@ -4,10 +4,12 @@ import SideBar from "./SideBar";
 import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
+import NavBar from "../../components/navbar";
 
 const DashboardLayout = () => {
 	const user = useSelector((state: AppState) => state.auth.user);
-	const iSmallScreen = useMediaQuery((theme: Theme) =>
+	const sideBarMobile = useSelector((state: AppState) => state.app.sidebar);
+	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
 
@@ -25,10 +27,14 @@ const DashboardLayout = () => {
 	if ((user && !user.firstName) || !user.lastName || !user.gender) {
 		return <Navigate to={"/auth/setup"} />;
 	}
-	console.log(user);
 	return (
 		<Stack direction={{ xs: "column", sm: "row" }}>
-			{!iSmallScreen ? <SideBar /> : null}
+			{isSmallScreen &&
+			sideBarMobile.isOpen &&
+			sideBarMobile.type === "NAVBAR" ? (
+				<NavBar />
+			) : null}
+			{!isSmallScreen ? <SideBar /> : null}
 			<Outlet />
 		</Stack>
 	);

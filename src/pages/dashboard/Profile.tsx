@@ -2,9 +2,11 @@ import { Box, IconButton, Stack, Typography } from "@mui/material";
 import { CaretLeft } from "phosphor-react";
 import React from "react";
 import ProfileForm from "../../sections/settings/ProfileForm";
+import { useNavigate } from "react-router-dom";
 // import Conversation from "../../components/Conversation";
 
 const Profile = () => {
+	const navigate = useNavigate();
 	return (
 		<>
 			<Stack direction={"row"} sx={{ width: "100%" }}>
@@ -15,7 +17,7 @@ const Profile = () => {
 							theme.palette.mode === "light"
 								? "#F8FAFF"
 								: theme.palette.background.default,
-						width: 320,
+						width: "100%",
 						boxShadow: "0px 0px 2px rgba(0,0,0,0.25)",
 					}}
 				>
@@ -25,7 +27,11 @@ const Profile = () => {
 							alignItems="center"
 							spacing={3}
 						>
-							<IconButton>
+							<IconButton
+								onClick={() => {
+									navigate("/");
+								}}
+							>
 								<CaretLeft size={24} color={"#4B4B4B"} />
 							</IconButton>
 							<Typography variant="h5">Profile</Typography>
