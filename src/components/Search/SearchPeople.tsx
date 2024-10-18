@@ -1,9 +1,10 @@
 import { Box, Typography } from "@mui/material";
+import PeopleCard from "../PeopleCard";
 
 const SearchPeople = () => {
 	return (
 		<Box>
-			<Typography>People</Typography>
+			<Typography variant="caption">People you may know</Typography>
 		</Box>
 	);
 };

@@ -10,6 +10,9 @@ import SettingsProvider from "./contexts/SettingsContext";
 import { store } from "./redux/store";
 
 import { Provider as ReduxProvider } from "react-redux";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(
 	document.getElementById("root") as HTMLElement,
@@ -21,7 +24,9 @@ root.render(
 			<ReduxProvider store={store}>
 				<SettingsProvider>
 					<BrowserRouter>
-						<App />
+						<QueryClientProvider client={queryClient}>
+							<App />
+						</QueryClientProvider>
 					</BrowserRouter>
 				</SettingsProvider>
 			</ReduxProvider>

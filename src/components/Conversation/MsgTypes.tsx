@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { DotsThreeVertical, DownloadSimple, Image } from "phosphor-react";
-import React from "react";
+import React, { MouseEvent } from "react";
 
 interface IMessageBase {
 	type: "msg" | "divider"; // Common property for all message types
@@ -314,11 +314,9 @@ const TimeLine = ({ el }: { el: IChatMessage }) => {
 const MessageOptions = () => {
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
-	const id = crypto.randomUUID();
 
-	const handleClick = () => {
-		const el = document.getElementById(id) as HTMLElement;
-		setAnchorEl(el);
+	const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+		setAnchorEl(event.currentTarget);
 	};
 
 	const handleClose = () => {
@@ -327,14 +325,14 @@ const MessageOptions = () => {
 
 	return (
 		<>
-			<DotsThreeVertical
-				id={id}
-				aria-controls={open ? "basic-menu" : undefined}
-				aria-haspopup="true"
-				aria-expanded={open ? "true" : undefined}
-				onClick={handleClick}
-				size={20}
-			/>
+			<IconButton onClick={handleClick}>
+				<DotsThreeVertical
+					aria-controls={open ? "basic-menu" : undefined}
+					aria-haspopup="true"
+					aria-expanded={open ? "true" : undefined}
+					size={20}
+				/>
+			</IconButton>
 
 			<Menu
 				id="basic-menu"
@@ -347,7 +345,7 @@ const MessageOptions = () => {
 			>
 				<Stack spacing={1} px={1}>
 					{Message_options.map((el) => (
-						<MenuItem onClick={handleClick}>{el.title}</MenuItem>
+						<MenuItem>{el.title}</MenuItem>
 					))}
 				</Stack>
 			</Menu>

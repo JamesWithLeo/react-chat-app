@@ -12,20 +12,58 @@ import SearchBase from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
 import { MagnifyingGlass } from "@phosphor-icons/react";
-import { CaretLeft } from "phosphor-react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { CaretLeft, Spinner } from "phosphor-react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setSearchRoute } from "../../redux/slices/app";
 import { AppState } from "../../redux/store";
+import { debounce } from "lodash";
+import { ChangeEvent, useEffect, useState } from "react";
+import { FetchPeople } from "../../services/fetch";
+import PeopleCard from "../../components/PeopleCard";
+import { IViewUser } from "../../redux/slices/auth";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Search() {
 	const theme = useTheme();
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
+	const id = useSelector((state: AppState) => state.auth.user?.id);
+	const searchRoute = useSelector((state: AppState) => state.app.search);
+
 	const isSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.down("sm"),
 	);
-	const navigate = useNavigate();
-	const dispatch = useDispatch();
-	const searchRoute = useSelector((state: AppState) => state.app.search);
+	const [searchQuery, setSearchQuery] = useState<string>("");
+	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+
+	const HandleSearch = (
+		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+	) => {
+		const { value } = event.target;
+		setSearchQuery(value);
+	};
+
+	useEffect(() => {
+		const handler = debounce(() => {
+			setDebouncedSearchTerm(searchQuery);
+		}, 800);
+		handler();
+		return () => {
+			handler.cancel();
+		};
+	}, [searchQuery]);
+
+	const query = useQuery(
+		["people", debouncedSearchTerm],
+		() => {
+			return FetchPeople(id!, debouncedSearchTerm);
+		},
+		{ enabled: true },
+	);
+
+	const { isLoading, isSuccess, data: searchData } = query;
 
 	return (
 		<>
@@ -59,6 +97,8 @@ export default function Search() {
 								/>
 							</SearchIconWrapper>
 							<StyledInputBase
+								id="searchBox"
+								onChange={HandleSearch}
 								autoFocus
 								placeholder="Search..."
 								inputProps={{ "aria-label": "search" }}
@@ -105,7 +145,15 @@ export default function Search() {
 					</ToggleButtonGroup>
 				</Stack>
 				<Box p={isSmallScreen ? 2 : 3}>
-					<Outlet />
+					{isSuccess && searchData && searchData.data ? (
+						<>
+							{searchData.data.map((user: IViewUser) => {
+								return <PeopleCard user={user} key={user.id} />;
+							})}
+						</>
+					) : (
+						<Spinner />
+					)}
 				</Box>
 			</Box>
 		</>

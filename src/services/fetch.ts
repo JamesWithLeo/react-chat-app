@@ -1,5 +1,6 @@
 import { Gender } from "../sections/auth/SetupForm";
 const apiUrl = process.env.REACT_APP_API_URL;
+
 export async function SigninFetch({ uid }: { uid: string }) {
 	const response = await fetch(`${apiUrl}signin`, {
 		method: "POST",
@@ -79,6 +80,20 @@ export async function SetupFetch({
 			"Content-type": "application/json",
 		},
 	});
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
+export async function FetchPeople(id: string, query: string) {
+	const response = await fetch(
+		`${apiUrl}search/people/${id}/?query=${query}`,
+		{
+			method: "GET",
+		},
+	);
+
 	if (!response.ok) {
 		return `${response.status} ${response.statusText}`;
 	}

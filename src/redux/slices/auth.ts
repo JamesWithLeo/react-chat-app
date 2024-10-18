@@ -9,6 +9,14 @@ const currentUser: IUser | null = userWeChat ? JSON.parse(userWeChat) : null;
 type Status = "offline" | "online";
 type Gender = "male" | "female" | "others";
 
+export interface IViewUser {
+	id: string;
+	email: string | null;
+	photo_url: string;
+	first_name: string | null;
+	last_name: string | null;
+}
+
 interface IUser {
 	id: string;
 	email: string | null;
