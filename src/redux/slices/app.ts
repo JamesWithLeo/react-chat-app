@@ -1,7 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type SideBarType = "CONTACT" | "STARRED" | "SHARED" | "NAVBAR" | "THEME";
+const sessionStorageAppKey = "WeChatConfig";
+const appWeChat = sessionStorage.getItem(sessionStorageAppKey);
+const currentApp: IApp | null = appWeChat ? JSON.parse(appWeChat) : null;
 
+type SideBarType = "CONTACT" | "STARRED" | "SHARED" | "NAVBAR" | "THEME";
+type SearchRoute = "search/all" | "search/people" | "search/chats" | null;
 // define initial state
 interface ISiderBar {
 	isOpen: boolean;
@@ -13,16 +17,20 @@ interface IConvoBar {
 interface IApp {
 	sidebar: ISiderBar;
 	convobar: IConvoBar;
+	search: SearchRoute | null;
 }
-const initialState: IApp = {
-	sidebar: {
-		isOpen: false,
-		type: "THEME", // can be CONTACT, STARRED,SHARED
-	},
-	convobar: {
-		isOpen: false,
-	},
-};
+const initialState: IApp = currentApp
+	? currentApp
+	: {
+			sidebar: {
+				isOpen: false,
+				type: "THEME", // can be CONTACT, STARRED,SHARED
+			},
+			convobar: {
+				isOpen: false,
+			},
+			search: null,
+		};
 
 // create slice
 const appSlice = createSlice({
@@ -56,6 +64,17 @@ const appSlice = createSlice({
 		ToggleConvobar(state) {
 			state.convobar.isOpen = !state.convobar.isOpen;
 		},
+
+		setSearchRoute: (state, action: PayloadAction<SearchRoute>) => {
+			sessionStorage.setItem(
+				sessionStorageAppKey,
+				JSON.stringify({ ...state, search: action.payload } as IApp),
+			);
+			return {
+				...state,
+				search: action.payload,
+			};
+		},
 	},
 	extraReducers: {},
 });
@@ -68,4 +87,5 @@ export const {
 	UpdateSidebarType,
 	ToggleConvobar,
 	ToggleSidebarOn,
+	setSearchRoute,
 } = appSlice.actions;

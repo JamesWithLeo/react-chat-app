@@ -73,10 +73,6 @@ export const SigninWithPopup = async (provider: validProvider) => {
 		});
 };
 
-auth.onAuthStateChanged(function (user) {
-	console.log("firebase.auth().onAuthStateChanged", user);
-});
-console.log("event handlers registerd.");
 export const LogoutFirebase = () => {
 	return auth.signOut();
 };

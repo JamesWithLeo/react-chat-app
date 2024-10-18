@@ -42,6 +42,19 @@ export default function Router() {
 				},
 				{ path: "chats", element: <GeneralChats /> },
 				{ path: "chat", element: <Chat /> },
+				{
+					path: "search",
+					element: <SearchPage />,
+					children: [
+						{
+							index: true,
+							element: <Navigate to={"/search/all"} replace />,
+						},
+						{ path: "all", element: <SearchAll /> },
+						{ path: "people", element: <SearchPeople /> },
+						{ path: "chats", element: <SearchChats /> },
+					],
+				},
 				{ path: "settings", element: <Settings /> },
 				{ path: "group", element: <GroupPage /> },
 				{ path: "call", element: <CallPage /> },
@@ -56,7 +69,7 @@ export default function Router() {
 
 const Chat = Loadable(lazy(() => import("../pages/dashboard/Chat")));
 const GeneralChats = Loadable(
-	lazy(() => import("../pages/dashboard/generalChat")),
+	lazy(() => import("../pages/dashboard/GeneralChat")),
 );
 
 const LoginPage = Loadable(lazy(() => import("../pages/auth/Login")));
@@ -71,7 +84,6 @@ const ResetPasswordPage = Loadable(
 const NewPasswordPage = Loadable(
 	lazy(() => import("../pages/auth/NewPassword")),
 );
-
 const GroupPage = Loadable(lazy(() => import("../pages/dashboard/Group")));
 
 const Settings = Loadable(lazy(() => import("../pages/dashboard/Settings")));
@@ -80,3 +92,14 @@ const CallPage = Loadable(lazy(() => import("../pages/dashboard/Call")));
 
 const ProfilePage = Loadable(lazy(() => import("../pages/dashboard/Profile")));
 const Page404 = Loadable(lazy(() => import("../pages/Page404")));
+
+const SearchPage = Loadable(lazy(() => import("../pages/dashboard/Search")));
+const SearchAll = Loadable(
+	lazy(() => import("../components/Search/SearchAll")),
+);
+const SearchPeople = Loadable(
+	lazy(() => import("../components/Search/SearchPeople")),
+);
+const SearchChats = Loadable(
+	lazy(() => import("../components/Search/SearchChats")),
+);

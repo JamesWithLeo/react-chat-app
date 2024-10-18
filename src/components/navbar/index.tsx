@@ -1,16 +1,9 @@
-import {
-	Avatar,
-	Backdrop,
-	Button,
-	ButtonBase,
-	Divider,
-	Typography,
-} from "@mui/material";
+import { Avatar, Backdrop, Button, Divider, Typography } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "../../redux/store";
 import { AnimatePresence, m } from "framer-motion";
-import { Stack, style } from "@mui/system";
+import { Stack } from "@mui/system";
 import cssStyles from "../../utils/cssStyles";
 import { NAVBAR } from "../../config";
 import { ToggleSidebarOff } from "../../redux/slices/app";
@@ -36,8 +29,15 @@ const Rootstyle = styled(m.div)(({ theme }) => ({
 	display: "flex",
 	position: "fixed",
 	overflow: "hidden",
+	borderRight: "1px",
+	borderLeft: 0,
+	borderTop: 0,
+	borderBottom: 0,
+	borderStyle: "solid",
+	borderColor: theme.palette.divider,
 	zIndex: theme.zIndex.drawer + 3,
 	flexDirection: "column",
+	backgroundColor: theme.palette.background.paper,
 }));
 
 export default function NavBar() {

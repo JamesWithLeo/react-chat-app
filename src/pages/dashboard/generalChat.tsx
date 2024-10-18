@@ -6,9 +6,9 @@ import {
 	Button,
 	useMediaQuery,
 } from "@mui/material";
-import { ArchiveBox, CircleDashed, MagnifyingGlass } from "phosphor-react";
+import { CircleDashed, MagnifyingGlass } from "phosphor-react";
 import { Theme, useTheme } from "@mui/material/styles";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import {ChatList} from '../../data';
 import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
@@ -17,7 +17,8 @@ import { List } from "@phosphor-icons/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
-import { ToggleSidebarOff, ToggleSidebarOn } from "../../redux/slices/app";
+import { ToggleSidebarOn } from "../../redux/slices/app";
+import socket from "../../services/sockets";
 // import ChatElement from "../../components/ConvoCard";
 
 const Chats = () => {
@@ -31,6 +32,26 @@ const Chats = () => {
 	const [chats, setChats] = useState<string[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
 
+	useEffect(() => {
+		console.log(
+			"socket is:",
+			socket.connected ? "connected" : "not connected",
+		);
+		socket.emit("hello");
+		socket.on("connect", () => {
+			console.log("socket id:", socket.id);
+		});
+
+		socket.on("connect_error", (err) => {
+			console.log(err.stack);
+		});
+
+		return () => {
+			socket.off("connect", () => {
+				console.log("connection is off");
+			});
+		};
+	}, []);
 	return (
 		<Box
 			sx={{
@@ -72,7 +93,11 @@ const Chats = () => {
 				</Stack>
 
 				<Stack sx={{ width: "100%" }}>
-					<Search>
+					<Search
+						onClick={() => {
+							navigate("/search");
+						}}
+					>
 						<SearchIconWrapper>
 							<MagnifyingGlass color="#709CE6" />
 						</SearchIconWrapper>

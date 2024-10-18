@@ -3,7 +3,6 @@ import { SetupFetch, SigninFetch, SignupFetch } from "../../services/fetch";
 import { LogoutFirebase } from "../../services/firebase";
 
 const localStorageKey = "userWeChat";
-
 const userWeChat = localStorage.getItem(localStorageKey);
 const currentUser: IUser | null = userWeChat ? JSON.parse(userWeChat) : null;
 
