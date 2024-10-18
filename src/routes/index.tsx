@@ -69,7 +69,7 @@ export default function Router() {
 
 const Chat = Loadable(lazy(() => import("../pages/dashboard/Chat")));
 const GeneralChats = Loadable(
-	lazy(() => import("../pages/dashboard/GeneralChat")),
+	lazy(() => import("../pages/dashboard/generalChat")),
 );
 
 const LoginPage = Loadable(lazy(() => import("../pages/auth/Login")));
