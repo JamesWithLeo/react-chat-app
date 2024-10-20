@@ -1,10 +1,12 @@
 import {
 	Box,
+	Divider,
 	IconButton,
 	Stack,
 	Theme,
 	ToggleButton,
 	ToggleButtonGroup,
+	Typography,
 	useMediaQuery,
 	useTheme,
 } from "@mui/material";
@@ -15,7 +17,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import { CaretLeft, Spinner } from "phosphor-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { setSearchRoute } from "../../redux/slices/app";
+import { SearchScope, setSearchRoute } from "../../redux/slices/app";
 import { AppState } from "../../redux/store";
 import { debounce } from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -30,13 +32,14 @@ export default function Search() {
 	const dispatch = useDispatch();
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
-	const searchRoute = useSelector((state: AppState) => state.app.search);
+	const searchScope = useSelector((state: AppState) => state.app.search);
 
 	const isSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.down("sm"),
 	);
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+	const [scope, setScope] = useState<SearchScope>(searchScope ?? "all");
 
 	const HandleSearch = (
 		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -56,9 +59,10 @@ export default function Search() {
 	}, [searchQuery]);
 
 	const query = useQuery(
-		["people", debouncedSearchTerm],
+		["people", debouncedSearchTerm, scope],
 		() => {
-			return FetchPeople(id!, debouncedSearchTerm);
+			console.log("scope:", scope);
+			return FetchPeople(id!, debouncedSearchTerm, scope);
 		},
 		{ enabled: true },
 	);
@@ -84,7 +88,7 @@ export default function Search() {
 							<IconButton
 								onClick={() => {
 									navigate("/");
-									dispatch(setSearchRoute(null));
+									dispatch(setSearchRoute("all"));
 								}}
 							>
 								<CaretLeft size={20} color="#4B4B4B" />
@@ -107,7 +111,7 @@ export default function Search() {
 					</Stack>
 
 					<ToggleButtonGroup
-						value={searchRoute ?? "search/all"}
+						value={searchScope ?? scope}
 						size="small"
 						exclusive
 						sx={{
@@ -116,28 +120,28 @@ export default function Search() {
 						}}
 					>
 						<ToggleButton
-							value={"search/all"}
+							value={"all"}
 							onClick={() => {
-								dispatch(setSearchRoute("search/all"));
-								navigate("all");
+								dispatch(setSearchRoute("all"));
+								setScope("all");
 							}}
 						>
 							all
 						</ToggleButton>
 						<ToggleButton
-							value={"search/people"}
+							value={"people"}
 							onClick={() => {
-								dispatch(setSearchRoute("search/people"));
-								navigate("people");
+								dispatch(setSearchRoute("people"));
+								setScope("people");
 							}}
 						>
 							people
 						</ToggleButton>
 						<ToggleButton
-							value={"search/chats"}
+							value={"chats"}
 							onClick={() => {
-								dispatch(setSearchRoute("search/chats"));
-								navigate("chats");
+								dispatch(setSearchRoute("chats"));
+								setScope("chats");
 							}}
 						>
 							chats
@@ -145,14 +149,29 @@ export default function Search() {
 					</ToggleButtonGroup>
 				</Stack>
 				<Box p={isSmallScreen ? 2 : 3}>
-					{isSuccess && searchData && searchData.data ? (
-						<>
-							{searchData.data.map((user: IViewUser) => {
-								return <PeopleCard user={user} key={user.id} />;
-							})}
-						</>
-					) : (
+					{isLoading ? (
 						<Spinner />
+					) : (
+						<>
+							{isSuccess && searchData && searchData.users ? (
+								<>
+									{searchData.users.map((user: IViewUser) => {
+										return (
+											<PeopleCard
+												// Todo: Include the block id
+												readOnly={[id].includes(
+													user.id,
+												)}
+												user={user}
+												key={user.id}
+											/>
+										);
+									})}
+								</>
+							) : (
+								<Typography>No result</Typography>
+							)}
+						</>
 					)}
 				</Box>
 			</Box>

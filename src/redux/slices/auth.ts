@@ -13,8 +13,9 @@ export interface IViewUser {
 	id: string;
 	email: string | null;
 	photo_url: string;
-	first_name: string | null;
-	last_name: string | null;
+	first_name: string;
+	last_name: string;
+	phone_number: string | null;
 }
 
 interface IUser {

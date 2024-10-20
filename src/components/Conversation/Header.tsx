@@ -10,26 +10,23 @@ import {
 import { CaretDown, CaretLeft, Phone, VideoCamera } from "phosphor-react";
 import React from "react";
 import { Theme, useTheme } from "@mui/material/styles";
-import { faker } from "@faker-js/faker";
 import StyledBadge from "../StyledBadge";
 import { useDispatch } from "react-redux";
 import { ToggleConvobar } from "../../redux/slices/app";
 import { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
+import { useChatContext } from "../../contexts/ChatContext";
 
-const Header = ({
-	firstName,
-	lastName,
-}: {
-	firstName: string;
-	lastName: string;
-}) => {
+const Header = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const theme = useTheme();
+	const { peer, isLoading, isSuccess } = useChatContext();
+
 	const navigate = useNavigate();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
+
 	return (
 		<Box
 			p={isSmallScreen ? 1 : 2}
@@ -73,18 +70,22 @@ const Header = ({
 							}}
 							variant="dot"
 						>
-							{faker.image.people() ? (
+							{peer ? (
 								<Avatar
-									alt={faker.name.fullName()}
-									src={faker.image.people()}
+									alt={peer.photo_url}
+									src={peer.photo_url}
 								/>
 							) : (
-								<Avatar>{firstName[0]}</Avatar>
+								<Avatar />
 							)}
 						</StyledBadge>
 					</Box>
 					<Stack spacing={0.2}>
-						<Typography variant="subtitle2">{firstName}</Typography>
+						{peer ? (
+							<Typography variant="subtitle2">
+								{peer.first_name} {peer.last_name}
+							</Typography>
+						) : null}
 						<Typography variant="caption">Online</Typography>
 					</Stack>
 				</Stack>

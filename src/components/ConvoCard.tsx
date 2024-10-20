@@ -1,25 +1,9 @@
 import { Avatar, Badge, Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import StyledBadge from "./StyledBadge";
+import { IConversation } from "../contexts/ConvoContext";
 
-//single chat element
-const ChatElement = ({
-	id,
-	name,
-	img,
-	msg,
-	time,
-	online,
-	unread,
-}: {
-	id: any;
-	name: any;
-	img: any;
-	msg: any;
-	time: any;
-	online: any;
-	unread: any;
-}) => {
+const ChatElement = ({ convo }: { convo: IConversation }) => {
 	const theme = useTheme();
 	return (
 		<Box
@@ -39,7 +23,8 @@ const ChatElement = ({
 				justifyContent="space-between"
 			>
 				<Stack direction="row" spacing={2}>
-					{online ? (
+					{true ? (
+						// online
 						<StyledBadge
 							overlap="circular"
 							anchorOrigin={{
@@ -48,22 +33,29 @@ const ChatElement = ({
 							}}
 							variant="dot"
 						>
-							<Avatar src={img} />
+							<Avatar src={convo.conversation_thumbnail} />
 						</StyledBadge>
 					) : (
-						<Avatar src={img} />
+						<Avatar src={convo.conversation_thumbnail} />
 					)}
 
 					<Stack spacing={0.3}>
-						<Typography variant="subtitle2">{name}</Typography>
-						<Typography variant="caption">{msg}</Typography>
+						<Typography variant="subtitle2">
+							{convo.recipient_name ?? convo.conversation_id}
+						</Typography>
+						<Typography variant="caption">
+							{convo.last_message_content}
+						</Typography>
 					</Stack>
 				</Stack>
 				<Stack spacing={2} alignItems="center">
 					<Typography sx={{ fontWeight: 600 }} variant="caption">
-						{time}
+						{/* {time} */}
+						{new Date(
+							convo.last_message_created_at,
+						).toLocaleTimeString()}
 					</Typography>
-					<Badge color="primary" badgeContent={unread}></Badge>
+					<Badge color="primary" badgeContent={1}></Badge>
 				</Stack>
 			</Stack>
 		</Box>

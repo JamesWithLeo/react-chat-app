@@ -5,7 +5,7 @@ const appWeChat = sessionStorage.getItem(sessionStorageAppKey);
 const currentApp: IApp | null = appWeChat ? JSON.parse(appWeChat) : null;
 
 type SideBarType = "CONTACT" | "STARRED" | "SHARED" | "NAVBAR" | "THEME";
-type SearchRoute = "search/all" | "search/people" | "search/chats" | null;
+export type SearchScope = "all" | "people" | "chats";
 // define initial state
 interface ISiderBar {
 	isOpen: boolean;
@@ -17,7 +17,7 @@ interface IConvoBar {
 interface IApp {
 	sidebar: ISiderBar;
 	convobar: IConvoBar;
-	search: SearchRoute | null;
+	search: SearchScope | null;
 }
 const initialState: IApp = currentApp
 	? currentApp
@@ -29,7 +29,7 @@ const initialState: IApp = currentApp
 			convobar: {
 				isOpen: false,
 			},
-			search: null,
+			search: "all",
 		};
 
 // create slice
@@ -65,7 +65,7 @@ const appSlice = createSlice({
 			state.convobar.isOpen = !state.convobar.isOpen;
 		},
 
-		setSearchRoute: (state, action: PayloadAction<SearchRoute>) => {
+		setSearchRoute: (state, action: PayloadAction<SearchScope>) => {
 			sessionStorage.setItem(
 				sessionStorageAppKey,
 				JSON.stringify({ ...state, search: action.payload } as IApp),

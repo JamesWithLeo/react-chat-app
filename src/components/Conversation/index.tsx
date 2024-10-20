@@ -8,7 +8,7 @@ const Conversation = () => {
 	return (
 		<Stack height={"100%"} maxHeight={"100vh"} width={"100%"}>
 			<>
-				<Header firstName="James" lastName="Ocampo" />
+				<Header />
 
 				<Box
 					className="scrollbar"

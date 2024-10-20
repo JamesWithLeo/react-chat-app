@@ -7,7 +7,7 @@ import {
 	TextField,
 	Tooltip,
 } from "@mui/material";
-import React, { SetStateAction, useState } from "react";
+import React, { forwardRef, useRef, useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import {
 	LinkSimple,
@@ -21,6 +21,9 @@ import {
 } from "phosphor-react";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
+import { useChatContext } from "../../contexts/ChatContext";
+import { useSelector } from "react-redux";
+import { AppState } from "../../redux/store";
 
 const StyledInput = styled(TextField)(({ theme }) => ({
 	"& .MuiInputBase-input": {
@@ -61,18 +64,18 @@ const Actions = [
 		title: "Contact",
 	},
 ];
-
-const ChatInput = ({
-	setOpenPicker,
-}: {
-	setOpenPicker: React.Dispatch<SetStateAction<boolean>>;
-}) => {
+const ChatInput = forwardRef<
+	HTMLInputElement,
+	{ setOpenPicker: React.Dispatch<React.SetStateAction<boolean>> }
+>(({ setOpenPicker }, ref) => {
 	const [openAction, setOpenAction] = useState(false);
+
 	return (
-		<StyledInput
+		<TextField
+			inputRef={ref}
 			fullWidth
 			placeholder="Write a message..."
-			variant="filled"
+			variant="standard"
 			InputProps={{
 				disableUnderline: true,
 				startAdornment: (
@@ -84,7 +87,11 @@ const ChatInput = ({
 							}}
 						>
 							{Actions.map((el) => (
-								<Tooltip placement="right" title={el.title}>
+								<Tooltip
+									key={el.title}
+									placement="right"
+									title={el.title}
+								>
 									<Fab
 										sx={{
 											position: "absolute",
@@ -99,9 +106,7 @@ const ChatInput = ({
 						</Stack>
 						<InputAdornment position="end">
 							<IconButton
-								onClick={() => {
-									setOpenAction((prev) => !prev);
-								}}
+								onClick={() => setOpenAction((prev) => !prev)}
 							>
 								<LinkSimple />
 							</IconButton>
@@ -112,9 +117,9 @@ const ChatInput = ({
 				endAdornment: (
 					<InputAdornment position="end">
 						<IconButton
-							onClick={() => {
-								setOpenPicker((prev: boolean) => !prev);
-							}}
+							onClick={() =>
+								setOpenPicker((prev: boolean) => !prev)
+							}
 						>
 							<Smiley />
 						</IconButton>
@@ -123,11 +128,21 @@ const ChatInput = ({
 			}}
 		/>
 	);
-};
+});
 
 const Footer = () => {
 	const theme = useTheme();
+	const { messagePeer } = useChatContext();
+	const id = useSelector((state: AppState) => state.auth.user?.id);
+	const messageInputRef = useRef<HTMLInputElement>(null);
 	const [openPicker, setOpenPicker] = useState(false);
+
+	async function HandleSendMessage() {
+		if (!messageInputRef.current || !id) return;
+		const message = messageInputRef.current.value;
+		messagePeer(message, id);
+		messageInputRef.current.value = "";
+	}
 	return (
 		<Box
 			p={2}
@@ -158,7 +173,10 @@ const Footer = () => {
 							onEmojiSelect={console.log}
 						/>
 					</Box>
-					<ChatInput setOpenPicker={setOpenPicker} />
+					<ChatInput
+						setOpenPicker={setOpenPicker}
+						ref={messageInputRef}
+					/>
 				</Stack>
 
 				<Box
@@ -177,7 +195,7 @@ const Footer = () => {
 							justifyContent: "center",
 						}}
 					>
-						<IconButton>
+						<IconButton onClick={HandleSendMessage}>
 							<PaperPlaneTilt color="#fff" />
 						</IconButton>
 					</Stack>

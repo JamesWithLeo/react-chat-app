@@ -19,18 +19,20 @@ import { AppDispatch, AppState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { ToggleSidebarOn } from "../../redux/slices/app";
 import socket from "../../services/sockets";
-// import ChatElement from "../../components/ConvoCard";
+import { useConvoContext } from "../../contexts/ConvoContext";
+import ChatElement from "../../components/ConvoCard";
 
 const Chats = () => {
 	const theme = useTheme();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
-	const user = useSelector((state: AppState) => state.auth.user);
-	const navigate = useNavigate();
-
-	const [chats, setChats] = useState<string[]>([]);
 	const dispatch = useDispatch<AppDispatch>();
+	const navigate = useNavigate();
+	const user = useSelector((state: AppState) => state.auth.user);
+	const { conversation, isLoading, isSuccess, fetchConversation } =
+		useConvoContext();
+	console.log(conversation);
 
 	useEffect(() => {
 		console.log(
@@ -167,9 +169,23 @@ const Chats = () => {
 							>
 								All Chats
 							</Typography>
-							{/* {ChatList.filter((el) => !el.pinned).map((el) => {
+							{isLoading ? (
+								<Typography>...Loading</Typography>
+							) : (
+								<>
+									{conversation.map((convo) => {
+										return (
+											<ChatElement
+												convo={convo}
+												key={convo.conversation_id}
+											/>
+										);
+									})}
+									{/* {ChatList.filter((el) => !el.pinned).map((el) => {
               return <ChatElement {...el} />
               })} */}
+								</>
+							)}
 						</Stack>
 					</Stack>
 				)}

@@ -86,13 +86,69 @@ export async function SetupFetch({
 	return await response.json();
 }
 
-export async function FetchPeople(id: string, query: string) {
+export async function FetchPeople(
+	id: string,
+	query: string,
+	scope: string = "all",
+) {
 	const response = await fetch(
-		`${apiUrl}search/people/${id}/?query=${query}`,
+		`${apiUrl}search/people/${id}/?scope=${scope}&query=${query}`,
 		{
 			method: "GET",
 		},
 	);
+
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
+export async function FetchPeer(peerId: string) {
+	const url = `${apiUrl}peer/${peerId}`;
+	console.log(`GET fetching for ${url}`);
+
+	const response = await fetch(url, {
+		method: "GET",
+	});
+
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+
+	return await response.json();
+}
+
+export async function SendChat(
+	senderId: string,
+	recipientId: string,
+	message: string,
+) {
+	const body = JSON.stringify({
+		message,
+		recipientId,
+	});
+	const url = `${apiUrl}chat/${senderId}`;
+	console.log("POST fetching for", url);
+
+	const response = await fetch(url, {
+		method: "POST",
+		body,
+		headers: {
+			"Content-type": "application/json",
+		},
+	});
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
+export async function FetchConvo(senderId: string) {
+	const url = `${apiUrl}convo/${senderId}`;
+	const response = await fetch(url, {
+		method: "GET",
+	});
 
 	if (!response.ok) {
 		return `${response.status} ${response.statusText}`;

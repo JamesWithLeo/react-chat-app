@@ -33,6 +33,7 @@ import "../css/global.css";
 import { SlideProps } from "@mui/material";
 import { AppDispatch } from "../redux/store";
 import { ToggleConvobar } from "../redux/slices/app";
+import { useChatContext } from "../contexts/ChatContext";
 
 // Define the ref and props types for the Transition component using forwardRef
 const Transition = React.forwardRef<unknown, SlideProps>(
@@ -101,6 +102,7 @@ const DeleteDialog = ({
 
 const Contact = () => {
 	const theme = useTheme();
+	const { peer } = useChatContext();
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [openBlock, setOpenBlock] = useState(false);
@@ -161,17 +163,19 @@ const Contact = () => {
 				>
 					<Stack alignItems={"center"} direction="row" spacing={2}>
 						<Avatar
-							src={faker.image.avatar()}
-							alt={faker.name.firstName("male")}
+							src={peer?.photo_url}
+							alt={peer?.first_name!}
 							sx={{ height: 64, width: 64 }}
 						/>
 						<Stack spacing={0.5}>
 							<Typography variant="caption" fontWeight={600}>
-								{faker.name.fullName()}
+								{peer?.first_name} {peer?.last_name}
 							</Typography>
-							<Typography variant="caption" fontWeight={500}>
-								{"+94 713725452"}
-							</Typography>
+							{peer?.phone_number ? (
+								<Typography variant="caption" fontWeight={500}>
+									{peer?.phone_number}
+								</Typography>
+							) : null}
 						</Stack>
 					</Stack>
 					<Stack

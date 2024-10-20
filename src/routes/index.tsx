@@ -8,6 +8,8 @@ import AuthLayout from "../layouts/auth";
 // config
 import { DEFAULT_PATH } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
+import ChatContextProvider from "../contexts/ChatContext";
+import ConvoContextProvider from "../contexts/ConvoContext";
 
 const Loadable = (Component: ComponentType) => {
 	return (props: { [key: string]: any }) => {
@@ -40,20 +42,29 @@ export default function Router() {
 					element: <Navigate to={DEFAULT_PATH} replace />,
 					index: true,
 				},
-				{ path: "chats", element: <GeneralChats /> },
-				{ path: "chat", element: <Chat /> },
+				{
+					path: "chats",
+					element: (
+						<ConvoContextProvider>
+							<GeneralChats />
+						</ConvoContextProvider>
+					),
+				},
+				{
+					path: "chat",
+					element: (
+						<ChatContextProvider>
+							<Chat />
+						</ChatContextProvider>
+					),
+				},
 				{
 					path: "search",
-					element: <SearchPage />,
-					children: [
-						{
-							index: true,
-							element: <Navigate to={"/search/all"} replace />,
-						},
-						{ path: "all", element: <SearchAll /> },
-						{ path: "people", element: <SearchPeople /> },
-						{ path: "chats", element: <SearchChats /> },
-					],
+					element: (
+						<ChatContextProvider>
+							<SearchPage />
+						</ChatContextProvider>
+					),
 				},
 				{ path: "settings", element: <Settings /> },
 				{ path: "group", element: <GroupPage /> },
@@ -94,12 +105,3 @@ const ProfilePage = Loadable(lazy(() => import("../pages/dashboard/Profile")));
 const Page404 = Loadable(lazy(() => import("../pages/Page404")));
 
 const SearchPage = Loadable(lazy(() => import("../pages/dashboard/Search")));
-const SearchAll = Loadable(
-	lazy(() => import("../components/Search/SearchAll")),
-);
-const SearchPeople = Loadable(
-	lazy(() => import("../components/Search/SearchPeople")),
-);
-const SearchChats = Loadable(
-	lazy(() => import("../components/Search/SearchChats")),
-);

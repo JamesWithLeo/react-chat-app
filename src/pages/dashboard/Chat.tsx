@@ -5,13 +5,14 @@ import Conversation from "../../components/Conversation";
 import { useTheme } from "@mui/material/styles";
 import Contact from "../../components/Contact";
 import { useSelector } from "react-redux";
-import SharedMessages from "../../components/SharedMessages";
-import StarredMessages from "../../components/StarredMessages";
 import { AppState } from "../../redux/store";
+import { useLocation } from "react-router-dom";
 
-const GeneralApp = () => {
+const Chat = () => {
 	const theme = useTheme();
-	const { sidebar, convobar } = useSelector((store: AppState) => store.app);
+
+	const { convobar } = useSelector((store: AppState) => store.app);
+
 	return (
 		<Stack direction="row" sx={{ width: "100%" }}>
 			{convobar.isOpen ? (
@@ -31,7 +32,7 @@ const GeneralApp = () => {
 				</Box>
 			)}
 
-			{sidebar.isOpen &&
+			{/* {sidebar.isOpen &&
 				(() => {
 					switch (sidebar.type) {
 						case "STARRED":
@@ -43,9 +44,9 @@ const GeneralApp = () => {
 						default:
 							break;
 					}
-				})()}
+				})()} */}
 		</Stack>
 	);
 };
 
-export default GeneralApp;
+export default Chat;

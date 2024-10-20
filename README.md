@@ -22,7 +22,8 @@ You can change theming colors and dark and light modes by clicking settings icon
 
 ## To do
 
-Add functionalities 🔃
+Add conversation function
+Improve Searching/Querying
 
 ## What I used
 
@@ -30,6 +31,7 @@ Add functionalities 🔃
 -   [Material UI](https://mui.com/)
 -   [React Context API](https://legacy.reactjs.org/docs/context.html)
 -   [Redux Toolkit](https://redux-toolkit.js.org/)
+-   [TanStack Query](https://tanstack.com/query/)
 -   [phosphor-react](https://www.npmjs.com/package/phosphor-react)
 -   [Emoji Mart](https://www.npmjs.com/package/emoji-mart)
 -   [React Hook Form](https://react-hook-form.com/)
