@@ -2,9 +2,25 @@ import { Avatar, Badge, Box, Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import StyledBadge from "./StyledBadge";
 import { IConversation } from "../contexts/ConvoContext";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useChatContext } from "../contexts/ChatContext";
+import { useNavigate } from "react-router-dom";
 
+dayjs.extend(relativeTime);
 const ChatElement = ({ convo }: { convo: IConversation }) => {
 	const theme = useTheme();
+	const { fetchPeer } = useChatContext();
+	const navigate = useNavigate();
+	const HandleOpenChat = () => {
+		if (convo.conversation_type === "direct") {
+			console.log("reading direct chat!");
+			fetchPeer(convo.recipient_id!);
+			navigate("/chat");
+		} else {
+			console.log("group chat");
+		}
+	};
 	return (
 		<Box
 			sx={{
@@ -16,6 +32,8 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 						: theme.palette.background.default,
 			}}
 			p={2}
+			component={"span"}
+			onClick={HandleOpenChat}
 		>
 			<Stack
 				direction="row"
@@ -24,7 +42,6 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 			>
 				<Stack direction="row" spacing={2}>
 					{true ? (
-						// online
 						<StyledBadge
 							overlap="circular"
 							anchorOrigin={{
@@ -50,10 +67,7 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 				</Stack>
 				<Stack spacing={2} alignItems="center">
 					<Typography sx={{ fontWeight: 600 }} variant="caption">
-						{/* {time} */}
-						{new Date(
-							convo.last_message_created_at,
-						).toLocaleTimeString()}
+						{dayjs(convo.last_message_created_at).fromNow()}
 					</Typography>
 					<Badge color="primary" badgeContent={1}></Badge>
 				</Stack>

@@ -36,6 +36,7 @@ Improve Searching/Querying
 -   [Emoji Mart](https://www.npmjs.com/package/emoji-mart)
 -   [React Hook Form](https://react-hook-form.com/)
 -   [Yup js](https://www.npmjs.com/package/yup)
+-   [Dayjs](https://day.js.org/)
 -   More...
 
 ## Requirements

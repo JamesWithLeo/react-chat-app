@@ -6,7 +6,6 @@ import { useTheme } from "@mui/material/styles";
 import Contact from "../../components/Contact";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
-import { useLocation } from "react-router-dom";
 
 const Chat = () => {
 	const theme = useTheme();

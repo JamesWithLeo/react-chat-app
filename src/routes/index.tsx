@@ -45,9 +45,11 @@ export default function Router() {
 				{
 					path: "chats",
 					element: (
-						<ConvoContextProvider>
-							<GeneralChats />
-						</ConvoContextProvider>
+						<ChatContextProvider>
+							<ConvoContextProvider>
+								<GeneralChats />
+							</ConvoContextProvider>
+						</ChatContextProvider>
 					),
 				},
 				{

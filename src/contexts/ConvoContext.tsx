@@ -8,10 +8,12 @@ export interface IConversation {
 	conversation_id: string;
 	conversation_name: string;
 	conversation_thumbnail: string;
+	conversation_type: "direct" | "group";
 	created_at: string;
 	last_message_id: string;
 	last_sender_id: string;
-	recipient_name: string;
+	recipient_id: "string" | null;
+	recipient_name: string | null;
 	last_message_created_at: string;
 	last_message_content: string;
 	updated_at: string;
