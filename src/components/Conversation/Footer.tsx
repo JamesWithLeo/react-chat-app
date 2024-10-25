@@ -140,7 +140,7 @@ const Footer = () => {
 	async function HandleSendMessage() {
 		if (!messageInputRef.current || !id) return;
 		const message = messageInputRef.current.value;
-		messagePeer(message, id);
+		messagePeer(message, id, "text");
 		messageInputRef.current.value = "";
 	}
 	return (

@@ -1,5 +1,12 @@
-import { Avatar, Badge, Box, Stack, Typography } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import {
+	Avatar,
+	Badge,
+	Box,
+	Stack,
+	Typography,
+	useMediaQuery,
+} from "@mui/material";
+import { Theme, useTheme } from "@mui/material/styles";
 import StyledBadge from "./StyledBadge";
 import { IConversation } from "../contexts/ConvoContext";
 import dayjs from "dayjs";
@@ -10,12 +17,16 @@ import { useNavigate } from "react-router-dom";
 dayjs.extend(relativeTime);
 const ChatElement = ({ convo }: { convo: IConversation }) => {
 	const theme = useTheme();
-	const { fetchPeer } = useChatContext();
+	const { fetchPeer, getMessages } = useChatContext();
 	const navigate = useNavigate();
+	const isSmallScreen = useMediaQuery((state: Theme) =>
+		state.breakpoints.up("sm"),
+	);
+
 	const HandleOpenChat = () => {
 		if (convo.conversation_type === "direct") {
-			console.log("reading direct chat!");
 			fetchPeer(convo.recipient_id!);
+			getMessages(convo.conversation_id);
 			navigate("/chat");
 		} else {
 			console.log("group chat");
@@ -26,6 +37,8 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 			sx={{
 				width: "100%",
 				borderRadius: 1,
+				height: "100%",
+				maxHeight: "5rem",
 				backgroundColor:
 					theme.palette.mode === "light"
 						? "#fff"
@@ -57,7 +70,15 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 					)}
 
 					<Stack spacing={0.3}>
-						<Typography variant="subtitle2">
+						<Typography
+							variant="subtitle2"
+							width={isSmallScreen ? 200 : 130}
+							sx={{
+								overflow: "hidden",
+								whiteSpace: "nowrap",
+								textOverflow: "ellipsis",
+							}}
+						>
 							{convo.recipient_name ?? convo.conversation_id}
 						</Typography>
 						<Typography variant="caption">
@@ -66,7 +87,11 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 					</Stack>
 				</Stack>
 				<Stack spacing={2} alignItems="center">
-					<Typography sx={{ fontWeight: 600 }} variant="caption">
+					<Typography
+						sx={{ fontWeight: 400 }}
+						variant="caption"
+						fontSize={10}
+					>
 						{dayjs(convo.last_message_created_at).fromNow()}
 					</Typography>
 					<Badge color="primary" badgeContent={1}></Badge>

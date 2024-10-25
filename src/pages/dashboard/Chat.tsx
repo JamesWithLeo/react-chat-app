@@ -30,20 +30,6 @@ const Chat = () => {
 					<Conversation />
 				</Box>
 			)}
-
-			{/* {sidebar.isOpen &&
-				(() => {
-					switch (sidebar.type) {
-						case "STARRED":
-							return <StarredMessages />;
-
-						case "SHARED":
-							return <SharedMessages />;
-
-						default:
-							break;
-					}
-				})()} */}
 		</Stack>
 	);
 };

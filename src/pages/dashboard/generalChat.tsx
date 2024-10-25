@@ -21,6 +21,7 @@ import { ToggleSidebarOn } from "../../redux/slices/app";
 import socket from "../../services/sockets";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
+import ConvoSkeleton from "../../components/skeletons/skeleton";
 
 const Chats = () => {
 	const theme = useTheme();
@@ -30,9 +31,9 @@ const Chats = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 	const user = useSelector((state: AppState) => state.auth.user);
+	const [skeletonCount, setSkeletonCount] = useState<number>(0);
 	const { conversation, isLoading, isSuccess, fetchConversation } =
 		useConvoContext();
-	console.log(conversation);
 
 	useEffect(() => {
 		console.log(
@@ -54,6 +55,18 @@ const Chats = () => {
 			});
 		};
 	}, []);
+
+	useEffect(() => {
+		function setSkeleton() {
+			if (isSuccess && conversation.length) {
+				setSkeletonCount(conversation.length);
+				setTimeout(() => {
+					setSkeletonCount(0);
+				}, 3000);
+			} else return;
+		}
+		setSkeleton();
+	}, [isSuccess, conversation]);
 	return (
 		<Box
 			sx={{
@@ -81,7 +94,6 @@ const Chats = () => {
 							<IconButton
 								onClick={() => {
 									dispatch(ToggleSidebarOn("NAVBAR"));
-									// dispatch(ToggleSidebarOff());
 								}}
 							>
 								<List />
@@ -110,85 +122,58 @@ const Chats = () => {
 					</Search>
 				</Stack>
 
-				{!user ? (
-					<Box
-						width={"100%"}
-						height={"100%"}
-						display={"flex"}
-						flexDirection={"column"}
-						alignItems={"center"}
-						justifyContent={"center"}
-					>
-						<Stack direction={"row"} spacing={2}>
-							<Button
-								onClick={() => {
-									navigate("/auth/login");
-								}}
-								variant="contained"
-								sx={{
-									":hover": {
-										backgroundColor:
-											theme.palette.primary.main,
-									},
-								}}
-							>
-								Sign in
-							</Button>
-							<Button
-								variant="outlined"
-								onClick={() => {
-									navigate("/auth/register");
-								}}
-							>
-								Sign up
-							</Button>
-						</Stack>
-					</Box>
-				) : (
-					<Stack
-						spacing={2}
-						direction="column"
-						sx={{ flexGrow: 1, overflow: "scroll", height: "100%" }}
-					>
-						<Stack spacing={2.4}>
-							<Typography
-								variant="subtitle2"
-								sx={{ color: "#676767" }}
-							>
-								Pinned
-							</Typography>
-							{/* {ChatList.filter((el) => el.pinned).map((el) => {
+				<Stack
+					height={"100%"}
+					spacing={2}
+					direction="column"
+					sx={{ flexGrow: 1, overflow: "scroll", height: "100%" }}
+				>
+					<Stack spacing={2.4}>
+						<Typography
+							variant="subtitle2"
+							sx={{ color: "#676767" }}
+						>
+							Pinned
+						</Typography>
+						{/* {ChatList.filter((el) => el.pinned).map((el) => {
               return <ChatElement  {...el} />
             })} */}
-						</Stack>
-
-						<Stack spacing={2.4}>
-							<Typography
-								variant="subtitle2"
-								sx={{ color: "#676767" }}
-							>
-								All Chats
-							</Typography>
-							{isLoading ? (
-								<Typography>...Loading</Typography>
-							) : (
-								<>
-									{conversation.map((convo) => {
-										return (
-											<ChatElement
-												convo={convo}
-												key={convo.conversation_id}
-											/>
-										);
-									})}
-									{/* {ChatList.filter((el) => !el.pinned).map((el) => {
-              return <ChatElement {...el} />
-              })} */}
-								</>
-							)}
-						</Stack>
 					</Stack>
-				)}
+
+					<Stack spacing={2.4}>
+						<Typography
+							variant="subtitle2"
+							sx={{ color: "#676767" }}
+						>
+							All Chats
+						</Typography>
+
+						{skeletonCount ? (
+							<>
+								{Array.from({ length: skeletonCount }).map(
+									(_, index) => {
+										return <ConvoSkeleton key={index} />;
+									},
+								)}
+							</>
+						) : (
+							<>
+								{isSuccess ? (
+									<>
+										{conversation.map((convo) => {
+											return (
+												<ChatElement
+													convo={convo}
+													key={convo.conversation_id}
+												/>
+											);
+										})}
+									</>
+								) : null}
+							</>
+						)}
+					</Stack>
+				</Stack>
 			</Stack>
 		</Box>
 	);

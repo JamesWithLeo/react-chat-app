@@ -10,57 +10,39 @@ import {
 import { useTheme } from "@mui/material/styles";
 import { DotsThreeVertical, DownloadSimple, Image } from "phosphor-react";
 import React, { MouseEvent } from "react";
+import { IMessages, useChatContext } from "../../contexts/ChatContext";
 
 interface IMessageBase {
-	type: "msg" | "divider"; // Common property for all message types
-	incoming?: boolean; // Indicates if the message is incoming
-	outgoing?: boolean; // Indicates if the message is outgoing
+	type: "msg" | "divider";
+	incoming?: boolean;
+	outgoing?: boolean;
 }
 
 export interface IChatMessage extends IMessageBase {
-	subtype?: "text" | "doc" | "link" | "img" | "reply"; // Optional subtype for messages
-	message?: string; // Text of the message
-	img?: string; // Optional image URL
-	preview?: string; // Optional link preview image
-	reply?: string; // Optional reply text
+	subtype?: "text" | "doc" | "link" | "img" | "reply";
+	message?: string;
+	img?: string;
+	preview?: string;
+	reply?: string;
 	text?: string;
 }
 
-const Message_options = [
-	{
-		title: "Reply",
-	},
-	{
-		title: "React to message",
-	},
-	{
-		title: "Forward message",
-	},
-	{
-		title: "Star message",
-	},
-	{
-		title: "Report",
-	},
-	{
-		title: "Delete Message",
-	},
-];
-
 const DocMsg = ({
-	el,
+	message,
 	isOptionOpen,
+	isFromUser,
 }: {
-	el: IChatMessage;
+	message: IMessages;
 	isOptionOpen: boolean;
+	isFromUser: boolean;
 }) => {
 	const theme = useTheme();
 	return (
-		<Stack direction="row" justifyContent={el.incoming ? "start" : "end"}>
+		<Stack direction="row" justifyContent={!isFromUser ? "start" : "end"}>
 			<Box
 				p={1.5}
 				sx={{
-					backgroundColor: el.incoming
+					backgroundColor: !isFromUser
 						? theme.palette.background.default
 						: theme.palette.primary.main,
 					borderRadius: 1.5,
@@ -87,34 +69,36 @@ const DocMsg = ({
 					<Typography
 						variant="body2"
 						sx={{
-							color: el.incoming
-								? theme.palette.text.primary
-								: "#fff",
+							color: true ? theme.palette.text.primary : "#fff",
 						}}
 					>
-						{el.message}
+						{message.content}
 					</Typography>
 				</Stack>
 			</Box>
-			{isOptionOpen && <MessageOptions />}
+			{isOptionOpen && (
+				<MessageOptions messageId={message.message_id} isFromOther />
+			)}
 		</Stack>
 	);
 };
 
 const LinkMsg = ({
-	el,
+	message,
 	isOptionOpen,
+	isFromUser,
 }: {
-	el: IChatMessage;
+	message: IMessages;
 	isOptionOpen: boolean;
+	isFromUser: boolean;
 }) => {
 	const theme = useTheme();
 	return (
-		<Stack direction="row" justifyContent={el.incoming ? "start" : "end"}>
+		<Stack direction="row" justifyContent={!isFromUser ? "start" : "end"}>
 			<Box
 				p={1.5}
 				sx={{
-					backgroundColor: el.incoming
+					backgroundColor: !isFromUser
 						? theme.palette.background.default
 						: theme.palette.primary.main,
 					borderRadius: 1.5,
@@ -132,8 +116,8 @@ const LinkMsg = ({
 						}}
 					>
 						<img
-							src={el.preview}
-							alt={el.message}
+							src={message.content}
+							alt={message.content}
 							style={{ maxHeight: 210, borderRadius: "10px" }}
 						/>
 						<Stack spacing={2}>
@@ -150,35 +134,39 @@ const LinkMsg = ({
 						<Typography
 							variant="body2"
 							color={
-								el.incoming
+								!isFromUser
 									? theme.palette.text.primary
 									: "#fff"
 							}
 						>
-							{el.message}
+							{message.content}
 						</Typography>
 					</Stack>
 				</Stack>
 			</Box>
-			{isOptionOpen && <MessageOptions />}
+			{isOptionOpen && (
+				<MessageOptions messageId={message.message_id} isFromOther />
+			)}
 		</Stack>
 	);
 };
 
 const ReplyMsg = ({
-	el,
+	message,
 	isOptionOpen,
+	isFromUser,
 }: {
-	el: IChatMessage;
+	message: IMessages;
 	isOptionOpen: boolean;
+	isFromUser: boolean;
 }) => {
 	const theme = useTheme();
 	return (
-		<Stack direction="row" justifyContent={el.incoming ? "start" : "end"}>
+		<Stack direction="row" justifyContent={!isFromUser ? "start" : "end"}>
 			<Box
 				p={1.5}
 				sx={{
-					backgroundColor: el.incoming
+					backgroundColor: !isFromUser
 						? theme.palette.background.default
 						: theme.palette.primary.main,
 					borderRadius: 1.5,
@@ -200,38 +188,69 @@ const ReplyMsg = ({
 							variant="body2"
 							color={theme.palette.text.primary}
 						>
-							{el.message}
+							{message.content}
 						</Typography>
 					</Stack>
 					<Typography
 						variant="body2"
 						color={
-							el.incoming ? theme.palette.text.primary : "#fff"
+							!isFromUser ? theme.palette.text.primary : "#fff"
 						}
 					>
-						{el.reply}
+						{/* TODO: add reply */}
+						{/* {el.reply} */}
 					</Typography>
 				</Stack>
 			</Box>
-			{isOptionOpen && <MessageOptions />}
+			{isOptionOpen && (
+				<MessageOptions messageId={message.message_id} isFromOther />
+			)}
 		</Stack>
 	);
 };
 
 const MediaMsg = ({
-	el,
+	message,
 	isOptionOpen,
+	isFromUser,
 }: {
-	el: IChatMessage;
+	message: IMessages;
 	isOptionOpen: boolean;
+	isFromUser: boolean;
 }) => {
 	const theme = useTheme();
+	const Message_options = [
+		{
+			title: "Reply",
+			fn: () => {},
+		},
+		{
+			title: "React to message",
+			fn: () => {},
+		},
+		{
+			title: "Forward message",
+			fn: () => {},
+		},
+		{
+			title: "Star message",
+			fn: () => {},
+		},
+		{
+			title: "Report",
+			fn: () => {},
+		},
+		{
+			title: "Delete Message",
+			fn: () => {},
+		},
+	];
 	return (
-		<Stack direction="row" justifyContent={el.incoming ? "start" : "end"}>
+		<Stack direction="row" justifyContent={!isFromUser ? "start" : "end"}>
 			<Box
 				p={1.5}
 				sx={{
-					backgroundColor: el.incoming
+					backgroundColor: !isFromUser
 						? theme.palette.background.default
 						: theme.palette.primary.main,
 					borderRadius: 1.5,
@@ -240,53 +259,62 @@ const MediaMsg = ({
 			>
 				<Stack spacing={1}>
 					<img
-						src={el.img}
-						alt={el.message}
+						src={message.content}
+						alt={message.content}
 						style={{ maxHeight: 210, borderRadius: "10px" }}
 					/>
 					<Typography
 						variant="body2"
 						color={
-							el.incoming ? theme.palette.text.primary : "#fff"
+							!isFromUser ? theme.palette.text.primary : "#fff"
 						}
 					>
-						{el.message}
+						{message.content}
 					</Typography>
 				</Stack>
 			</Box>
-			{isOptionOpen && <MessageOptions />}
+			{isOptionOpen && (
+				<MessageOptions messageId={message.message_id} isFromOther />
+			)}
 		</Stack>
 	);
 };
 
 const TextMsg = ({
-	el,
+	message,
+	isFromOther,
 	isOptionOpen,
 }: {
-	el: IChatMessage;
+	message: IMessages;
+	isFromOther: boolean;
 	isOptionOpen: boolean;
 }) => {
 	const theme = useTheme();
 	return (
-		<Stack direction="row" justifyContent={el.incoming ? "start" : "end"}>
+		<Stack direction="row" justifyContent={!isFromOther ? "end" : "start"}>
 			<Box
 				p={1.5}
 				sx={{
-					backgroundColor: el.incoming
-						? theme.palette.background.default
-						: theme.palette.primary.main,
+					backgroundColor: !isFromOther
+						? theme.palette.primary.main
+						: theme.palette.background.default,
 					borderRadius: 1.5,
 					width: "max-content",
 				}}
 			>
 				<Typography
 					variant="body2"
-					color={el.incoming ? theme.palette.text.primary : "#fff"}
+					color={!isFromOther ? "#fff" : theme.palette.text.primary}
 				>
-					{el.message}
+					{message.content}
 				</Typography>
 			</Box>
-			{isOptionOpen && <MessageOptions />}
+			{isOptionOpen && (
+				<MessageOptions
+					messageId={message.message_id}
+					isFromOther={isFromOther}
+				/>
+			)}
 		</Stack>
 	);
 };
@@ -311,9 +339,24 @@ const TimeLine = ({ el }: { el: IChatMessage }) => {
 	);
 };
 
-const MessageOptions = () => {
+type UserOption = "reply" | "react" | "star" | "report" | "delete" | "forward";
+
+interface IMessage_option {
+	key: UserOption;
+	title: string;
+	fn: () => void;
+}
+
+const MessageOptions = ({
+	messageId,
+	isFromOther,
+}: {
+	messageId: string;
+	isFromOther: boolean;
+}) => {
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
+	const { removeMessage } = useChatContext();
 
 	const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
@@ -322,6 +365,41 @@ const MessageOptions = () => {
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+
+	const Message_options: IMessage_option[] = [
+		{
+			key: "reply",
+			title: "Reply",
+			fn: () => {},
+		},
+		{
+			key: "react",
+			title: "React to message",
+			fn: () => {},
+		},
+		{
+			key: "forward",
+			title: "Forward message",
+			fn: () => {},
+		},
+		{
+			key: "star",
+			title: "Star message",
+			fn: () => {},
+		},
+		{
+			key: "report",
+			title: "Report",
+			fn: () => {},
+		},
+		{
+			key: "delete",
+			title: "Delete Message",
+			fn: async () => {
+				removeMessage(messageId);
+			},
+		},
+	];
 
 	return (
 		<>
@@ -344,9 +422,22 @@ const MessageOptions = () => {
 				}}
 			>
 				<Stack spacing={1} px={1}>
-					{Message_options.map((el) => (
-						<MenuItem>{el.title}</MenuItem>
-					))}
+					{Message_options.map((option) => {
+						if (isFromOther && option.key === "delete") {
+							return null;
+						} else if (!isFromOther && option.key === "report") {
+							return null;
+						} else {
+							return (
+								<MenuItem
+									key={option.title}
+									onClick={option.fn}
+								>
+									{option.title}
+								</MenuItem>
+							);
+						}
+					})}
 				</Stack>
 			</Menu>
 		</>

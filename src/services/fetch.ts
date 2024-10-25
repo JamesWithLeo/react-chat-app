@@ -1,3 +1,4 @@
+import { IMessage_type } from "../contexts/ChatContext";
 import { Gender } from "../sections/auth/SetupForm";
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -104,8 +105,9 @@ export async function FetchPeople(
 	return await response.json();
 }
 
-export async function FetchPeer(peerId: string) {
-	const url = `${apiUrl}peer/${peerId}`;
+export async function FetchPeer(userId: string | undefined, peerId: string) {
+	if (!userId) return;
+	const url = `${apiUrl}peer/${userId}?peerId=${peerId}`;
 	console.log(`GET fetching for ${url}`);
 
 	const response = await fetch(url, {
@@ -123,10 +125,12 @@ export async function SendChat(
 	senderId: string,
 	recipientId: string,
 	message: string,
+	messageType: IMessage_type,
 ) {
 	const body = JSON.stringify({
 		message,
 		recipientId,
+		messageType,
 	});
 	const url = `${apiUrl}chat/${senderId}`;
 	console.log("POST fetching for", url);
@@ -143,9 +147,33 @@ export async function SendChat(
 	}
 	return await response.json();
 }
+export async function DeleteChat(messageId: string) {
+	const url = `${apiUrl}chat/${messageId}`;
+
+	const response = await fetch(url, {
+		method: "DELETE",
+	});
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
 
 export async function FetchConvo(senderId: string) {
 	const url = `${apiUrl}convo/${senderId}`;
+	const response = await fetch(url, {
+		method: "GET",
+	});
+
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
+export async function FetchMessages(conversationId: string) {
+	const url = `${apiUrl}messages/${conversationId}`;
+
 	const response = await fetch(url, {
 		method: "GET",
 	});
