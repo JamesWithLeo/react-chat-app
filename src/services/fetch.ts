@@ -1,9 +1,10 @@
 import { IMessage_type } from "../contexts/ChatContext";
 import { Gender } from "../sections/auth/SetupForm";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 export async function SigninFetch({ uid }: { uid: string }) {
-	const response = await fetch(`${apiUrl}signin`, {
+	const response = await fetch(`${apiUrl}auth/signin`, {
 		method: "POST",
 		body: JSON.stringify({ uid }),
 		headers: {
@@ -33,7 +34,7 @@ export async function SignupFetch({
 	firstName: string | null;
 	lastName: string | null;
 }) {
-	const response = await fetch(`${apiUrl}signup`, {
+	const response = await fetch(`${apiUrl}auth/signup`, {
 		method: "POST",
 		body: JSON.stringify({
 			email,
@@ -68,7 +69,7 @@ export async function SetupFetch({
 	gender: Gender;
 	birthDate: Date;
 }) {
-	const response = await fetch(`${apiUrl}setup`, {
+	const response = await fetch(`${apiUrl}auth/setup`, {
 		method: "POST",
 		body: JSON.stringify({
 			uid,
@@ -87,13 +88,13 @@ export async function SetupFetch({
 	return await response.json();
 }
 
-export async function FetchPeople(
+export async function FetchSearch(
 	id: string,
 	query: string,
 	scope: string = "all",
 ) {
 	const response = await fetch(
-		`${apiUrl}search/people/${id}/?scope=${scope}&query=${query}`,
+		`${apiUrl}search/${id}/?scope=${scope}&query=${query}`,
 		{
 			method: "GET",
 		},

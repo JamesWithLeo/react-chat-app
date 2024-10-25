@@ -21,7 +21,7 @@ import { SearchScope, setSearchRoute } from "../../redux/slices/app";
 import { AppState } from "../../redux/store";
 import { debounce } from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
-import { FetchPeople } from "../../services/fetch";
+import { FetchSearch } from "../../services/fetch";
 import PeopleCard from "../../components/PeopleCard";
 import { IViewUser } from "../../redux/slices/auth";
 import { useQuery } from "@tanstack/react-query";
@@ -61,8 +61,8 @@ export default function Search() {
 	const query = useQuery(
 		["people", debouncedSearchTerm, scope],
 		() => {
-			console.log("scope:", scope);
-			return FetchPeople(id!, debouncedSearchTerm, scope);
+			console.log("searching! scope:", scope);
+			return FetchSearch(id!, debouncedSearchTerm, scope);
 		},
 		{ enabled: true },
 	);
