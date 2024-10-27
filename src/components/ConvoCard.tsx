@@ -26,9 +26,9 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 	const HandleOpenChat = () => {
 		if (convo.conversation_type === "direct") {
 			fetchPeer(convo.recipient_id!);
-			getMessages(convo.conversation_id);
 			navigate("/chat");
 		} else {
+			// getMessages(convo.conversation_id);
 			console.log("group chat");
 		}
 	};

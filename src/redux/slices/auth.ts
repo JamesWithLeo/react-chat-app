@@ -10,6 +10,7 @@ type Status = "offline" | "online";
 type Gender = "male" | "female" | "others";
 
 export interface IViewUser {
+	conversation_id: string | null;
 	id: string;
 	email: string | null;
 	photo_url: string;

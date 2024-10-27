@@ -22,8 +22,13 @@ You can change theming colors and dark and light modes by clicking settings icon
 
 ## To do
 
-Add conversation function
-Improve Searching/Querying
+Add conversation function ✅
+-call
+-voice message
+-media
+
+Improve Searching/Querying 🅿️
+-pagination/infinite fetching
 
 ## What I used
 

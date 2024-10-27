@@ -173,6 +173,8 @@ export async function FetchConvo(senderId: string) {
 }
 
 export async function FetchMessages(conversationId: string) {
+	if (!conversationId) return;
+
 	const url = `${apiUrl}messages/${conversationId}`;
 
 	const response = await fetch(url, {
