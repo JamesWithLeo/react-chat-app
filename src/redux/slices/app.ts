@@ -4,7 +4,14 @@ const sessionStorageAppKey = "WeChatConfig";
 const appWeChat = sessionStorage.getItem(sessionStorageAppKey);
 const currentApp: IApp | null = appWeChat ? JSON.parse(appWeChat) : null;
 
-type SideBarType = "CONTACT" | "STARRED" | "SHARED" | "NAVBAR" | "THEME";
+type SideBarType =
+	| "CONTACT"
+	| "STARRED"
+	| "SHARED"
+	| "NAVBAR"
+	| "THEME"
+	| "CONVO_MINI_SETTING";
+
 export type SearchScope = "all" | "people" | "chats";
 // define initial state
 interface ISiderBar {
@@ -18,6 +25,12 @@ interface IApp {
 	sidebar: ISiderBar;
 	convobar: IConvoBar;
 	search: SearchScope | null;
+	conversation: null | {
+		id: string;
+		is_pinned?: boolean;
+		is_archived?: boolean;
+	};
+	peerId: string | null;
 }
 const initialState: IApp = currentApp
 	? currentApp
@@ -30,6 +43,8 @@ const initialState: IApp = currentApp
 				isOpen: false,
 			},
 			search: "all",
+			conversation: null,
+			peerId: null,
 		};
 
 // create slice
@@ -37,6 +52,29 @@ const appSlice = createSlice({
 	name: "app",
 	initialState,
 	reducers: {
+		SetConversation(
+			state,
+			action: PayloadAction<{
+				id: string;
+				is_pinned?: boolean;
+				is_archived?: boolean;
+			}>,
+		) {
+			sessionStorage.setItem("conversationId", action.payload.id);
+
+			return {
+				...state,
+				conversation: action.payload,
+			};
+		},
+
+		SetPeerId(state, action: PayloadAction<string>) {
+			sessionStorage.setItem("peerId", action.payload);
+			return {
+				...state,
+				peerId: action.payload,
+			};
+		},
 		//Toggle sidebar
 		ToggleSidebarOff(state) {
 			return {
@@ -88,4 +126,7 @@ export const {
 	ToggleConvobar,
 	ToggleSidebarOn,
 	setSearchRoute,
+
+	SetConversation,
+	SetPeerId,
 } = appSlice.actions;

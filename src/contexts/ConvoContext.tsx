@@ -17,6 +17,8 @@ export interface IConversation {
 	last_message_created_at: string;
 	last_message_content: string;
 	updated_at: string;
+	is_pinned: boolean;
+	is_archived: boolean;
 }
 
 interface IConvoContext {

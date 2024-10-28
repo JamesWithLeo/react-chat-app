@@ -13,14 +13,25 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useChatContext } from "../contexts/ChatContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { SetConversation, ToggleSidebarOn } from "../redux/slices/app";
+import { AppState } from "../redux/store";
 
 dayjs.extend(relativeTime);
 const ChatElement = ({ convo }: { convo: IConversation }) => {
 	const theme = useTheme();
-	const { fetchPeer, getMessages } = useChatContext();
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
+	const id = useSelector((state: AppState) => state.auth.user?.id);
+	const { fetchPeer } = useChatContext();
 	const isSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.up("sm"),
+	);
+	const [isLongPress, setIsLongPress] = useState<boolean>(false);
+	const [pressTimeoutId, setPressTimeoutId] = useState<NodeJS.Timeout | null>(
+		null,
 	);
 
 	const HandleOpenChat = () => {
@@ -32,6 +43,37 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 			console.log("group chat");
 		}
 	};
+
+	const HandleOpenConvoSetting = () => {
+		if (!id) return;
+
+		dispatch(
+			SetConversation({
+				id: convo.conversation_id,
+				is_archived: convo.is_archived,
+				is_pinned: convo.is_pinned,
+			}),
+		);
+
+		dispatch(ToggleSidebarOn("CONVO_MINI_SETTING"));
+	};
+
+	const HandleLongPressStart = () => {
+		setIsLongPress(false);
+		const timeoutId = setTimeout(() => {
+			setIsLongPress(true);
+			HandleOpenConvoSetting();
+		}, 800);
+		setPressTimeoutId(timeoutId);
+	};
+
+	const HandlePressEnd = () => {
+		if (pressTimeoutId) clearTimeout(pressTimeoutId);
+		if (!isLongPress) {
+			HandleOpenChat();
+		}
+	};
+
 	return (
 		<Box
 			sx={{
@@ -46,7 +88,9 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 			}}
 			p={2}
 			component={"span"}
-			onClick={HandleOpenChat}
+			onMouseDown={HandleLongPressStart}
+			onMouseUp={HandlePressEnd}
+			// onClick={HandleOpenChat}
 		>
 			<Stack
 				direction="row"

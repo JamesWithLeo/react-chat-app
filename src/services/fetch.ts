@@ -1,3 +1,4 @@
+import { Id } from "@reduxjs/toolkit/dist/tsHelpers";
 import { IMessage_type } from "../contexts/ChatContext";
 import { Gender } from "../sections/auth/SetupForm";
 
@@ -179,6 +180,52 @@ export async function FetchMessages(conversationId: string) {
 
 	const response = await fetch(url, {
 		method: "GET",
+	});
+
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
+export async function PinConvoRequest(
+	userId: string,
+	conversationId: string,
+	isPinned: boolean,
+) {
+	const url = `${apiUrl}convo/${userId}/pin`;
+	const response = await fetch(url, {
+		method: "POST",
+		body: JSON.stringify({
+			conversationId,
+			isPinned,
+		}),
+		headers: {
+			"Content-type": "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
+export async function ArchiveConvoRequest(
+	userId: string,
+	conversationId: string,
+	isArchived: string,
+) {
+	const url = `${apiUrl}convo/${userId}/archive`;
+	const response = await fetch(url, {
+		method: "POST",
+		body: JSON.stringify({
+			conversationId,
+			isArchived,
+		}),
+		headers: {
+			"Content-type": "application/json",
+		},
 	});
 
 	if (!response.ok) {

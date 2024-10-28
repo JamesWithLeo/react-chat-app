@@ -1,10 +1,4 @@
-import React, {
-	createContext,
-	ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
+import React, { createContext, ReactNode, useContext, useState } from "react";
 import { IViewUser } from "../redux/slices/auth";
 import {
 	DeleteChat,
@@ -13,8 +7,12 @@ import {
 	SendChat,
 } from "../services/fetch";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../redux/store";
+import {
+	SetConversation as DispatchSetConversation,
+	SetPeerId as DispatchSetPeerId,
+} from "../redux/slices/app";
 
 export type IMessage_type = "text" | "reply" | "doc" | "link" | "media";
 
@@ -40,7 +38,6 @@ interface ChatContextType {
 		userId: string,
 		messageType: IMessage_type,
 	) => Promise<void>;
-	getMessages: (conversation_id: string) => Promise<void>;
 	removeMessage: (messageId: string) => Promise<void>;
 	isSuccessMessages: boolean;
 	isLoadingMessages: boolean;
@@ -55,7 +52,6 @@ const defaultContextValue: ChatContextType = {
 	conversation_id: "",
 	messagePeer: async () => {},
 
-	getMessages: async () => {},
 	removeMessage: async () => {},
 	messages: [],
 	isSuccessMessages: false,
@@ -72,6 +68,9 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	children,
 }) => {
 	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
+
+	const id = useSelector((state: AppState) => state.auth.user?.id);
 
 	const [peerId, setPeerId] = useState<string>(
 		sessionStorage.getItem("peerId") ?? "",
@@ -79,7 +78,6 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	const [conversation_id, setConversationId] = useState<string>(
 		sessionStorage.getItem("conversationId") ?? "",
 	);
-	const id = useSelector((state: AppState) => state.auth.user?.id);
 
 	const {
 		data: peer,
@@ -90,11 +88,13 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		async () => {
 			const response = await FetchPeer(id, peerId);
 			if (response.ok && response.peer) {
-				sessionStorage.setItem("peerId", response.peer.id);
-				sessionStorage.setItem(
-					"conversationId",
-					response.conversation_id,
+				dispatch(DispatchSetPeerId(response.peer.id ?? ""));
+				dispatch(
+					DispatchSetConversation({
+						id: response.conversation_id ?? "",
+					}),
 				);
+
 				setConversationId(response.conversation_id ?? "");
 
 				return response.peer;
@@ -125,7 +125,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	const fetchPeer = async (peer_id: string) => {
 		const previousConvoId = sessionStorage.getItem("peerId");
 		if (previousConvoId !== peer_id) {
-			sessionStorage.setItem("peerId", peer_id);
+			dispatch(DispatchSetPeerId(peer_id ?? ""));
 			setPeerId(peer_id);
 		}
 	};
@@ -138,6 +138,14 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		if (!peer || !peer.id) return;
 		const result = await SendChat(userId, peer.id, message, messageType);
 
+		if (result.isNew) {
+			setConversationId(result.conversation_id);
+			dispatch(
+				DispatchSetConversation({ id: result.conversation_id ?? "" }),
+			);
+			return;
+		}
+
 		if (result.ok && result.message) {
 			queryClient.setQueryData(
 				["messages", (result.message as IMessages).conversation_id],
@@ -148,11 +156,6 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				},
 			);
 		}
-	};
-
-	const getMessages = async (convo_id: string) => {
-		sessionStorage.setItem("conversation_id", convo_id);
-		setConversationId(convo_id);
 	};
 
 	const removeMessage = async (messageId: string) => {
@@ -183,7 +186,6 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				isSuccess,
 				//
 				messages,
-				getMessages,
 				messagePeer,
 				removeMessage,
 
