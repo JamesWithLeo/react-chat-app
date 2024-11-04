@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import useSettings from "../../hooks/useSettings";
-import AntSwitch from "../../components/AntSwitch";
+import AntSwitch from "../AntSwitch";
 import Logo from "../../assets/Images/logo.ico";
 import { useNavigate } from "react-router-dom";
 import { ChatCircleDots, User, Gear } from "@phosphor-icons/react";
@@ -60,7 +60,7 @@ const getMenuPath = (index: number) => {
 	}
 };
 
-export default function SideBar() {
+export default function NavBar() {
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 	const open = Boolean(anchorEl);
 

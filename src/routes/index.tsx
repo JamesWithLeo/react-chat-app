@@ -61,6 +61,14 @@ export default function Router() {
 					),
 				},
 				{
+					path: "archived",
+					element: (
+						<ConvoContextProvider>
+							<ArchivePage />
+						</ConvoContextProvider>
+					),
+				},
+				{
 					path: "search",
 					element: (
 						<ChatContextProvider>
@@ -84,7 +92,7 @@ const Chat = Loadable(lazy(() => import("../pages/dashboard/Chat")));
 const GeneralChats = Loadable(
 	lazy(() => import("../pages/dashboard/generalChat")),
 );
-
+const ArchivePage = Loadable(lazy(() => import("../pages/dashboard/Archived")));
 const LoginPage = Loadable(lazy(() => import("../pages/auth/Login")));
 
 const RegisterPage = Loadable(lazy(() => import("../pages/auth/Register")));

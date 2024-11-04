@@ -47,6 +47,7 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 					<Typography>No messages</Typography>
 				)}
 			</Stack>
+			<Typography variant="caption">Typing...</Typography>
 		</Box>
 	);
 };

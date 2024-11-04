@@ -214,7 +214,7 @@ export async function PinConvoRequest(
 export async function ArchiveConvoRequest(
 	userId: string,
 	conversationId: string,
-	isArchived: string,
+	isArchived: boolean,
 ) {
 	const url = `${apiUrl}convo/${userId}/archive`;
 	const response = await fetch(url, {

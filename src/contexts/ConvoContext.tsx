@@ -46,6 +46,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 }) => {
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const [senderId, setSenderId] = useState<string>(id ?? "");
+
 	const {
 		data: conversation,
 		isLoading,
@@ -65,6 +66,9 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 	const fetchConversation = async (userId: string) => {
 		setSenderId(userId);
 	};
+
+	const pinConversation = async () => {};
+
 	return (
 		<ConvoContext.Provider
 			value={{ conversation, fetchConversation, isLoading, isSuccess }}
@@ -78,6 +82,9 @@ export default ConvoContextProvider;
 export const useConvoContext = () => {
 	const context = useContext(ConvoContext);
 	if (!context) {
+		console.error(
+			"useConvoContext must be used with a ConvoContextProvider",
+		);
 		throw new Error(
 			"useConvoContext must be used with a ConvoContextProvider",
 		);

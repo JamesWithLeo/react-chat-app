@@ -1,13 +1,14 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { Stack, Theme, useMediaQuery } from "@mui/material";
-import SideBar from "./SideBar";
+import NavBar from "../../components/navbar/SideBar";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
-import NavBar from "../../components/navbar";
+import SlideBar from "../../components/navbar";
+import ConvoSlideBar from "../../components/ConvoSlideBar";
 
 const DashboardLayout = () => {
 	const user = useSelector((state: AppState) => state.auth.user);
-	const sideBarMobile = useSelector((state: AppState) => state.app.sidebar);
+	const sidebar = useSelector((state: AppState) => state.app.sidebar);
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
@@ -20,12 +21,18 @@ const DashboardLayout = () => {
 	}
 	return (
 		<Stack direction={{ xs: "column", sm: "row" }}>
-			{isSmallScreen &&
-			sideBarMobile.isOpen &&
-			sideBarMobile.type === "NAVBAR" ? (
-				<NavBar />
+			{/* this is slide bar */}
+			{isSmallScreen && sidebar.isOpen && sidebar.type === "NAVBAR" ? (
+				<SlideBar />
 			) : null}
-			{!isSmallScreen ? <SideBar /> : null}
+
+			{/* nav bar for destop */}
+			{!isSmallScreen ? <NavBar /> : null}
+
+			{sidebar.type === "CONVO_MINI_SETTING" && sidebar.isOpen ? (
+				<ConvoSlideBar />
+			) : null}
+
 			<Outlet />
 		</Stack>
 	);

@@ -4,38 +4,24 @@ import {
 	Stack,
 	Typography,
 	useMediaQuery,
-	List as MuiList,
-	Backdrop,
-	Dialog,
-	DialogContent,
-	ListItem,
-	ListItemButton,
-	Paper,
-	ListItemText,
-	ListItemIcon,
 } from "@mui/material";
-import {
-	Archive,
-	CircleDashed,
-	MagnifyingGlass,
-	PushPin,
-} from "phosphor-react";
+import { CircleDashed, MagnifyingGlass } from "phosphor-react";
 import { Theme, useTheme } from "@mui/material/styles";
 import React, { useEffect, useState } from "react";
 // import {ChatList} from '../../data';
 import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
-import { List, Trash } from "@phosphor-icons/react";
+import { List } from "@phosphor-icons/react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, AppState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
-import { ToggleSidebarOff, ToggleSidebarOn } from "../../redux/slices/app";
+import { ToggleSidebarOn } from "../../redux/slices/app";
 import socket from "../../services/sockets";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
 import ConvoSkeleton from "../../components/skeletons/skeleton";
-import { PinConvoRequest } from "../../services/fetch";
+import { ArchiveConvoRequest, PinConvoRequest } from "../../services/fetch";
 
 const Chats = () => {
 	const theme = useTheme();
@@ -85,99 +71,8 @@ const Chats = () => {
 		setSkeleton();
 	}, [isSuccess, conversation]);
 
-	const HandleArchiveConvo = () => {
-		console.log("Archiving Convo!", ConversationSlice?.id);
-	};
-
-	const HandleDeleteConvo = () => {
-		console.log("Deleting Convo!", ConversationSlice?.id);
-	};
-
-	const HandlePinConvo = async () => {
-		if (!id || !ConversationSlice) return;
-		console.log("Pinning Convo!", ConversationSlice);
-		const pinResponse = await PinConvoRequest(
-			id,
-			ConversationSlice.id,
-			!ConversationSlice.is_pinned,
-		);
-		console.log(pinResponse);
-	};
-
 	return (
 		<>
-			{sidebar.type === "CONVO_MINI_SETTING" && sidebar.isOpen ? (
-				<>
-					<Box
-						component={"div"}
-						onClick={() => dispatch(ToggleSidebarOff())}
-						sx={{
-							width: "100%",
-							position: "fixed",
-							height: "100%",
-							backgroundColor: "rgba(0, 0, 0, 0.5)", // 50% transparent black
-							zIndex: theme.zIndex.modal + 1,
-						}}
-					/>
-					<Box
-						sx={{
-							borderTopLeftRadius: 6,
-							borderTopRightRadius: 6,
-							bgcolor: theme.palette.background.default,
-							zIndex: theme.zIndex.modal + 1,
-							width: "100%",
-							position: "absolute",
-							bottom: 0,
-						}}
-					>
-						<Box
-							sx={{
-								zIndex: theme.zIndex.drawer + 2,
-								width: "100%",
-							}}
-						>
-							<MuiList>
-								<ListItem>
-									<ListItemButton
-										disableGutters
-										onClick={HandleArchiveConvo}
-									>
-										<ListItemIcon>
-											<Archive />
-										</ListItemIcon>
-										<ListItemText secondary="Archive" />
-									</ListItemButton>
-								</ListItem>
-								<ListItem>
-									<ListItemButton
-										disableGutters
-										onClick={HandlePinConvo}
-									>
-										<ListItemIcon>
-											<PushPin />
-										</ListItemIcon>
-										<ListItemText
-											secondary={`${ConversationSlice?.is_pinned ? "unpin" : "pin"} conversation`}
-										/>
-									</ListItemButton>
-								</ListItem>
-								<ListItem>
-									<ListItemButton
-										disableGutters
-										onClick={HandleDeleteConvo}
-									>
-										<ListItemIcon>
-											<Trash />
-										</ListItemIcon>
-										<ListItemText secondary="Delete conversation" />
-									</ListItemButton>
-								</ListItem>
-							</MuiList>
-						</Box>
-					</Box>
-				</>
-			) : null}
-
 			<Box
 				sx={{
 					position: "relative",

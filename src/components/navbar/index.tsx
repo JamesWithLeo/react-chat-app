@@ -40,7 +40,7 @@ const Rootstyle = styled(m.div)(({ theme }) => ({
 	backgroundColor: theme.palette.background.paper,
 }));
 
-export default function NavBar() {
+export default function SlideBar() {
 	const isOpen = useSelector((state: AppState) => state.app.sidebar.isOpen);
 	const user = useSelector((state: AppState) => state.auth.user);
 	const navigate = useNavigate();
@@ -115,7 +115,7 @@ export default function NavBar() {
 
 						<Button
 							onClick={() => {
-								navigate("/archive");
+								navigate("/archived");
 							}}
 							startIcon={<ArchiveBox />}
 							sx={{ width: "100%" }}
