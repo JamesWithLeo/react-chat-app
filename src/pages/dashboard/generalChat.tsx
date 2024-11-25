@@ -13,15 +13,13 @@ import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
 import { List } from "@phosphor-icons/react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, AppState } from "../../redux/store";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { ToggleSidebarOn } from "../../redux/slices/app";
-import socket from "../../services/sockets";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
 import ConvoSkeleton from "../../components/skeletons/skeleton";
-import { ArchiveConvoRequest, PinConvoRequest } from "../../services/fetch";
 
 const Chats = () => {
 	const theme = useTheme();
@@ -32,32 +30,6 @@ const Chats = () => {
 	const navigate = useNavigate();
 	const [skeletonCount, setSkeletonCount] = useState<number>(0);
 	const { conversation, isSuccess } = useConvoContext();
-
-	const id = useSelector((state: AppState) => state.auth.user?.id);
-	const { sidebar, conversation: ConversationSlice } = useSelector(
-		(store: AppState) => store.app,
-	);
-
-	useEffect(() => {
-		console.log(
-			"socket is:",
-			socket.connected ? "connected" : "not connected",
-		);
-		socket.emit("hello");
-		socket.on("connect", () => {
-			console.log("socket id:", socket.id);
-		});
-
-		socket.on("connect_error", (err) => {
-			console.log(err.stack);
-		});
-
-		return () => {
-			socket.off("connect", () => {
-				console.log("connection is off");
-			});
-		};
-	}, []);
 
 	useEffect(() => {
 		function setSkeleton() {

@@ -24,13 +24,8 @@ import Picker from "@emoji-mart/react";
 import { useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
-
-const StyledInput = styled(TextField)(({ theme }) => ({
-	"& .MuiInputBase-input": {
-		paddingTop: "12px",
-		paddingBottom: "12px",
-	},
-}));
+import socket from "../../services/sockets";
+import { useConvoContext } from "../../contexts/ConvoContext";
 
 const Actions = [
 	{
@@ -132,17 +127,28 @@ const ChatInput = forwardRef<
 
 const Footer = () => {
 	const theme = useTheme();
-	const { messagePeer } = useChatContext();
+	const { messagePeer, conversation_id } = useChatContext();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
+
 	const messageInputRef = useRef<HTMLInputElement>(null);
 	const [openPicker, setOpenPicker] = useState(false);
 
 	async function HandleSendMessage() {
 		if (!messageInputRef.current || !id) return;
 		const message = messageInputRef.current.value;
-		messagePeer(message, id, "text");
+
+		// messagePeer(message, id, "text");
+		socket.emit("newMessage", {
+			conversation_id,
+			content: message,
+			sender_id: id,
+			message_type: "text",
+		});
+
+		// clear input element
 		messageInputRef.current.value = "";
 	}
+
 	return (
 		<Box
 			p={2}

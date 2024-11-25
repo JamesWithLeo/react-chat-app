@@ -150,7 +150,7 @@ export async function SendChat(
 	return await response.json();
 }
 export async function DeleteChat(messageId: string) {
-	const url = `${apiUrl}chat/${messageId}`;
+	const url = `${apiUrl}messages/${messageId}`;
 
 	const response = await fetch(url, {
 		method: "DELETE",

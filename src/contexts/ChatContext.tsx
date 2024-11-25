@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import { IViewUser } from "../redux/slices/auth";
 import {
 	DeleteChat,
@@ -13,6 +19,7 @@ import {
 	SetConversation as DispatchSetConversation,
 	SetPeerId as DispatchSetPeerId,
 } from "../redux/slices/app";
+import socket from "../services/sockets";
 
 export type IMessage_type = "text" | "reply" | "doc" | "link" | "media";
 
@@ -176,6 +183,21 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		}
 	};
 
+	useEffect(() => {
+		socket.emit("joinMessage", { conversationId: conversation_id });
+		socket.on("toClientMessage", (messageData) => {
+			console.log("New Message recieved:");
+			console.log(messageData);
+			queryClient.setQueryData(
+				["messages", messageData.conversation_id],
+				(prevMessages: IMessages[] | undefined) =>
+					prevMessages ? [...prevMessages, messageData] : [],
+			);
+		});
+		return () => {
+			socket.off("toClientMessage");
+		};
+	}, [conversation_id, queryClient]);
 	return (
 		<ChatContext.Provider
 			value={{

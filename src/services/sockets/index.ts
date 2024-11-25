@@ -1,13 +1,18 @@
 import { io, Socket } from "socket.io-client";
+import { IMessage_type, IMessages } from "../../contexts/ChatContext";
 
-export interface ServerToClientEvents {
-	noArg: () => void;
-	basicEmit: (a: number, b: string, c: Buffer) => void;
-	withAck: (d: string, callback: (e: number) => void) => void;
+interface ServerToClientEvents {
+	toClientMessage: (messageData: IMessages) => void;
 }
 
-export interface ClientToServerEvents {
-	hello: () => void;
+interface ClientToServerEvents {
+	joinMessage: ({ conversationId }: { conversationId: string }) => void;
+	newMessage: (messageData: {
+		sender_id: string;
+		conversation_id: string;
+		content: string;
+		message_type: IMessage_type;
+	}) => void;
 }
 
 export interface InterServerEvents {

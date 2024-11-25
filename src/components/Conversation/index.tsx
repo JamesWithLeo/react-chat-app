@@ -6,21 +6,11 @@ import ConvoBody from "./ConvoBody";
 
 const Conversation = () => {
 	return (
-		<Stack height={"100%"} maxHeight={"100vh"} width={"100%"}>
+		<Stack height={"100dvh"} maxHeight={"100vh"} width={"100%"}>
 			<>
 				<Header />
 
-				<Box
-					className="scrollbar"
-					width={"100%"}
-					sx={{
-						flexGrow: 1,
-						height: "100%",
-						overflowY: "scroll",
-					}}
-				>
-					<ConvoBody isOptionOpen={true} />
-				</Box>
+				<ConvoBody isOptionOpen={true} />
 
 				<Footer />
 			</>
