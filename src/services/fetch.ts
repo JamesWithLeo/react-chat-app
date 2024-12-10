@@ -1,8 +1,6 @@
-import { Id } from "@reduxjs/toolkit/dist/tsHelpers";
 import { IMessage_type } from "../contexts/ChatContext";
 import { Gender } from "../sections/auth/SetupForm";
-
-const apiUrl = process.env.REACT_APP_API_URL;
+import { apiUrl } from "../config";
 
 export async function SigninFetch({ uid }: { uid: string }) {
 	const response = await fetch(`${apiUrl}auth/signin`, {

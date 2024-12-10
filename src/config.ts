@@ -69,3 +69,5 @@ export const defaultLang = allLangs[0]; // English
 
 // DEFAULT ROOT PATH
 export const DEFAULT_PATH = PATH_DASHBOARD.general.app; // as '/app'
+
+export const apiUrl = process.env.REACT_APP_API_URL;
