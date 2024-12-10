@@ -1,5 +1,6 @@
 import { io, Socket } from "socket.io-client";
 import { IMessage_type, IMessages } from "../../contexts/ChatContext";
+import { apiUrl } from "../../config";
 
 interface ServerToClientEvents {
 	toClientMessage: (messageData: IMessages) => void;
@@ -25,9 +26,8 @@ export interface SocketData {
 }
 
 // please note that the types are reversed
-const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
-	"http://localhost:5000/",
-	{ autoConnect: true },
-);
+const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(apiUrl, {
+	autoConnect: true,
+});
 
 export default socket;
