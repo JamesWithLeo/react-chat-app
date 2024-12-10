@@ -7,14 +7,14 @@ import AuthLayout from "../layouts/auth";
 
 // config
 import { DEFAULT_PATH } from "../config";
-import LoadingScreen from "../components/LoadingScreen";
+import DefaultSpinner from "../components/skeletons/DefaultSpinner";
 import ChatContextProvider from "../contexts/ChatContext";
 import ConvoContextProvider from "../contexts/ConvoContext";
 
 const Loadable = (Component: ComponentType) => {
 	return (props: { [key: string]: any }) => {
 		return (
-			<Suspense fallback={<LoadingScreen />}>
+			<Suspense fallback={<DefaultSpinner />}>
 				<Component {...props} />
 			</Suspense>
 		);

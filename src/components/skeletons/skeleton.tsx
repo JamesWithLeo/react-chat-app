@@ -1,4 +1,4 @@
-import { Box, Skeleton, Stack, useTheme } from "@mui/material";
+import { Box, Skeleton, useTheme } from "@mui/material";
 
 export default function ConvoSkeleton() {
 	const theme = useTheme();
