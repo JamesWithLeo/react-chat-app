@@ -8,7 +8,7 @@ import {
 	Tooltip,
 } from "@mui/material";
 import React, { forwardRef, useRef, useState } from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { useTheme } from "@mui/material/styles";
 import {
 	LinkSimple,
 	PaperPlaneTilt,
@@ -25,7 +25,7 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import socket from "../../services/sockets";
-import { useConvoContext } from "../../contexts/ConvoContext";
+// import { useConvoContext } from "../../contexts/ConvoContext";
 
 const Actions = [
 	{
@@ -61,13 +61,19 @@ const Actions = [
 ];
 const ChatInput = forwardRef<
 	HTMLInputElement,
-	{ setOpenPicker: React.Dispatch<React.SetStateAction<boolean>> }
->(({ setOpenPicker }, ref) => {
+	{
+		setOpenPicker: React.Dispatch<React.SetStateAction<boolean>>;
+		onFocusTyping: () => void;
+		onBlur: () => void;
+	}
+>(({ setOpenPicker, onFocusTyping, onBlur }, ref) => {
 	const [openAction, setOpenAction] = useState(false);
 
 	return (
 		<TextField
 			inputRef={ref}
+			onFocus={onFocusTyping}
+			onBlur={onBlur}
 			fullWidth
 			placeholder="Write a message..."
 			variant="standard"
@@ -127,7 +133,7 @@ const ChatInput = forwardRef<
 
 const Footer = () => {
 	const theme = useTheme();
-	const { messagePeer, conversation_id } = useChatContext();
+	const { messagePeer, conversation_id, isTyping } = useChatContext();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
 	const messageInputRef = useRef<HTMLInputElement>(null);
@@ -148,7 +154,14 @@ const Footer = () => {
 		// clear input element
 		messageInputRef.current.value = "";
 	}
+	async function HandleFocusTyping() {
+		if (!id || isTyping) return;
 
+		socket.emit("activeTyping", { conversation_id, sender_id: id });
+	}
+	async function HandleBlurTyping() {
+		if (!id) return;
+	}
 	return (
 		<Box
 			p={2}
@@ -180,6 +193,8 @@ const Footer = () => {
 						/>
 					</Box>
 					<ChatInput
+						onFocusTyping={HandleFocusTyping}
+						onBlur={HandleBlurTyping}
 						setOpenPicker={setOpenPicker}
 						ref={messageInputRef}
 					/>

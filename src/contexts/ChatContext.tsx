@@ -33,8 +33,13 @@ export interface IMessages {
 	is_read: boolean;
 	is_edited: boolean;
 }
+export interface ITypist {
+	id: string;
+	photoUrl: string;
+}
 interface ChatContextType {
 	peer: IViewUser | null; // Store peer user information
+	isTyping: boolean; // for user, to check if the user is typing
 	messages: IMessages[];
 	isLoading: boolean;
 	isSuccess: boolean;
@@ -55,6 +60,7 @@ const defaultContextValue: ChatContextType = {
 	peer: null,
 	isLoading: false,
 	isSuccess: false,
+	isTyping: false,
 	fetchPeer: async () => {},
 	conversation_id: "",
 	messagePeer: async () => {},
@@ -85,6 +91,8 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	const [conversation_id, setConversationId] = useState<string>(
 		sessionStorage.getItem("conversationId") ?? "",
 	);
+	const [isTyping, setIsTyping] = useState<boolean>(false);
+	const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
 
 	const {
 		data: peer,
@@ -136,7 +144,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			setPeerId(peer_id);
 		}
 	};
-
+	// old way for sending message, fetch api . soon to remove replaced by socket.io
 	const messagePeer = async (
 		message: string,
 		userId: string,
@@ -194,8 +202,20 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 					prevMessages ? [...prevMessages, messageData] : [],
 			);
 		});
+		socket.on("peerTyping", (data) => {
+			if (data === id) return;
+			console.log(data, " is typing!");
+			queryClient.setQueryData(["peer", data], (oldPeer: any) => {
+				if (!oldPeer) return null; // Safeguard in case oldPeer is null
+				return {
+					...oldPeer,
+					isTyping: true, // Update the typing status
+				} as IViewUser;
+			});
+		});
 		return () => {
 			socket.off("toClientMessage");
+			socket.off("peerTyping");
 		};
 	}, [conversation_id, queryClient]);
 	return (
@@ -206,11 +226,11 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				fetchPeer,
 				isLoading,
 				isSuccess,
-				//
 				messages,
 				messagePeer,
 				removeMessage,
 
+				isTyping,
 				isSuccessMessages,
 				isLoadingMessages,
 			}}
