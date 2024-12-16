@@ -335,6 +335,7 @@ const TextMsg = ({
 				>
 					<Typography
 						variant="body2"
+						style={{ userSelect: "none" }}
 						color={
 							!isFromOther ? "#fff" : theme.palette.text.primary
 						}
@@ -378,7 +379,14 @@ const TimeLine = ({ el }: { el: IChatMessage }) => {
 	);
 };
 
-type UserOption = "reply" | "react" | "star" | "report" | "delete" | "forward";
+type UserOption =
+	| "reply"
+	| "react"
+	| "star"
+	| "report"
+	| "delete"
+	| "forward"
+	| "copy";
 
 interface IMessage_option {
 	key: UserOption;
@@ -418,6 +426,7 @@ const MessageOptions = ({
 			title: "Forward message",
 			fn: () => {},
 		},
+		{ key: "copy", title: "Copy message", fn: () => {} },
 		{
 			key: "star",
 			title: "Star message",
@@ -441,7 +450,7 @@ const MessageOptions = ({
 		<>
 			{isSmallScreen ? null : (
 				<IconButton onClick={() => setVisibility(true)}>
-					<DotsThreeVertical aria-haspopup="true" size={18} />
+					<DotsThreeVertical size={18} />
 				</IconButton>
 			)}
 

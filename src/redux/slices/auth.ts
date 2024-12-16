@@ -18,6 +18,7 @@ export interface IViewUser {
 	last_name: string;
 	phone_number: string | null;
 	isTyping: boolean;
+	isOnline: boolean;
 }
 
 interface IUser {

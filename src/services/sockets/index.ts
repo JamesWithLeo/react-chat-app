@@ -1,6 +1,7 @@
 import { io, Socket } from "socket.io-client";
 import { IMessage_type } from "../../contexts/ChatContext";
 import { apiUrl } from "../../config";
+import { IViewUser } from "../../redux/slices/auth";
 
 interface ServerToClientEvents {
 	toClientMessage: (messageData: any) => void;
@@ -13,6 +14,7 @@ interface ServerToClientEvents {
 		conversation_id: string;
 		isTyping: boolean;
 	}) => void;
+	peersStatus: (data: { peers: { id: string; isOnline: boolean } }) => void;
 }
 
 interface ClientToServerEvents {
@@ -31,6 +33,13 @@ interface ClientToServerEvents {
 		sender_id: string;
 		conversation_id: string;
 		isTyping: boolean;
+	}) => void;
+	peersStatus: ({
+		sender_id,
+		isOnline,
+	}: {
+		sender_id: string;
+		isOnline: boolean;
 	}) => void;
 }
 

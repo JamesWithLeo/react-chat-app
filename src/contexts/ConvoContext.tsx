@@ -1,8 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 import { FetchConvo } from "../services/fetch";
 import { useSelector } from "react-redux";
 import { AppState } from "../redux/store";
+import socket from "../services/sockets";
 
 export interface IConversation {
 	conversation_id: string;
@@ -25,6 +32,7 @@ interface IConvoContext {
 	conversation: IConversation[];
 	isLoading: boolean;
 	isSuccess: boolean;
+	refreshStatus: (value: boolean) => void;
 	fetchConversation: (userId: string) => void;
 }
 
@@ -32,6 +40,7 @@ const defaultContextValue: IConvoContext = {
 	conversation: [],
 	isLoading: false,
 	isSuccess: false,
+	refreshStatus: async () => {},
 	fetchConversation: async (userId: string) => {},
 };
 
@@ -69,9 +78,25 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	const pinConversation = async () => {};
 
+	const refreshStatus = (value: boolean) => {
+		if (!id) return;
+		socket.emit("peersStatus", { sender_id: id, isOnline: value });
+	};
+
+	useEffect(() => {
+		socket.on("peersStatus", (data) => {
+			console.log(data);
+		});
+	}, []);
 	return (
 		<ConvoContext.Provider
-			value={{ conversation, fetchConversation, isLoading, isSuccess }}
+			value={{
+				conversation,
+				refreshStatus,
+				fetchConversation,
+				isLoading,
+				isSuccess,
+			}}
 		>
 			{children}
 		</ConvoContext.Provider>

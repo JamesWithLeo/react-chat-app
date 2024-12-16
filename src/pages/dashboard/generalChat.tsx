@@ -29,7 +29,7 @@ const Chats = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 	const [skeletonCount, setSkeletonCount] = useState<number>(0);
-	const { conversation, isSuccess } = useConvoContext();
+	const { conversation, isSuccess, refreshStatus } = useConvoContext();
 
 	useEffect(() => {
 		function setSkeleton() {
@@ -41,8 +41,9 @@ const Chats = () => {
 			} else return;
 		}
 		setSkeleton();
-	}, [isSuccess, conversation]);
 
+		refreshStatus(true);
+	}, [isSuccess, conversation, refreshStatus]);
 	return (
 		<>
 			<Box
