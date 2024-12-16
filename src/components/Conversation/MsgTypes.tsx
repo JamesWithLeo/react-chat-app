@@ -6,10 +6,11 @@ import {
 	Typography,
 	Menu,
 	MenuItem,
+	useMediaQuery,
 } from "@mui/material";
-import { useTheme } from "@mui/material/styles";
+import { Theme, useTheme } from "@mui/material/styles";
 import { DotsThreeVertical, DownloadSimple, Image } from "phosphor-react";
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, useState } from "react";
 import { IMessages, useChatContext } from "../../contexts/ChatContext";
 
 interface IMessageBase {
@@ -76,9 +77,9 @@ const DocMsg = ({
 					</Typography>
 				</Stack>
 			</Box>
-			{isOptionOpen && (
+			{/* {isOptionOpen && (
 				<MessageOptions messageId={message.message_id} isFromOther />
-			)}
+			)} */}
 		</Stack>
 	);
 };
@@ -144,9 +145,9 @@ const LinkMsg = ({
 					</Stack>
 				</Stack>
 			</Box>
-			{isOptionOpen && (
+			{/* {isOptionOpen && (
 				<MessageOptions messageId={message.message_id} isFromOther />
-			)}
+			)} */}
 		</Stack>
 	);
 };
@@ -202,9 +203,9 @@ const ReplyMsg = ({
 					</Typography>
 				</Stack>
 			</Box>
-			{isOptionOpen && (
+			{/* {isOptionOpen && (
 				<MessageOptions messageId={message.message_id} isFromOther />
-			)}
+			)} */}
 		</Stack>
 	);
 };
@@ -273,9 +274,9 @@ const MediaMsg = ({
 					</Typography>
 				</Stack>
 			</Box>
-			{isOptionOpen && (
+			{/* {isOptionOpen && (
 				<MessageOptions messageId={message.message_id} isFromOther />
-			)}
+			)} */}
 		</Stack>
 	);
 };
@@ -290,32 +291,70 @@ const TextMsg = ({
 	isOptionOpen: boolean;
 }) => {
 	const theme = useTheme();
+	const isSmallScreen = useMediaQuery((theme: Theme) =>
+		theme.breakpoints.down("sm"),
+	);
+	const [pressTimeoutId, setPressTimeoutId] = useState<NodeJS.Timeout | null>(
+		null,
+	);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+
+	const HandleLongPress = () => {
+		const timeoutId = setTimeout(() => {
+			setIsOpen(true);
+		}, 800);
+		setPressTimeoutId(timeoutId);
+	};
+
+	const HandlePressEnd = () => {
+		if (pressTimeoutId) clearTimeout(pressTimeoutId);
+	};
+
 	return (
-		<Stack direction="row" justifyContent={!isFromOther ? "end" : "start"}>
-			<Box
-				p={1.5}
-				sx={{
-					backgroundColor: !isFromOther
-						? theme.palette.primary.main
-						: theme.palette.background.default,
-					borderRadius: 1.5,
-					width: "max-content",
-				}}
+		<>
+			<Stack
+				direction="row"
+				justifyContent={!isFromOther ? "end" : "start"}
 			>
-				<Typography
-					variant="body2"
-					color={!isFromOther ? "#fff" : theme.palette.text.primary}
+				<Box
+					component={"span"}
+					id={message.message_id}
+					onMouseDown={isSmallScreen ? HandleLongPress : undefined}
+					onMouseUp={isSmallScreen ? HandlePressEnd : undefined}
+					onTouchStart={isSmallScreen ? HandleLongPress : undefined}
+					onTouchEnd={isSmallScreen ? HandlePressEnd : undefined}
+					p={1.5}
+					sx={{
+						border: "none",
+						backgroundColor: !isFromOther
+							? theme.palette.primary.main
+							: theme.palette.background.default,
+						borderRadius: 1.5,
+						width: "max-content",
+					}}
 				>
-					{message.content}
-				</Typography>
-			</Box>
-			{isOptionOpen && (
-				<MessageOptions
-					messageId={message.message_id}
-					isFromOther={isFromOther}
-				/>
-			)}
-		</Stack>
+					<Typography
+						variant="body2"
+						color={
+							!isFromOther ? "#fff" : theme.palette.text.primary
+						}
+					>
+						{message.content}
+					</Typography>
+				</Box>
+
+				{isOptionOpen && (
+					<MessageOptions
+						messageId={message.message_id}
+						isFromOther
+						isOpen={isOpen}
+						setVisibility={(value: boolean) => {
+							setIsOpen(value);
+						}}
+					/>
+				)}
+			</Stack>
+		</>
 	);
 };
 
@@ -350,21 +389,18 @@ interface IMessage_option {
 const MessageOptions = ({
 	messageId,
 	isFromOther,
+	isOpen,
+	setVisibility,
 }: {
 	messageId: string;
 	isFromOther: boolean;
+	isOpen: boolean;
+	setVisibility: (value: boolean) => void;
 }) => {
-	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-	const open = Boolean(anchorEl);
+	const isSmallScreen = useMediaQuery((theme: Theme) =>
+		theme.breakpoints.down("sm"),
+	);
 	const { removeMessage } = useChatContext();
-
-	const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
 
 	const Message_options: IMessage_option[] = [
 		{
@@ -403,20 +439,20 @@ const MessageOptions = ({
 
 	return (
 		<>
-			<IconButton onClick={handleClick}>
-				<DotsThreeVertical
-					aria-controls={open ? "basic-menu" : undefined}
-					aria-haspopup="true"
-					aria-expanded={open ? "true" : undefined}
-					size={20}
-				/>
-			</IconButton>
+			{isSmallScreen ? null : (
+				<IconButton onClick={() => setVisibility(true)}>
+					<DotsThreeVertical aria-haspopup="true" size={18} />
+				</IconButton>
+			)}
 
 			<Menu
-				id="basic-menu"
-				anchorEl={anchorEl}
-				open={Boolean(anchorEl)}
-				onClose={handleClose}
+				anchorEl={
+					document.getElementById(messageId) as HTMLElement | null
+				}
+				open={isOpen}
+				onClose={() => {
+					setVisibility(false);
+				}}
 				MenuListProps={{
 					"aria-labelledby": "basic-button",
 				}}

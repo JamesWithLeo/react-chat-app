@@ -1,13 +1,13 @@
 import { Box, Stack, Theme, Typography, useMediaQuery } from "@mui/material";
 import React, { useEffect } from "react";
 import {
-	DocMsg,
-	IChatMessage,
-	LinkMsg,
-	MediaMsg,
-	ReplyMsg,
+	// DocMsg,
+	// IChatMessage,
+	// LinkMsg,
+	// MediaMsg,
+	// ReplyMsg,
+	// TimeLine,
 	TextMsg,
-	TimeLine,
 } from "./MsgTypes";
 import { useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";

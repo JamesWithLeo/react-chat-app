@@ -4,11 +4,6 @@ import {
 	Box,
 	Stack,
 	Typography,
-	List as MuiList,
-	ListItem,
-	ListItemButton,
-	ListItemText,
-	ListItemIcon,
 	useMediaQuery,
 } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
