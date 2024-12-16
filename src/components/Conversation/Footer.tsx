@@ -133,34 +133,33 @@ const ChatInput = forwardRef<
 
 const Footer = () => {
 	const theme = useTheme();
-	const { messagePeer, conversation_id, isTyping } = useChatContext();
+	const { conversation_id, isTyping, messagePeer, setIsTyping } =
+		useChatContext();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
 	const messageInputRef = useRef<HTMLInputElement>(null);
 	const [openPicker, setOpenPicker] = useState(false);
 
 	async function HandleSendMessage() {
-		if (!messageInputRef.current || !id) return;
+		if (!messageInputRef.current || !id) {
+			return;
+		}
 		const message = messageInputRef.current.value;
-
-		// messagePeer(message, id, "text");
-		socket.emit("newMessage", {
-			conversation_id,
-			content: message,
-			sender_id: id,
-			message_type: "text",
-		});
-
-		// clear input element
 		messageInputRef.current.value = "";
+		messagePeer(message, id, "text");
 	}
-	async function HandleFocusTyping() {
-		if (!id || isTyping) return;
 
+	async function HandleFocusTyping() {
+		if (!id || isTyping) {
+			return;
+		}
+		setIsTyping(true);
 		socket.emit("activeTyping", { conversation_id, sender_id: id });
 	}
 	async function HandleBlurTyping() {
-		if (!id) return;
+		if (!id) {
+			setIsTyping(false);
+		}
 	}
 	return (
 		<Box

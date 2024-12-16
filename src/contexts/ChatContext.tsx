@@ -40,6 +40,7 @@ export interface ITypist {
 interface ChatContextType {
 	peer: IViewUser | null; // Store peer user information
 	isTyping: boolean; // for user, to check if the user is typing
+	setIsTyping: (value: boolean) => void;
 	messages: IMessages[];
 	isLoading: boolean;
 	isSuccess: boolean;
@@ -61,6 +62,7 @@ const defaultContextValue: ChatContextType = {
 	isLoading: false,
 	isSuccess: false,
 	isTyping: false,
+	setIsTyping: (value: boolean) => {},
 	fetchPeer: async () => {},
 	conversation_id: "",
 	messagePeer: async () => {},
@@ -92,7 +94,6 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		sessionStorage.getItem("conversationId") ?? "",
 	);
 	const [isTyping, setIsTyping] = useState<boolean>(false);
-	const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
 
 	const {
 		data: peer,
@@ -151,26 +152,12 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		messageType: IMessage_type,
 	) => {
 		if (!peer || !peer.id) return;
-		const result = await SendChat(userId, peer.id, message, messageType);
-
-		if (result.isNew) {
-			setConversationId(result.conversation_id);
-			dispatch(
-				DispatchSetConversation({ id: result.conversation_id ?? "" }),
-			);
-			return;
-		}
-
-		if (result.ok && result.message) {
-			queryClient.setQueryData(
-				["messages", (result.message as IMessages).conversation_id],
-				(prevMessage: IMessages[] | undefined) => {
-					return prevMessage
-						? [...prevMessage, result.message]
-						: [result.message];
-				},
-			);
-		}
+		socket.emit("newMessage", {
+			conversation_id,
+			content: message,
+			sender_id: userId,
+			message_type: messageType,
+		});
 	};
 
 	const removeMessage = async (messageId: string) => {
@@ -191,6 +178,10 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		}
 	};
 
+	const HandleTyping = (value: boolean) => {
+		setIsTyping(value);
+	};
+
 	useEffect(() => {
 		socket.emit("joinMessage", { conversationId: conversation_id });
 		socket.on("toClientMessage", (messageData) => {
@@ -205,7 +196,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		socket.on("peerTyping", (data) => {
 			if (data.id === id) return;
 			console.log(data, " is typing!");
-			queryClient.setQueryData(["peer", data], (oldPeer: any) => {
+			queryClient.setQueryData(["peer", data.id], (oldPeer: any) => {
 				if (!oldPeer) return null; // Safeguard in case oldPeer is null
 				return {
 					...oldPeer,
@@ -231,6 +222,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				removeMessage,
 
 				isTyping,
+				setIsTyping: HandleTyping,
 				isSuccessMessages,
 				isLoadingMessages,
 			}}

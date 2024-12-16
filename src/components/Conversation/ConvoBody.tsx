@@ -1,5 +1,5 @@
 import { Box, Stack, Theme, Typography, useMediaQuery } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import {
 	DocMsg,
 	IChatMessage,
