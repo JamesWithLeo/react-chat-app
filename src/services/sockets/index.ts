@@ -1,10 +1,16 @@
 import { io, Socket } from "socket.io-client";
-import { IMessage_type, IMessages } from "../../contexts/ChatContext";
+import { IMessage_type } from "../../contexts/ChatContext";
 import { apiUrl } from "../../config";
 
 interface ServerToClientEvents {
-	toClientMessage: (messageData: IMessages) => void;
-	peerTyping: (id: string) => void;
+	toClientMessage: (messageData: any) => void;
+	peerTyping: ({
+		id,
+		conversation_id,
+	}: {
+		id: string;
+		conversation_id: string;
+	}) => void;
 }
 
 interface ClientToServerEvents {

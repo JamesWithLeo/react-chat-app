@@ -203,7 +203,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			);
 		});
 		socket.on("peerTyping", (data) => {
-			if (data === id) return;
+			if (data.id === id) return;
 			console.log(data, " is typing!");
 			queryClient.setQueryData(["peer", data], (oldPeer: any) => {
 				if (!oldPeer) return null; // Safeguard in case oldPeer is null
