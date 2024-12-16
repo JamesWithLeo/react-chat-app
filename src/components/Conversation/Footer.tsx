@@ -153,13 +153,22 @@ const Footer = () => {
 		if (!id || isTyping) {
 			return;
 		}
+		socket.emit("handleTyping", {
+			conversation_id,
+			sender_id: id,
+			isTyping: true,
+		});
 		setIsTyping(true);
-		socket.emit("activeTyping", { conversation_id, sender_id: id });
 	}
 	async function HandleBlurTyping() {
-		if (!id) {
-			setIsTyping(false);
-		}
+		if (!id || !isTyping) return;
+
+		socket.emit("handleTyping", {
+			conversation_id,
+			sender_id: id,
+			isTyping: false,
+		});
+		setIsTyping(false);
 	}
 	return (
 		<Box

@@ -200,7 +200,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				if (!oldPeer) return null; // Safeguard in case oldPeer is null
 				return {
 					...oldPeer,
-					isTyping: true, // Update the typing status
+					isTyping: data.isTyping, // Update the typing status
 				} as IViewUser;
 			});
 		});
