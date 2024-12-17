@@ -140,7 +140,6 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 			if (id) {
 				socket.emit("peersStatus", { sender_id: id, isOnline: false });
 			}
-			socket.off("peersStatus");
 		};
 	}, [queryClient, conversation, isSuccess, id]);
 	return (
