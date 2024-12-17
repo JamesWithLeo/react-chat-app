@@ -37,7 +37,6 @@ interface IConvoContext {
 	conversation: IConversation[];
 	isLoading: boolean;
 	isSuccess: boolean;
-	refreshStatus: (value: boolean) => void;
 	fetchConversation: (userId: string) => void;
 }
 
@@ -45,7 +44,6 @@ const defaultContextValue: IConvoContext = {
 	conversation: [],
 	isLoading: false,
 	isSuccess: false,
-	refreshStatus: async () => {},
 	fetchConversation: async (userId: string) => {},
 };
 
@@ -86,7 +84,6 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	const refreshStatus = (value: boolean) => {
 		if (!id) return;
-		socket.emit("peersStatus", { sender_id: id, isOnline: value });
 	};
 
 	useEffect(() => {
@@ -126,7 +123,6 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		<ConvoContext.Provider
 			value={{
 				conversation,
-				refreshStatus,
 				fetchConversation,
 				isLoading,
 				isSuccess,
