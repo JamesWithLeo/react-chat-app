@@ -28,19 +28,9 @@ const Chats = () => {
 	);
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-	const [skeletonCount, setSkeletonCount] = useState<number>(0);
 	const { conversation, isSuccess, refreshStatus } = useConvoContext();
 
 	useEffect(() => {
-		function setSkeleton() {
-			if (isSuccess && conversation.length) {
-				setSkeletonCount(conversation.length);
-				setTimeout(() => {
-					setSkeletonCount(0);
-				}, 3000);
-			} else return;
-		}
-		setSkeleton();
 		refreshStatus(true);
 	}, [isSuccess, conversation, refreshStatus]);
 	return (
@@ -142,36 +132,21 @@ const Chats = () => {
 								All Chats
 							</Typography>
 
-							{skeletonCount ? (
-								<>
-									{Array.from({ length: skeletonCount }).map(
-										(_, index) => {
+							<>
+								{isSuccess ? (
+									<>
+										{conversation.map((convo) => {
+											if (convo.is_pinned) return null;
 											return (
-												<ConvoSkeleton key={index} />
+												<ChatElement
+													convo={convo}
+													key={convo.conversation_id}
+												/>
 											);
-										},
-									)}
-								</>
-							) : (
-								<>
-									{isSuccess ? (
-										<>
-											{conversation.map((convo) => {
-												if (convo.is_pinned)
-													return null;
-												return (
-													<ChatElement
-														convo={convo}
-														key={
-															convo.conversation_id
-														}
-													/>
-												);
-											})}
-										</>
-									) : null}
-								</>
-							)}
+										})}
+									</>
+								) : null}
+							</>
 						</Stack>
 					</Stack>
 				</Stack>

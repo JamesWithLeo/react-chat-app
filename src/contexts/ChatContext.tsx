@@ -278,6 +278,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 					});
 				},
 			);
+			console.log(peers);
 		});
 
 		return () => {
