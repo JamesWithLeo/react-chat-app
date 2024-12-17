@@ -10,15 +10,12 @@ type Status = "offline" | "online";
 type Gender = "male" | "female" | "others";
 
 export interface IViewUser {
-	conversation_id: string | null;
 	id: string;
-	email: string | null;
-	photo_url: string;
-	first_name: string;
-	last_name: string;
-	phone_number: string | null;
-	isTyping: boolean;
+	photoUrl: string;
+	firstName: string;
+	lastName: string;
 	isOnline: boolean;
+	isTyping: boolean;
 }
 
 interface IUser {

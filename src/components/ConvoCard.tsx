@@ -40,13 +40,10 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 
 	const HandleOpenChat = () => {
 		if (convo.conversation_type === "direct") {
-			console.log(convo.conversation_type, convo.conversation_id);
-			console.log("peers", convo.peers);
 			setChat({
 				conversationId: convo.conversation_id,
 				peers: convo.peers,
 			});
-			// fetchPeer(convo.peers[0].id);
 			navigate("/chat");
 		} else {
 			// Todo add group chat functionality

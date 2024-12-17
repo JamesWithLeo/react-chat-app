@@ -41,16 +41,7 @@ export interface ITypist {
 interface ChatContextType {
 	conversation_type: "direct" | "group";
 	conversation_thumbnail: string;
-	peers:
-		| {
-				id: string;
-				photoUrl: string;
-				firstName: string;
-				lastName: string;
-				isOnline: boolean;
-				isTyping: boolean;
-		  }[]
-		| null; // Store peer user information
+	peers: IViewUser[] | null; // Store peer user information
 	setChat: ({
 		conversationId,
 		peers,
@@ -147,16 +138,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	const [isOtherOnline, setIsOtherOnline] = useState<boolean>(false);
 	const [isTyping, setIsTyping] = useState<boolean>(false);
 	const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
-	const [peers, setPeers] = useState<
-		{
-			id: string;
-			photoUrl: string;
-			firstName: string;
-			lastName: string;
-			isOnline: boolean;
-			isTyping: boolean;
-		}[]
-	>([]);
+	const [peers, setPeers] = useState<IViewUser[]>([]);
 
 	const {
 		data: messages,
@@ -186,8 +168,14 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			enabled: !!conversationId,
 			onSuccess: (data) => {
 				if (data && Array.isArray(data) && data.length) {
-					// Update context state after fetching peers
 					setPeers(data);
+					setIsOtherTyping(
+						(data as IViewUser[]).some((p) => p.isTyping),
+					);
+					setIsOtherOnline(
+						(data as IViewUser[]).some((p) => p.isOnline),
+					);
+					// Update context state after fetching peers
 				}
 			},
 		},
@@ -198,18 +186,10 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		peers,
 	}: {
 		conversationId: string;
-		peers: {
-			id: string;
-			photoUrl: string;
-			firstName: string;
-			lastName: string;
-			isOnline: boolean;
-			isTyping: boolean;
-		}[];
+		peers: IViewUser[];
 	}) => {
 		setConversationId(conversationId);
-		sessionStorage.getItem(conversationId);
-
+		sessionStorage.setItem("conversationId", conversationId);
 		setPeers(peers);
 		setIsOtherOnline(peers.some((p) => p.isOnline));
 		setIsOtherTyping(peers.some((p) => p.isTyping));
@@ -289,12 +269,12 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			console.log("someone is typing!", data);
 			queryClient.setQueryData(
 				["peers", data.conversation_id],
-				(oldPeer: any) => {
-					if (!oldPeer) return null; // Safeguard in case oldPeer is null
+				(oldPeer: IViewUser[] | undefined) => {
+					if (!oldPeer) return oldPeer; // Safeguard in case oldPeer is null
 					return {
 						...oldPeer,
 						isTyping: data.isTyping, // Update the typing status
-					} as IViewUser;
+					};
 				},
 			);
 		});

@@ -64,9 +64,9 @@ export default function PeopleCard({
 			}}
 		>
 			<Stack direction={"row"} spacing={2}>
-				{user.photo_url ? <Avatar src={user.photo_url} /> : <Avatar />}
+				{user.photoUrl ? <Avatar src={user.photoUrl} /> : <Avatar />}
 				<Typography variant="subtitle2">
-					{user.first_name} {user.last_name}
+					{user.firstName} {user.lastName}
 				</Typography>
 			</Stack>
 

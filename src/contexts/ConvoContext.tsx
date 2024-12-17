@@ -20,14 +20,7 @@ export interface IConversation {
 	created_at: Date;
 	updated_at: Date;
 	conversation_type: "direct" | "group";
-	peers: {
-		id: string;
-		photoUrl: string;
-		firstName: string;
-		lastName: string;
-		isOnline: boolean;
-		isTyping: boolean;
-	}[];
+	peers: IViewUser[];
 	last_message: {
 		content: string;
 		created_at: string;
@@ -115,7 +108,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 					// Map through the conversations and peers to update isOnline status
 					return oldData.map((conversation: IConversation) => ({
 						...conversation,
-						peers: conversation.peers.map((peer: any) => {
+						peers: conversation.peers.map((peer: IViewUser) => {
 							console.log(
 								peer.id === data.peers.id,
 								data.peers.isOnline,
