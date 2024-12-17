@@ -11,15 +11,11 @@ import {
 	FetchMessages,
 	FetchPeers,
 	// FetchPeer,
-	SendChat,
 } from "../services/fetch";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { AppState } from "../redux/store";
-import {
-	SetConversation as DispatchSetConversation,
-	SetPeerId as DispatchSetPeerId,
-} from "../redux/slices/app";
+
 import socket from "../services/sockets";
 
 export type IMessage_type = "text" | "reply" | "doc" | "link" | "media";
@@ -44,7 +40,6 @@ interface ChatContextType {
 	peers: IViewUser[] | null; // Store peer user information
 	setChat: ({
 		conversationId,
-		peers,
 	}: {
 		conversationId: string;
 		peers: {
@@ -85,21 +80,8 @@ const defaultContextValue: ChatContextType = {
 	conversation_thumbnail: "",
 	peers: null,
 	isTyping: false,
-	setIsTyping: (value: boolean) => {},
-	setChat: async ({
-		conversationId,
-		peers,
-	}: {
-		conversationId: string;
-		peers: {
-			id: string;
-			photoUrl: string;
-			firstName: string;
-			lastName: string;
-			isOnline: boolean;
-		}[];
-	}) => {},
-	// fetchPeer: async () => {},
+	setIsTyping: () => {},
+	setChat: () => {},
 	conversation_id: null,
 	insertMessage: async () => {},
 	createMessage: async () => {},
@@ -132,8 +114,6 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	const [conversationThumbnail, setConversationThumbnail] =
 		useState<string>("");
 	const [isTyping, setIsTyping] = useState<boolean>(false);
-	// const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
-	// const [peers, setPeers] = useState<IViewUser[]>([]);
 
 	const {
 		data: messages,
@@ -153,7 +133,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		},
 	);
 	// Query for peers: can be used if you want to refresh peers on each conversationId change
-	const { data: peers, isLoading: isLoadingPeers } = useQuery(
+	const { data: peers } = useQuery(
 		["peers", conversationId],
 		async () => {
 			const response = await FetchPeers(id, conversationId);
@@ -167,16 +147,10 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		},
 	);
 
-	const setChat = async ({
-		conversationId,
-		peers,
-	}: {
-		conversationId: string;
-		peers: IViewUser[];
-	}) => {
-		setConversationId(conversationId);
+	const setChat = async ({ conversationId }: { conversationId: string }) => {
 		sessionStorage.setItem("conversationId", conversationId);
-		// setPeers(peers);
+		socket.emit("joinMessage", { conversationId: conversationId });
+		setConversationId(conversationId);
 	};
 
 	const insertMessage = async (

@@ -38,12 +38,14 @@ interface IConvoContext {
 	isLoading: boolean;
 	isSuccess: boolean;
 	fetchConversation: (userId: string) => void;
+	refreshStatus: (value: boolean) => void;
 }
 
 const defaultContextValue: IConvoContext = {
 	conversation: [],
 	isLoading: false,
 	isSuccess: false,
+	refreshStatus: () => {},
 	fetchConversation: async (userId: string) => {},
 };
 
@@ -80,7 +82,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		setSenderId(userId);
 	};
 
-	const pinConversation = async () => {};
+	// const pinConversation = async () => {};
 
 	const refreshStatus = (value: boolean) => {
 		if (!id) return;
@@ -128,7 +130,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				socket.disconnect();
 			}
 		};
-	}, [queryClient, conversation, isSuccess]);
+	}, [queryClient, conversation, isSuccess, id]);
 	return (
 		<ConvoContext.Provider
 			value={{
@@ -136,6 +138,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				fetchConversation,
 				isLoading,
 				isSuccess,
+				refreshStatus,
 			}}
 		>
 			{children}
