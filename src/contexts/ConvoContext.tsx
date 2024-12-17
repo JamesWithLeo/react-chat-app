@@ -106,11 +106,15 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 					// Map through the conversations and peers to update isOnline status
 					return oldData.map((conversation: IConversation) => ({
 						...conversation,
-						peers: conversation.peers.map((peer: any) =>
-							peer.id === data.peers.id
+						peers: conversation.peers.map((peer: any) => {
+							console.log(
+								peer.id === data.peers.id,
+								data.peers.isOnline,
+							);
+							return peer.id === data.peers.id
 								? { ...peer, isOnline: data.peers.isOnline }
-								: peer,
-						),
+								: peer;
+						}),
 					}));
 				},
 			);
