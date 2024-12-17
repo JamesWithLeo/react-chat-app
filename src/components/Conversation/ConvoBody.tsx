@@ -71,19 +71,23 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 				</Stack>
 				{conversation_type === "direct" ? (
 					<>
-						{peers && peers[0].isTyping ? (
+						{peers && peers[0].isTyping && (
 							<Typography variant="caption">Typing...</Typography>
-						) : null}
+						)}
 					</>
 				) : (
 					<>
-						{peers?.filter((p) =>
-							p.isTyping ? (
-								<Typography variant="caption">
-									{p.firstName} is typing...
-								</Typography>
-							) : null,
-						)}
+						<Typography variant="caption">
+							to do : group typing
+						</Typography>
+						{/* {peers?.filter(
+							(p) =>
+								p.isTyping && (
+									<Typography variant="caption">
+										{p.firstName} is typing...
+									</Typography>
+								),
+						)} */}
 					</>
 				)}
 			</Box>

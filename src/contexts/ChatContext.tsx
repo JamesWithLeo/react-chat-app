@@ -78,8 +78,6 @@ interface ChatContextType {
 	isSuccessMessages: boolean;
 	isLoadingMessages: boolean;
 	conversation_id: string | null;
-	isOtherOnline: boolean;
-	// isOtherTyping: boolean;
 }
 
 const defaultContextValue: ChatContextType = {
@@ -110,7 +108,6 @@ const defaultContextValue: ChatContextType = {
 	messages: [],
 	isSuccessMessages: false,
 	isLoadingMessages: false,
-	isOtherOnline: false,
 };
 
 export const ChatContext = createContext<ChatContextType>(defaultContextValue);
@@ -310,7 +307,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				removeMessage,
 
 				isTyping,
-				isOtherOnline,
+				// isOtherOnline,
 				// isOtherTyping,
 				setIsTyping: HandleTyping,
 				isSuccessMessages,

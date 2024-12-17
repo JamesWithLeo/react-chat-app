@@ -108,7 +108,7 @@ const Contact = () => {
 		conversation_type,
 		conversation_thumbnail,
 		conversation_id,
-		isOtherOnline,
+		// isOtherOnline,
 	} = useChatContext();
 	const dispatch = useDispatch<AppDispatch>();
 
@@ -169,7 +169,7 @@ const Contact = () => {
 					spacing={3}
 				>
 					<Stack alignItems={"center"} direction="row" spacing={2}>
-						{isOtherOnline ? (
+						{peers?.some((p) => p.isOnline) ? (
 							<StyledBadge
 								onClick={() => {
 									dispatch(ToggleConvobar());

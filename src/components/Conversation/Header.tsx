@@ -22,7 +22,7 @@ const Header = () => {
 	const theme = useTheme();
 	const {
 		peers,
-		isOtherOnline,
+		// isOtherOnline,
 		conversation_type,
 		conversation_thumbnail,
 		conversation_id,
@@ -65,7 +65,7 @@ const Header = () => {
 						/>
 					</IconButton>
 					<Box alignContent={"center"} component={"div"}>
-						{isOtherOnline ? (
+						{peers?.some((p) => p.isOnline) ? (
 							<StyledBadge
 								onClick={() => {
 									dispatch(ToggleConvobar());
@@ -137,7 +137,11 @@ const Header = () => {
 						)}
 
 						<Typography variant="caption">
-							{isOtherOnline ? "Online" : "Offline"}
+							{!peers
+								? "Offline"
+								: peers.some((p) => p.isOnline)
+									? "Online"
+									: "Offline"}
 						</Typography>
 					</Stack>
 				</Stack>
