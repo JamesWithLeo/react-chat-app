@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useChatContext } from "../contexts/ChatContext";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SetConversation, ToggleSidebarOn } from "../redux/slices/app";
 import { AppState } from "../redux/store";

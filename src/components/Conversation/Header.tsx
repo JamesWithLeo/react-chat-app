@@ -59,26 +59,55 @@ const Header = () => {
 						/>
 					</IconButton>
 					<Box alignContent={"center"} component={"div"}>
-						<StyledBadge
-							onClick={() => {
-								dispatch(ToggleConvobar());
-							}}
-							overlap="circular"
-							anchorOrigin={{
-								vertical: "bottom",
-								horizontal: "right",
-							}}
-							variant="dot"
-						>
-							{peer ? (
-								<Avatar
-									alt={peer.photo_url}
-									src={peer.photo_url}
-								/>
-							) : (
-								<Avatar />
-							)}
-						</StyledBadge>
+						{peer?.isOnline ? (
+							<StyledBadge
+								onClick={() => {
+									dispatch(ToggleConvobar());
+								}}
+								overlap="circular"
+								anchorOrigin={{
+									vertical: "bottom",
+									horizontal: "right",
+								}}
+								variant="dot"
+								sx={{
+									"& .MuiBadge-dot": {
+										backgroundColor: "#44b700",
+										color: "#44b700",
+									},
+								}}
+							>
+								{peer ? (
+									<Avatar
+										alt={peer.photo_url}
+										src={peer.photo_url}
+									/>
+								) : (
+									<Avatar />
+								)}
+							</StyledBadge>
+						) : (
+							<StyledBadge
+								onClick={() => {
+									dispatch(ToggleConvobar());
+								}}
+								overlap="circular"
+								anchorOrigin={{
+									vertical: "bottom",
+									horizontal: "right",
+								}}
+								variant="dot"
+							>
+								{peer ? (
+									<Avatar
+										alt={peer.photo_url}
+										src={peer.photo_url}
+									/>
+								) : (
+									<Avatar />
+								)}
+							</StyledBadge>
+						)}
 					</Box>
 					<Stack spacing={0.2}>
 						{peer ? (
@@ -86,7 +115,10 @@ const Header = () => {
 								{peer.first_name} {peer.last_name}
 							</Typography>
 						) : null}
-						<Typography variant="caption">Online</Typography>
+
+						<Typography variant="caption">
+							{peer?.isOnline ? "Online" : "Offline"}
+						</Typography>
 					</Stack>
 				</Stack>
 

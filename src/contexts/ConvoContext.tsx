@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "../redux/store";
 import socket from "../services/sockets";
 import { IMessage_type } from "./ChatContext";
+import { IViewUser } from "../redux/slices/auth";
 
 export interface IConversation {
 	conversation_id: string;
@@ -123,6 +124,17 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 								: peer;
 						}),
 					}));
+				},
+			);
+			queryClient.setQueryData(
+				["peer", data.peers.id],
+				(oldData: IViewUser[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((peer) =>
+						peer.id === data.peers.id
+							? { ...peer, isOnline: data.peers.isOnline }
+							: peer,
+					);
 				},
 			);
 		});
