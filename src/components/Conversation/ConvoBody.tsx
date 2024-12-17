@@ -71,7 +71,7 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 				</Stack>
 				{conversation_type === "direct" ? (
 					<>
-						{peers?.some((p) => p.isTyping) ? (
+						{peers && peers[0].isTyping ? (
 							<Typography variant="caption">Typing...</Typography>
 						) : null}
 					</>

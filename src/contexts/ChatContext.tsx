@@ -271,14 +271,24 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				(oldPeers: IViewUser[] | undefined) => {
 					if (!oldPeers) return oldPeers; // Safeguard in case oldPeer is null
 					return oldPeers.map((peer) => {
-						console.log(peer.id === data.id, data.isTyping);
-						return peer.id === data.id
-							? { ...peer, isTyping: data.isTyping }
+						const isMatchingPeer = peer.id === data.id;
+						console.log(
+							"Is Matching Peer:",
+							isMatchingPeer,
+							"Data.isTyping:",
+							data.isTyping,
+						);
+						return isMatchingPeer
+							? { ...peer, isTyping: data.isTyping } // Update the typing status
 							: peer;
 					});
 				},
 			);
-			console.log(peers);
+			const updatedPeers = queryClient.getQueryData([
+				"peers",
+				data.conversation_id,
+			]);
+			console.log("Updated Peers Data:", updatedPeers);
 		});
 
 		return () => {
