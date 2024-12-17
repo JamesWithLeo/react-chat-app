@@ -271,6 +271,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				(oldPeers: IViewUser[] | undefined) => {
 					if (!oldPeers) return oldPeers; // Safeguard in case oldPeer is null
 					return oldPeers.map((peer) => {
+						console.log(peer.id === data.id, data.isTyping);
 						return peer.id === data.id
 							? { ...peer, isTyping: data.isTyping }
 							: peer;
