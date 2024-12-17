@@ -131,10 +131,9 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	>("direct");
 	const [conversationThumbnail, setConversationThumbnail] =
 		useState<string>("");
-	const [isOtherOnline, setIsOtherOnline] = useState<boolean>(false);
 	const [isTyping, setIsTyping] = useState<boolean>(false);
 	// const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
-	const [peers, setPeers] = useState<IViewUser[]>([]);
+	// const [peers, setPeers] = useState<IViewUser[]>([]);
 
 	const {
 		data: messages,
@@ -154,7 +153,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		},
 	);
 	// Query for peers: can be used if you want to refresh peers on each conversationId change
-	const { data: fetchedPeers, isLoading: isLoadingPeers } = useQuery(
+	const { data: peers, isLoading: isLoadingPeers } = useQuery(
 		["peers", conversationId],
 		async () => {
 			const response = await FetchPeers(id, conversationId);
@@ -163,16 +162,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		{
 			enabled: !!conversationId,
 			onSuccess: (data) => {
-				if (data && Array.isArray(data) && data.length) {
-					setPeers(data);
-					// setIsOtherTyping(
-					// 	(data as IViewUser[]).some((p) => p.isTyping),
-					// );
-					// setIsOtherOnline(
-					// 	(data as IViewUser[]).some((p) => p.isOnline),
-					// );
-					// Update context state after fetching peers
-				}
+				console.log("success peers in useQuery");
 			},
 		},
 	);
@@ -186,9 +176,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	}) => {
 		setConversationId(conversationId);
 		sessionStorage.setItem("conversationId", conversationId);
-		setPeers(peers);
-		setIsOtherOnline(peers.some((p) => p.isOnline));
-		// setIsOtherTyping(peers.some((p) => p.isTyping));
+		// setPeers(peers);
 	};
 
 	const insertMessage = async (

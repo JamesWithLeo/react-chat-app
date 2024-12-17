@@ -22,7 +22,6 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 		useChatContext();
 
 	useEffect(() => {
-		console.log("Messages length changed!");
 		const body = document.getElementById("body") as HTMLDivElement;
 		if (body) body.scrollTop = body.scrollHeight;
 	}, [messages]);
