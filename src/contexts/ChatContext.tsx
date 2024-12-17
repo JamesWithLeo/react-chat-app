@@ -79,7 +79,7 @@ interface ChatContextType {
 	isLoadingMessages: boolean;
 	conversation_id: string | null;
 	isOtherOnline: boolean;
-	isOtherTyping: boolean;
+	// isOtherTyping: boolean;
 }
 
 const defaultContextValue: ChatContextType = {
@@ -111,7 +111,6 @@ const defaultContextValue: ChatContextType = {
 	isSuccessMessages: false,
 	isLoadingMessages: false,
 	isOtherOnline: false,
-	isOtherTyping: false,
 };
 
 export const ChatContext = createContext<ChatContextType>(defaultContextValue);
@@ -137,7 +136,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		useState<string>("");
 	const [isOtherOnline, setIsOtherOnline] = useState<boolean>(false);
 	const [isTyping, setIsTyping] = useState<boolean>(false);
-	const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
+	// const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
 	const [peers, setPeers] = useState<IViewUser[]>([]);
 
 	const {
@@ -169,12 +168,12 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			onSuccess: (data) => {
 				if (data && Array.isArray(data) && data.length) {
 					setPeers(data);
-					setIsOtherTyping(
-						(data as IViewUser[]).some((p) => p.isTyping),
-					);
-					setIsOtherOnline(
-						(data as IViewUser[]).some((p) => p.isOnline),
-					);
+					// setIsOtherTyping(
+					// 	(data as IViewUser[]).some((p) => p.isTyping),
+					// );
+					// setIsOtherOnline(
+					// 	(data as IViewUser[]).some((p) => p.isOnline),
+					// );
 					// Update context state after fetching peers
 				}
 			},
@@ -192,7 +191,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		sessionStorage.setItem("conversationId", conversationId);
 		setPeers(peers);
 		setIsOtherOnline(peers.some((p) => p.isOnline));
-		setIsOtherTyping(peers.some((p) => p.isTyping));
+		// setIsOtherTyping(peers.some((p) => p.isTyping));
 	};
 
 	const insertMessage = async (
@@ -300,7 +299,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 				isTyping,
 				isOtherOnline,
-				isOtherTyping,
+				// isOtherTyping,
 				setIsTyping: HandleTyping,
 				isSuccessMessages,
 				isLoadingMessages,

@@ -18,13 +18,8 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 		theme.breakpoints.down("sm"),
 	);
 	const id = useSelector((state: AppState) => state.auth.user?.id);
-	const {
-		messages,
-		isSuccessMessages,
-		peers,
-		conversation_type,
-		isOtherTyping,
-	} = useChatContext();
+	const { messages, isSuccessMessages, peers, conversation_type } =
+		useChatContext();
 
 	useEffect(() => {
 		console.log("Messages length changed!");
@@ -76,7 +71,7 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 				</Stack>
 				{conversation_type === "direct" ? (
 					<>
-						{isOtherTyping ? (
+						{peers?.some((p) => p.isTyping) ? (
 							<Typography variant="caption">Typing...</Typography>
 						) : null}
 					</>
