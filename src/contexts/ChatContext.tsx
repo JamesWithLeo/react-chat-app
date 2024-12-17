@@ -286,15 +286,19 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		});
 		socket.on("peerTyping", (data) => {
 			if (data.id === id) return;
-			console.log(data, " is typing!");
-			queryClient.setQueryData(["peer", data.id], (oldPeer: any) => {
-				if (!oldPeer) return null; // Safeguard in case oldPeer is null
-				return {
-					...oldPeer,
-					isTyping: data.isTyping, // Update the typing status
-				} as IViewUser;
-			});
+			console.log("someone is typing!", data);
+			queryClient.setQueryData(
+				["peer", data.conversation_id],
+				(oldPeer: any) => {
+					if (!oldPeer) return null; // Safeguard in case oldPeer is null
+					return {
+						...oldPeer,
+						isTyping: data.isTyping, // Update the typing status
+					} as IViewUser;
+				},
+			);
 		});
+
 		return () => {
 			socket.off("toClientMessage");
 			socket.off("peerTyping");

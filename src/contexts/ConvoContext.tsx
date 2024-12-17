@@ -127,17 +127,6 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 					}));
 				},
 			);
-			queryClient.setQueryData(
-				["peer", data.peers.id],
-				(oldData: IViewUser[] | undefined) => {
-					if (!oldData) return oldData;
-					return oldData.map((peer) =>
-						peer.id === data.peers.id
-							? { ...peer, isOnline: data.peers.isOnline }
-							: peer,
-					);
-				},
-			);
 		});
 	}, [queryClient, conversation, isSuccess]);
 	return (
