@@ -13,26 +13,41 @@ import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
 import { List } from "@phosphor-icons/react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, AppState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { ToggleSidebarOn } from "../../redux/slices/app";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
-import ConvoSkeleton from "../../components/skeletons/skeleton";
+import socket from "../../services/sockets";
 
 const Chats = () => {
 	const theme = useTheme();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
+	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-	const { conversation, isSuccess, refreshStatus } = useConvoContext();
+	const { conversation, isSuccess } = useConvoContext();
 
 	useEffect(() => {
-		refreshStatus(true);
-	}, [isSuccess, conversation, refreshStatus]);
+		if (id)
+			socket.emit("peersStatus", {
+				sender_id: id,
+				isOnline: true,
+			});
+
+		return () => {
+			if (id) {
+				socket.emit("peersStatus", {
+					sender_id: id,
+					isOnline: true,
+				});
+				socket.disconnect();
+			}
+		};
+	}, [isSuccess, conversation, id]);
 	return (
 		<>
 			<Box
