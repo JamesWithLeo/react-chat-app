@@ -4,6 +4,7 @@ import {
 	ReactNode,
 	useContext,
 	useEffect,
+	useRef,
 	useState,
 } from "react";
 import { FetchConvo } from "../services/fetch";
@@ -60,6 +61,8 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 }) => {
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const [senderId, setSenderId] = useState<string>(id ?? "");
+	const hasEmittedRed = useRef(false);
+
 	const queryClient = useQueryClient();
 
 	const {
@@ -86,6 +89,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	const refreshStatus = (value: boolean) => {
 		if (!id) return;
+
 		socket.emit("peersStatus", {
 			sender_id: id,
 			isOnline: true,
@@ -94,10 +98,13 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	useEffect(() => {
 		if (!id) return;
-		socket.emit("peersStatus", {
-			sender_id: id,
-			isOnline: true,
-		});
+		if (!hasEmittedRed.current) {
+			socket.emit("peersStatus", {
+				sender_id: id,
+				isOnline: true,
+			});
+			hasEmittedRed.current = true;
+		}
 		if (isSuccess) {
 			socket.emit("joinConvo", {
 				conversationIds: conversation.map(
@@ -133,6 +140,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 			if (id) {
 				socket.emit("peersStatus", { sender_id: id, isOnline: false });
 			}
+			socket.off("peersStatus");
 		};
 	}, [queryClient, conversation, isSuccess, id]);
 	return (
