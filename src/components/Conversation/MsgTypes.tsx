@@ -468,7 +468,7 @@ const MessageOptions = ({
 			>
 				<Stack spacing={1} px={1}>
 					{Message_options.map((option) => {
-						if (isFromOther && option.key === "delete") {
+						if (!isFromOther && option.key === "delete") {
 							return null;
 						} else if (!isFromOther && option.key === "report") {
 							return null;

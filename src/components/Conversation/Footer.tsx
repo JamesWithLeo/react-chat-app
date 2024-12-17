@@ -25,7 +25,6 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import socket from "../../services/sockets";
-// import { useConvoContext } from "../../contexts/ConvoContext";
 
 const Actions = [
 	{
@@ -133,24 +132,49 @@ const ChatInput = forwardRef<
 
 const Footer = () => {
 	const theme = useTheme();
-	const { conversation_id, isTyping, messagePeer, setIsTyping } =
-		useChatContext();
+	const {
+		conversation_id,
+		isTyping,
+		createMessage,
+		insertMessage,
+		setIsTyping,
+		peer,
+	} = useChatContext();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
 	const messageInputRef = useRef<HTMLInputElement>(null);
 	const [openPicker, setOpenPicker] = useState(false);
 
 	async function HandleSendMessage() {
-		if (!messageInputRef.current || !id) {
+		if (!messageInputRef.current || !id || !peer) {
 			return;
 		}
-		const message = messageInputRef.current.value;
+
+		const content = messageInputRef.current.value;
 		messageInputRef.current.value = "";
-		messagePeer(message, id, "text");
+		// todo : verify or confirm if the user doesn't have conversation yet
+		// insert
+		if (conversation_id) {
+			insertMessage(content, id, "text");
+			return;
+		}
+		// create first message
+		else {
+			createMessage({
+				userId: id,
+				content,
+				content_type: "text",
+				peerId: [peer.id],
+				conversation_type: "direct",
+			});
+		}
 	}
 
 	async function HandleFocusTyping() {
 		if (!id || isTyping) {
+			return;
+		} else if (!conversation_id) {
+			setIsTyping(true);
 			return;
 		}
 		socket.emit("handleTyping", {
@@ -161,8 +185,12 @@ const Footer = () => {
 		setIsTyping(true);
 	}
 	async function HandleBlurTyping() {
-		if (!id || !isTyping) return;
-
+		if (!id || !isTyping) {
+			return;
+		} else if (!conversation_id) {
+			setIsTyping(false);
+			return;
+		}
 		socket.emit("handleTyping", {
 			conversation_id,
 			sender_id: id,

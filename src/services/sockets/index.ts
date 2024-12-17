@@ -19,11 +19,18 @@ interface ServerToClientEvents {
 
 interface ClientToServerEvents {
 	joinMessage: ({ conversationId }: { conversationId: string }) => void;
-	newMessage: (messageData: {
-		sender_id: string;
+	insertMessage: (messageData: {
+		userId: string;
 		conversation_id: string;
 		content: string;
-		message_type: IMessage_type;
+		content_type: IMessage_type;
+	}) => void;
+	createMessage: (messageData: {
+		userId: string;
+		content: string;
+		content_type: IMessage_type;
+		peerId: string[];
+		conversation_type: "direct" | "group";
 	}) => void;
 	handleTyping: ({
 		sender_id,

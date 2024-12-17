@@ -46,7 +46,14 @@ interface ChatContextType {
 	isSuccess: boolean;
 	fetchPeer: (peerId: string) => void; // Function to fetch peer data
 
-	messagePeer: (
+	createMessage: (messageData: {
+		userId: string;
+		content: string;
+		content_type: IMessage_type;
+		peerId: string[];
+		conversation_type: "direct" | "group";
+	}) => void;
+	insertMessage: (
 		message: string,
 		userId: string,
 		messageType: IMessage_type,
@@ -54,7 +61,7 @@ interface ChatContextType {
 	removeMessage: (messageId: string) => Promise<void>;
 	isSuccessMessages: boolean;
 	isLoadingMessages: boolean;
-	conversation_id: string;
+	conversation_id: string | null;
 }
 
 const defaultContextValue: ChatContextType = {
@@ -64,8 +71,9 @@ const defaultContextValue: ChatContextType = {
 	isTyping: false,
 	setIsTyping: (value: boolean) => {},
 	fetchPeer: async () => {},
-	conversation_id: "",
-	messagePeer: async () => {},
+	conversation_id: null,
+	insertMessage: async () => {},
+	createMessage: async () => {},
 
 	removeMessage: async () => {},
 	messages: [],
@@ -145,18 +153,40 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			setPeerId(peer_id);
 		}
 	};
-	// old way for sending message, fetch api . soon to remove replaced by socket.io
-	const messagePeer = async (
+
+	const insertMessage = async (
 		message: string,
 		userId: string,
 		messageType: IMessage_type,
 	) => {
 		if (!peer || !peer.id) return;
-		socket.emit("newMessage", {
+		socket.emit("insertMessage", {
 			conversation_id,
 			content: message,
-			sender_id: userId,
-			message_type: messageType,
+			userId,
+			content_type: messageType,
+		});
+	};
+	const createMessage = async ({
+		userId,
+		content,
+		content_type,
+		peerId,
+		conversation_type,
+	}: {
+		userId: string;
+		content: string;
+		content_type: IMessage_type;
+		peerId: string[];
+		conversation_type: "direct" | "group";
+	}) => {
+		if (!peer || !peer.id) return;
+		socket.emit("createMessage", {
+			peerId,
+			content,
+			content_type,
+			userId,
+			conversation_type,
 		});
 	};
 
@@ -208,7 +238,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			socket.off("toClientMessage");
 			socket.off("peerTyping");
 		};
-	}, [conversation_id, queryClient]);
+	}, [conversation_id, queryClient, id]);
 	return (
 		<ChatContext.Provider
 			value={{
@@ -218,7 +248,8 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				isLoading,
 				isSuccess,
 				messages,
-				messagePeer,
+				createMessage,
+				insertMessage,
 				removeMessage,
 
 				isTyping,

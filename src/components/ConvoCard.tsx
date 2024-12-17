@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useChatContext } from "../contexts/ChatContext";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { SetConversation, ToggleSidebarOn } from "../redux/slices/app";
 import { AppState } from "../redux/store";
@@ -26,6 +26,7 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const { fetchPeer } = useChatContext();
+
 	const isSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.up("sm"),
 	);
@@ -36,7 +37,7 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 
 	const HandleOpenChat = () => {
 		if (convo.conversation_type === "direct") {
-			fetchPeer(convo.recipient_id!);
+			fetchPeer(convo.peers[0].id);
 			navigate("/chat");
 		} else {
 			// Todo add group chat functionality
@@ -99,7 +100,7 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 					justifyContent="space-between"
 				>
 					<Stack direction="row" spacing={2}>
-						{true ? (
+						{convo.isOnline ? (
 							<StyledBadge
 								overlap="circular"
 								anchorOrigin={{
@@ -107,11 +108,46 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 									horizontal: "right",
 								}}
 								variant="dot"
+								sx={{
+									"& .MuiBadge-dot": {
+										backgroundColor: "#44b700",
+										color: "#44b700",
+									},
+								}}
 							>
-								<Avatar src={convo.conversation_thumbnail} />
+								<Avatar
+									src={
+										convo.conversation_type === "group"
+											? (convo.conversation_thumbnail ??
+												"")
+											: convo.peers[0].photoUrl
+									}
+								/>
 							</StyledBadge>
 						) : (
-							<Avatar src={convo.conversation_thumbnail} />
+							<StyledBadge
+								overlap="circular"
+								anchorOrigin={{
+									vertical: "bottom",
+									horizontal: "right",
+								}}
+								variant="dot"
+								sx={{
+									"& .MuiBadge-dot": {
+										backgroundColor: "gray",
+										color: "gray",
+									},
+								}}
+							>
+								<Avatar
+									src={
+										convo.conversation_type === "group"
+											? (convo.conversation_thumbnail ??
+												"")
+											: convo.peers[0].photoUrl
+									}
+								/>
+							</StyledBadge>
 						)}
 
 						<Stack spacing={0.3}>
@@ -124,21 +160,31 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 									textOverflow: "ellipsis",
 								}}
 							>
-								{convo.recipient_name ?? convo.conversation_id}
+								{convo.conversation_type === "group"
+									? (convo.conversation_name ??
+										convo.peers
+											.map((p) => p.firstName)
+											.join(", "))
+									: (convo.conversation_name ??
+										`${convo.peers[0].firstName} ${convo.peers[0].lastName}`)}
 							</Typography>
-							<Typography variant="caption">
-								{convo.last_message_content}
-							</Typography>
+							{convo.last_message ? (
+								<Typography variant="caption">
+									{convo.last_message.content}
+								</Typography>
+							) : null}
 						</Stack>
 					</Stack>
 					<Stack spacing={2} alignItems="center">
-						<Typography
-							sx={{ fontWeight: 400 }}
-							variant="caption"
-							fontSize={10}
-						>
-							{dayjs(convo.last_message_created_at).fromNow()}
-						</Typography>
+						{convo.last_message ? (
+							<Typography
+								sx={{ fontWeight: 400 }}
+								variant="caption"
+								fontSize={10}
+							>
+								{dayjs(convo.last_message.created_at).fromNow()}
+							</Typography>
+						) : null}
 						<Badge color="primary" badgeContent={1}></Badge>
 					</Stack>
 				</Stack>

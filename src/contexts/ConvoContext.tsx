@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
 	createContext,
 	ReactNode,
@@ -10,22 +10,32 @@ import { FetchConvo } from "../services/fetch";
 import { useSelector } from "react-redux";
 import { AppState } from "../redux/store";
 import socket from "../services/sockets";
+import { IMessage_type } from "./ChatContext";
 
 export interface IConversation {
 	conversation_id: string;
-	conversation_name: string;
-	conversation_thumbnail: string;
+	conversation_name: string | null;
+	conversation_thumbnail: string | null;
+	created_at: Date;
+	updated_at: Date;
 	conversation_type: "direct" | "group";
-	created_at: string;
-	last_message_id: string;
-	last_sender_id: string;
-	recipient_id: "string" | null;
-	recipient_name: string | null;
-	last_message_created_at: string;
-	last_message_content: string;
-	updated_at: string;
+	peers: {
+		id: string;
+		photoUrl: string;
+		firstName: string;
+		lastName: string;
+	}[];
+	last_message: {
+		content: string;
+		created_at: string;
+		is_read: boolean;
+		message_type: IMessage_type;
+	};
+
+	// to add ff:
 	is_pinned: boolean;
 	is_archived: boolean;
+	isOnline: boolean;
 }
 
 interface IConvoContext {
@@ -55,6 +65,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 }) => {
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const [senderId, setSenderId] = useState<string>(id ?? "");
+	const queryClient = useQueryClient();
 
 	const {
 		data: conversation,
@@ -85,7 +96,24 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	useEffect(() => {
 		socket.on("peersStatus", (data) => {
-			console.log(data);
+			console.log("someone is active: ", data);
+			// Update cached conversation data
+			queryClient.setQueryData(
+				["convo"],
+				(oldData: IConversation[] | undefined) => {
+					if (!oldData) return oldData;
+
+					// Map through the conversations and peers to update isOnline status
+					return oldData.map((conversation: IConversation) => ({
+						...conversation,
+						peers: conversation.peers.map((peer: any) =>
+							peer.id === data.peers.id
+								? { ...peer, isOnline: data.peers.isOnline }
+								: peer,
+						),
+					}));
+				},
+			);
 		});
 	}, []);
 	return (
