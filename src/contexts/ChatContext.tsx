@@ -149,8 +149,8 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 	const setChat = async ({ conversationId }: { conversationId: string }) => {
 		sessionStorage.setItem("conversationId", conversationId);
-		socket.emit("joinMessage", { conversationId: conversationId });
 		setConversationId(conversationId);
+		// socket.emit("joinMessage", { conversationId: conversationId });
 	};
 
 	const insertMessage = async (
@@ -223,13 +223,16 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			);
 		});
 		socket.on("peerTyping", (data) => {
-			if (data.id === id) return;
 			console.log("Received typing event:", data);
+			if (data.id === id) return;
 
 			queryClient.setQueryData(
 				["peers", data.conversation_id],
 				(oldPeers: IViewUser[] | undefined) => {
-					if (!oldPeers) return oldPeers; // Safeguard in case oldPeer is null
+					if (!oldPeers) {
+						console.log("No old peers data found");
+						return oldPeers; // Safeguard in case oldPeer is null
+					}
 					return oldPeers.map((peer) => {
 						const isMatchingPeer = peer.id === data.id;
 						console.log(
