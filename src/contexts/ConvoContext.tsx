@@ -61,7 +61,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 }) => {
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const [senderId, setSenderId] = useState<string>(id ?? "");
-	const hasEmittedRed = useRef(false);
+	const isUnmountingRef = useRef(false);
 
 	const queryClient = useQueryClient();
 
@@ -98,13 +98,11 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	useEffect(() => {
 		if (!id) return;
-		if (!hasEmittedRed.current) {
-			socket.emit("peersStatus", {
-				sender_id: id,
-				isOnline: true,
-			});
-			hasEmittedRed.current = true;
-		}
+		isUnmountingRef.current = false;
+		socket.emit("peersStatus", {
+			sender_id: id,
+			isOnline: true,
+		});
 		if (isSuccess) {
 			socket.emit("joinConvo", {
 				conversationIds: conversation.map(
@@ -138,7 +136,20 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		});
 		return () => {
 			if (id) {
-				socket.emit("peersStatus", { sender_id: id, isOnline: false });
+				// Avoid emitting "isOnline: false" during re-renders
+				if (isUnmountingRef.current) {
+					console.log("User going offline...");
+					socket.emit("peersStatus", {
+						sender_id: id,
+						isOnline: false,
+					});
+				}
+
+				// Mark as unmounting
+				isUnmountingRef.current = true;
+
+				// Remove the listener
+				socket.off("peersStatus");
 			}
 		};
 	}, [queryClient, conversation, isSuccess, id]);
