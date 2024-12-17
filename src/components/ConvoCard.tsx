@@ -100,7 +100,7 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 					justifyContent="space-between"
 				>
 					<Stack direction="row" spacing={2}>
-						{convo.isOnline ? (
+						{convo.peers.some((p) => p.isOnline) ? (
 							<StyledBadge
 								overlap="circular"
 								anchorOrigin={{

@@ -24,6 +24,7 @@ export interface IConversation {
 		photoUrl: string;
 		firstName: string;
 		lastName: string;
+		isOnline: boolean;
 	}[];
 	last_message: {
 		content: string;
@@ -35,7 +36,6 @@ export interface IConversation {
 	// to add ff:
 	is_pinned: boolean;
 	is_archived: boolean;
-	isOnline: boolean;
 }
 
 interface IConvoContext {

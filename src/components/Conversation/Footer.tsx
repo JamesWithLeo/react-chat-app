@@ -73,6 +73,8 @@ const ChatInput = forwardRef<
 			inputRef={ref}
 			onFocus={onFocusTyping}
 			onBlur={onBlur}
+			onTouchStart={onFocusTyping}
+			onTouchEnd={onBlur}
 			fullWidth
 			placeholder="Write a message..."
 			variant="standard"
