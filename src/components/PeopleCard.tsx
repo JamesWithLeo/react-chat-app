@@ -30,7 +30,7 @@ export default function PeopleCard({
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const theme = useTheme();
 	const navigate = useNavigate();
-	const { fetchPeer } = useChatContext();
+	// const { fetchPeer } = useChatContext();
 
 	const isNotSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.up("sm"),
@@ -44,7 +44,7 @@ export default function PeopleCard({
 	};
 
 	const handleMessage = () => {
-		fetchPeer(user.id);
+		// fetchPeer(user.id);
 		navigate("/chat");
 	};
 

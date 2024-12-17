@@ -34,6 +34,7 @@ import { SlideProps } from "@mui/material";
 import { AppDispatch } from "../redux/store";
 import { ToggleConvobar } from "../redux/slices/app";
 import { useChatContext } from "../contexts/ChatContext";
+import StyledBadge from "./StyledBadge";
 
 // Define the ref and props types for the Transition component using forwardRef
 const Transition = React.forwardRef<unknown, SlideProps>(
@@ -102,7 +103,13 @@ const DeleteDialog = ({
 
 const Contact = () => {
 	const theme = useTheme();
-	const { peer } = useChatContext();
+	const {
+		peers,
+		conversation_type,
+		conversation_thumbnail,
+		conversation_id,
+		isOtherOnline,
+	} = useChatContext();
 	const dispatch = useDispatch<AppDispatch>();
 
 	const [openBlock, setOpenBlock] = useState(false);
@@ -162,18 +169,86 @@ const Contact = () => {
 					spacing={3}
 				>
 					<Stack alignItems={"center"} direction="row" spacing={2}>
-						<Avatar
-							src={peer?.photo_url}
-							alt={peer?.first_name!}
-							sx={{ height: 64, width: 64 }}
-						/>
+						{isOtherOnline ? (
+							<StyledBadge
+								onClick={() => {
+									dispatch(ToggleConvobar());
+								}}
+								overlap="circular"
+								anchorOrigin={{
+									vertical: "bottom",
+									horizontal: "right",
+								}}
+								variant="dot"
+								sx={{
+									"& .MuiBadge-dot": {
+										backgroundColor: "#44b700",
+										color: "#44b700",
+									},
+									height: 64,
+									width: 64,
+								}}
+							>
+								{peers?.length ? (
+									// to do : apply default theme
+									<Avatar
+										sx={{ height: 64, width: 64 }}
+										src={
+											conversation_type === "group"
+												? (conversation_thumbnail ?? "")
+												: peers[0].photoUrl
+										}
+									/>
+								) : (
+									<Avatar />
+								)}
+							</StyledBadge>
+						) : (
+							<StyledBadge
+								onClick={() => {
+									dispatch(ToggleConvobar());
+								}}
+								overlap="circular"
+								anchorOrigin={{
+									vertical: "bottom",
+									horizontal: "right",
+								}}
+								variant="dot"
+							>
+								{peers?.length ? (
+									// to do : apply default theme
+									<Avatar
+										sx={{ height: 64, width: 64 }}
+										src={
+											conversation_type === "group"
+												? (conversation_thumbnail ?? "")
+												: peers[0].photoUrl
+										}
+									/>
+								) : (
+									<Avatar />
+								)}
+							</StyledBadge>
+						)}
 						<Stack spacing={0.5}>
 							<Typography variant="caption" fontWeight={600}>
-								{peer?.first_name} {peer?.last_name}
+								{conversation_type === "group" ? (
+									<>
+										{peers
+											?.map((p) => p.firstName)
+											.join(", ")}
+									</>
+								) : (
+									<>
+										{peers?.length
+											? `${peers[0].firstName} ${peers[0].lastName}`
+											: conversation_id}
+									</>
+								)}
 							</Typography>
-							{peer?.phone_number ? (
+							{peers ? (
 								<Typography variant="caption" fontWeight={500}>
-									{peer?.phone_number}
+									{/* {peers?.phone_number} */}
 								</Typography>
 							) : null}
 						</Stack>

@@ -9,7 +9,8 @@ import { IViewUser } from "../redux/slices/auth";
 import {
 	DeleteChat,
 	FetchMessages,
-	FetchPeer,
+	FetchPeers,
+	// FetchPeer,
 	SendChat,
 } from "../services/fetch";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -38,13 +39,37 @@ export interface ITypist {
 	photoUrl: string;
 }
 interface ChatContextType {
-	peer: IViewUser | null; // Store peer user information
+	conversation_type: "direct" | "group";
+	conversation_thumbnail: string;
+	peers:
+		| {
+				id: string;
+				photoUrl: string;
+				firstName: string;
+				lastName: string;
+				isOnline: boolean;
+				isTyping: boolean;
+		  }[]
+		| null; // Store peer user information
+	setChat: ({
+		conversationId,
+		peers,
+	}: {
+		conversationId: string;
+		peers: {
+			id: string;
+			photoUrl: string;
+			firstName: string;
+			lastName: string;
+			isOnline: boolean;
+			isTyping: boolean;
+		}[];
+	}) => void;
+
 	isTyping: boolean; // for user, to check if the user is typing
 	setIsTyping: (value: boolean) => void;
 	messages: IMessages[];
-	isLoading: boolean;
-	isSuccess: boolean;
-	fetchPeer: (peerId: string) => void; // Function to fetch peer data
+	// fetchPeer: (peerId: string) => void; // Function to fetch peer data
 
 	createMessage: (messageData: {
 		userId: string;
@@ -62,15 +87,30 @@ interface ChatContextType {
 	isSuccessMessages: boolean;
 	isLoadingMessages: boolean;
 	conversation_id: string | null;
+	isOtherOnline: boolean;
+	isOtherTyping: boolean;
 }
 
 const defaultContextValue: ChatContextType = {
-	peer: null,
-	isLoading: false,
-	isSuccess: false,
+	conversation_type: "direct",
+	conversation_thumbnail: "",
+	peers: null,
 	isTyping: false,
 	setIsTyping: (value: boolean) => {},
-	fetchPeer: async () => {},
+	setChat: async ({
+		conversationId,
+		peers,
+	}: {
+		conversationId: string;
+		peers: {
+			id: string;
+			photoUrl: string;
+			firstName: string;
+			lastName: string;
+			isOnline: boolean;
+		}[];
+	}) => {},
+	// fetchPeer: async () => {},
 	conversation_id: null,
 	insertMessage: async () => {},
 	createMessage: async () => {},
@@ -79,6 +119,8 @@ const defaultContextValue: ChatContextType = {
 	messages: [],
 	isSuccessMessages: false,
 	isLoadingMessages: false,
+	isOtherOnline: false,
+	isOtherTyping: false,
 };
 
 export const ChatContext = createContext<ChatContextType>(defaultContextValue);
@@ -91,67 +133,86 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	children,
 }) => {
 	const queryClient = useQueryClient();
-	const dispatch = useDispatch();
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
-	const [peerId, setPeerId] = useState<string>(
-		sessionStorage.getItem("peerId") ?? "",
-	);
-	const [conversation_id, setConversationId] = useState<string>(
+	const [conversationId, setConversationId] = useState<string>(
 		sessionStorage.getItem("conversationId") ?? "",
 	);
+	const [conversationType, setConversationType] = useState<
+		"direct" | "group"
+	>("direct");
+	const [conversationThumbnail, setConversationThumbnail] =
+		useState<string>("");
+	const [isOtherOnline, setIsOtherOnline] = useState<boolean>(false);
 	const [isTyping, setIsTyping] = useState<boolean>(false);
-
-	const {
-		data: peer,
-		isLoading,
-		isSuccess,
-	} = useQuery(
-		["peer", peerId],
-		async () => {
-			const response = await FetchPeer(id, peerId);
-			if (response.ok && response.peer) {
-				dispatch(DispatchSetPeerId(response.peer.id ?? ""));
-				dispatch(
-					DispatchSetConversation({
-						id: response.conversation_id ?? "",
-					}),
-				);
-
-				setConversationId(response.conversation_id ?? "");
-
-				return response.peer;
-			}
-			return null;
-		},
-		{ enabled: !!peerId },
-	);
+	const [isOtherTyping, setIsOtherTyping] = useState<boolean>(false);
+	const [peers, setPeers] = useState<
+		{
+			id: string;
+			photoUrl: string;
+			firstName: string;
+			lastName: string;
+			isOnline: boolean;
+			isTyping: boolean;
+		}[]
+	>([]);
 
 	const {
 		data: messages,
 		isLoading: isLoadingMessages,
 		isSuccess: isSuccessMessages,
 	} = useQuery(
-		["messages", conversation_id],
+		["messages", conversationId],
 		async () => {
-			const fetchMessageResponse = await FetchMessages(conversation_id);
+			const fetchMessageResponse = await FetchMessages(conversationId);
 			if (fetchMessageResponse.ok) {
 				return fetchMessageResponse.messages;
 			}
 			return null;
 		},
 		{
-			enabled: !!conversation_id,
+			enabled: !!conversationId,
+		},
+	);
+	// Query for peers: can be used if you want to refresh peers on each conversationId change
+	const { data: fetchedPeers, isLoading: isLoadingPeers } = useQuery(
+		["peers", conversationId],
+		async () => {
+			const response = await FetchPeers(id, conversationId);
+			return response.ok ? response.peers : [];
+		},
+		{
+			enabled: !!conversationId,
+			onSuccess: (data) => {
+				if (data && Array.isArray(data) && data.length) {
+					// Update context state after fetching peers
+					setPeers(data);
+				}
+			},
 		},
 	);
 
-	const fetchPeer = async (peer_id: string) => {
-		const previousConvoId = sessionStorage.getItem("peerId");
-		if (previousConvoId !== peer_id) {
-			dispatch(DispatchSetPeerId(peer_id ?? ""));
-			setPeerId(peer_id);
-		}
+	const setChat = async ({
+		conversationId,
+		peers,
+	}: {
+		conversationId: string;
+		peers: {
+			id: string;
+			photoUrl: string;
+			firstName: string;
+			lastName: string;
+			isOnline: boolean;
+			isTyping: boolean;
+		}[];
+	}) => {
+		setConversationId(conversationId);
+		sessionStorage.getItem(conversationId);
+
+		setPeers(peers);
+		setIsOtherOnline(peers.some((p) => p.isOnline));
+		setIsOtherTyping(peers.some((p) => p.isTyping));
 	};
 
 	const insertMessage = async (
@@ -159,9 +220,9 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		userId: string,
 		messageType: IMessage_type,
 	) => {
-		if (!peer || !peer.id) return;
+		if (!peers) return;
 		socket.emit("insertMessage", {
-			conversation_id,
+			conversation_id: conversationId,
 			content: message,
 			userId,
 			content_type: messageType,
@@ -180,7 +241,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		peerId: string[];
 		conversation_type: "direct" | "group";
 	}) => {
-		if (!peer || !peer.id) return;
+		if (!peers) return;
 		socket.emit("createMessage", {
 			peerId,
 			content,
@@ -213,7 +274,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	};
 
 	useEffect(() => {
-		socket.emit("joinMessage", { conversationId: conversation_id });
+		socket.emit("joinMessage", { conversationId: conversationId });
 		socket.on("toClientMessage", (messageData) => {
 			console.log("New Message recieved:");
 			console.log(messageData);
@@ -238,21 +299,23 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			socket.off("toClientMessage");
 			socket.off("peerTyping");
 		};
-	}, [conversation_id, queryClient, id]);
+	}, [conversationId, queryClient, id]);
 	return (
 		<ChatContext.Provider
 			value={{
-				conversation_id,
-				peer,
-				fetchPeer,
-				isLoading,
-				isSuccess,
+				conversation_id: conversationId,
+				conversation_type: conversationType,
+				conversation_thumbnail: conversationThumbnail,
+				peers,
 				messages,
+				setChat,
 				createMessage,
 				insertMessage,
 				removeMessage,
 
 				isTyping,
+				isOtherOnline,
+				isOtherTyping,
 				setIsTyping: HandleTyping,
 				isSuccessMessages,
 				isLoadingMessages,

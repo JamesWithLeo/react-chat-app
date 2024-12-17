@@ -105,11 +105,13 @@ export async function FetchSearch(
 	return await response.json();
 }
 
-export async function FetchPeer(userId: string | undefined, peerId: string) {
+export async function FetchPeers(
+	userId: string | undefined,
+	conversationId: string,
+) {
 	if (!userId) return;
-	const url = `${apiUrl}peer/${userId}?peerId=${peerId}`;
+	const url = `${apiUrl}peer/${userId}?convoId=${conversationId}`;
 	console.log(`GET fetching for ${url}`);
-
 	const response = await fetch(url, {
 		method: "GET",
 	});

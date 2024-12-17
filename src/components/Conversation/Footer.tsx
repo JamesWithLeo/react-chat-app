@@ -140,7 +140,7 @@ const Footer = () => {
 		createMessage,
 		insertMessage,
 		setIsTyping,
-		peer,
+		peers,
 	} = useChatContext();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
@@ -148,7 +148,7 @@ const Footer = () => {
 	const [openPicker, setOpenPicker] = useState(false);
 
 	async function HandleSendMessage() {
-		if (!messageInputRef.current || !id || !peer) {
+		if (!messageInputRef.current || !id || !peers) {
 			return;
 		}
 
@@ -166,7 +166,7 @@ const Footer = () => {
 				userId: id,
 				content,
 				content_type: "text",
-				peerId: [peer.id],
+				peerId: [peers[0].id],
 				conversation_type: "direct",
 			});
 		}

@@ -20,7 +20,13 @@ import { useChatContext } from "../../contexts/ChatContext";
 const Header = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const theme = useTheme();
-	const { peer, isLoading, isSuccess } = useChatContext();
+	const {
+		peers,
+		isOtherOnline,
+		conversation_type,
+		conversation_thumbnail,
+		conversation_id,
+	} = useChatContext();
 
 	const navigate = useNavigate();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
@@ -59,7 +65,7 @@ const Header = () => {
 						/>
 					</IconButton>
 					<Box alignContent={"center"} component={"div"}>
-						{peer?.isOnline ? (
+						{isOtherOnline ? (
 							<StyledBadge
 								onClick={() => {
 									dispatch(ToggleConvobar());
@@ -77,10 +83,14 @@ const Header = () => {
 									},
 								}}
 							>
-								{peer ? (
+								{peers?.length ? (
+									// to do : apply default theme
 									<Avatar
-										alt={peer.photo_url}
-										src={peer.photo_url}
+										src={
+											conversation_type === "group"
+												? (conversation_thumbnail ?? "")
+												: peers[0].photoUrl
+										}
 									/>
 								) : (
 									<Avatar />
@@ -98,10 +108,14 @@ const Header = () => {
 								}}
 								variant="dot"
 							>
-								{peer ? (
+								{peers?.length ? (
+									// to do : apply default theme
 									<Avatar
-										alt={peer.photo_url}
-										src={peer.photo_url}
+										src={
+											conversation_type === "group"
+												? (conversation_thumbnail ?? "")
+												: peers[0].photoUrl
+										}
 									/>
 								) : (
 									<Avatar />
@@ -110,14 +124,20 @@ const Header = () => {
 						)}
 					</Box>
 					<Stack spacing={0.2}>
-						{peer ? (
+						{conversation_type === "direct" ? (
 							<Typography variant="subtitle2">
-								{peer.first_name} {peer.last_name}
+								{peers?.length
+									? `${peers[0].firstName} ${peers[0].lastName}`
+									: conversation_id}
 							</Typography>
-						) : null}
+						) : (
+							<Typography variant="subtitle2">
+								{peers?.map((p) => p.firstName).join(", ")}
+							</Typography>
+						)}
 
 						<Typography variant="caption">
-							{peer?.isOnline ? "Online" : "Offline"}
+							{isOtherOnline ? "Online" : "Offline"}
 						</Typography>
 					</Stack>
 				</Stack>

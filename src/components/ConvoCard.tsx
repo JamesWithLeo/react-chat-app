@@ -25,7 +25,10 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 	const dispatch = useDispatch();
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
-	const { fetchPeer } = useChatContext();
+	const {
+		//	fetchPeer
+		setChat,
+	} = useChatContext();
 
 	const isSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.up("sm"),
@@ -37,7 +40,13 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 
 	const HandleOpenChat = () => {
 		if (convo.conversation_type === "direct") {
-			fetchPeer(convo.peers[0].id);
+			console.log(convo.conversation_type, convo.conversation_id);
+			console.log("peers", convo.peers);
+			setChat({
+				conversationId: convo.conversation_id,
+				peers: convo.peers,
+			});
+			// fetchPeer(convo.peers[0].id);
 			navigate("/chat");
 		} else {
 			// Todo add group chat functionality

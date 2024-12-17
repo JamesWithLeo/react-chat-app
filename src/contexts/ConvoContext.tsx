@@ -26,6 +26,7 @@ export interface IConversation {
 		firstName: string;
 		lastName: string;
 		isOnline: boolean;
+		isTyping: boolean;
 	}[];
 	last_message: {
 		content: string;
