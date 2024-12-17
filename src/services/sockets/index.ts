@@ -41,6 +41,8 @@ interface ClientToServerEvents {
 		conversation_id: string;
 		isTyping: boolean;
 	}) => void;
+
+	joinConvo: ({ conversationIds }: { conversationIds: string[] }) => void;
 	peersStatus: ({
 		sender_id,
 		isOnline,

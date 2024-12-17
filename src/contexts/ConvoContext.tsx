@@ -95,6 +95,13 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 	};
 
 	useEffect(() => {
+		if (isSuccess) {
+			socket.emit("joinConvo", {
+				conversationIds: conversation.map(
+					(c: IConversation) => c.conversation_id,
+				),
+			});
+		}
 		socket.on("peersStatus", (data) => {
 			console.log("someone is active: ", data);
 			// Update cached conversation data
@@ -119,7 +126,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				},
 			);
 		});
-	}, []);
+	}, [queryClient, conversation, isSuccess]);
 	return (
 		<ConvoContext.Provider
 			value={{

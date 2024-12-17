@@ -20,6 +20,7 @@ import { ToggleSidebarOn } from "../../redux/slices/app";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
 import ConvoSkeleton from "../../components/skeletons/skeleton";
+import socket from "../../services/sockets";
 
 const Chats = () => {
 	const theme = useTheme();
@@ -34,6 +35,9 @@ const Chats = () => {
 	useEffect(() => {
 		function setSkeleton() {
 			if (isSuccess && conversation.length) {
+				socket.emit("joinConvo", {
+					conversationIds: conversation.map((c) => c.conversation_id),
+				});
 				setSkeletonCount(conversation.length);
 				setTimeout(() => {
 					setSkeletonCount(0);
@@ -41,7 +45,6 @@ const Chats = () => {
 			} else return;
 		}
 		setSkeleton();
-
 		refreshStatus(true);
 	}, [isSuccess, conversation, refreshStatus]);
 	return (
