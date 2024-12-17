@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { CircleDashed, MagnifyingGlass } from "phosphor-react";
 import { Theme, useTheme } from "@mui/material/styles";
-import React, { useEffect, useState } from "react";
+import React from "react";
 // import {ChatList} from '../../data';
 import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
@@ -19,35 +19,16 @@ import { useNavigate } from "react-router-dom";
 import { ToggleSidebarOn } from "../../redux/slices/app";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
-import socket from "../../services/sockets";
 
 const Chats = () => {
 	const theme = useTheme();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
-	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 	const { conversation, isSuccess } = useConvoContext();
 
-	useEffect(() => {
-		if (id)
-			socket.emit("peersStatus", {
-				sender_id: id,
-				isOnline: true,
-			});
-
-		return () => {
-			if (id) {
-				socket.emit("peersStatus", {
-					sender_id: id,
-					isOnline: true,
-				});
-				socket.disconnect();
-			}
-		};
-	}, [isSuccess, conversation, id]);
 	return (
 		<>
 			<Box

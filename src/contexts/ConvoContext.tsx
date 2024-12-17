@@ -84,6 +84,10 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	const refreshStatus = (value: boolean) => {
 		if (!id) return;
+		socket.emit("peersStatus", {
+			sender_id: id,
+			isOnline: true,
+		});
 	};
 
 	useEffect(() => {
