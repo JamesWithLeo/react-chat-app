@@ -288,7 +288,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			if (data.id === id) return;
 			console.log("someone is typing!", data);
 			queryClient.setQueryData(
-				["peer", data.conversation_id],
+				["peers", data.conversation_id],
 				(oldPeer: any) => {
 					if (!oldPeer) return null; // Safeguard in case oldPeer is null
 					return {
