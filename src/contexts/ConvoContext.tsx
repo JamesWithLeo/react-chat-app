@@ -99,6 +99,8 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 			sender_id: id,
 			isOnline: true,
 		});
+		socket.emit("userCameOnline", { id });
+
 		if (isSuccess) {
 			socket.emit("joinConvo", {
 				conversationIds: conversation.map(

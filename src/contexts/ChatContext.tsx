@@ -214,8 +214,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	useEffect(() => {
 		socket.emit("joinMessage", { conversationId: conversationId });
 		socket.on("toClientMessage", (messageData) => {
-			console.log("New Message recieved:");
-			console.log(messageData);
+			console.log("New Message recieved:", messageData);
 			queryClient.setQueryData(
 				["messages", messageData.conversation_id],
 				(prevMessages: IMessages[] | undefined) =>
