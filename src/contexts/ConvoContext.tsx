@@ -13,7 +13,6 @@ import { AppState } from "../redux/store";
 import socket from "../services/sockets";
 import { IMessage_type } from "./ChatContext";
 import { IViewUser } from "../redux/slices/auth";
-import { devToolsEnhancer } from "@reduxjs/toolkit/dist/devtoolsExtension";
 
 export interface IConversation {
 	conversation_id: string;
@@ -80,7 +79,12 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 			}
 			return [];
 		},
-		{ enabled: !!senderId },
+		{
+			enabled: !!senderId,
+			refetchOnWindowFocus: false, // Disable auto-refetch on window focus
+			refetchOnReconnect: false, // Disable auto-refetch on reconnect
+			refetchInterval: false, // No periodic polling
+		},
 	);
 	const fetchConversation = async (userId: string) => {
 		setSenderId(userId);
@@ -94,13 +98,6 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	useEffect(() => {
 		if (!id) return;
-		isUnmountingRef.current = false;
-		// socket.emit("peersStatus", {
-		// 	sender_id: id,
-		// 	isOnline: true,
-		// });
-		socket.emit("userCameOnline", { id });
-
 		if (isSuccess) {
 			socket.emit("joinConvo", {
 				conversationIds: conversation.map(
@@ -108,8 +105,15 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				),
 			});
 		}
+		isUnmountingRef.current = false;
+		// socket.emit("peersStatus", {
+		// 	sender_id: id,
+		// 	isOnline: true,
+		// });
+		socket.emit("userCameOnline", { id });
+
 		socket.on("currentOnlinePeers", (data) => {
-			console.log(data);
+			console.log("Current online users:", data);
 
 			queryClient.setQueryData(
 				["convo"],
