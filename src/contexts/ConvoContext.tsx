@@ -124,7 +124,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 						peers: conversation.peers.map((peer: IViewUser) => {
 							return data.peers.includes({ id: peer.id })
 								? { ...peer, isOnline: true }
-								: peer;
+								: { ...peer, isOnline: false };
 						}),
 					}));
 				},
