@@ -170,7 +170,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				isUnmountingRef.current = true;
 
 				// Remove the listener
-				socket.off("peersStatus");
+				socket.off("currentOnlinePeers");
 			}
 		};
 	}, [queryClient, conversation, isSuccess, id]);
