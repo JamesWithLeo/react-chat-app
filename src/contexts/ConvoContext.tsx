@@ -13,6 +13,7 @@ import { AppState } from "../redux/store";
 import socket from "../services/sockets";
 import { IMessage_type } from "./ChatContext";
 import { IViewUser } from "../redux/slices/auth";
+import { devToolsEnhancer } from "@reduxjs/toolkit/dist/devtoolsExtension";
 
 export interface IConversation {
 	conversation_id: string;
@@ -94,11 +95,10 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 	useEffect(() => {
 		if (!id) return;
 		isUnmountingRef.current = false;
-		// socket.emit("userCameOnline", { id });
-		socket.emit("peersStatus", {
-			sender_id: id,
-			isOnline: true,
-		});
+		// socket.emit("peersStatus", {
+		// 	sender_id: id,
+		// 	isOnline: true,
+		// });
 		socket.emit("userCameOnline", { id });
 
 		if (isSuccess) {
@@ -108,31 +108,51 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				),
 			});
 		}
+		socket.on("currentOnlinePeers", (data) => {
+			console.log(data);
 
-		socket.on("peersStatus", (data) => {
-			// Update cached conversation data
-			console.log("Online peers", data.onlinePeers);
 			queryClient.setQueryData(
 				["convo"],
 				(oldData: IConversation[] | undefined) => {
-					if (!oldData) return oldData;
-
-					// Map through the conversations and peers to update isOnline status
-					return oldData.map((conversation: IConversation) => ({
+					if (!oldData) {
+						return oldData;
+					}
+					return oldData.map((conversation) => ({
 						...conversation,
-						peers: conversation.peers.map((peer: IViewUser) => {
-							console.log(
-								peer.id === data.peers.id,
-								data.peers.isOnline,
-							);
-							return peer.id === data.peers.id
-								? { ...peer, isOnline: data.peers.isOnline }
-								: peer;
-						}),
+						peers: conversation.peers.map((peer) =>
+							data.includes(peer.id)
+								? { ...peer, isOnline: true }
+								: peer,
+						),
 					}));
 				},
 			);
 		});
+
+		// socket.on("peersStatus", (data) => {
+		// 	// Update cached conversation data
+		// 	console.log("Online peers", data.onlinePeers);
+		// 	queryClient.setQueryData(
+		// 		["convo"],
+		// 		(oldData: IConversation[] | undefined) => {
+		// 			if (!oldData) return oldData;
+
+		// 			// Map through the conversations and peers to update isOnline status
+		// 			return oldData.map((conversation: IConversation) => ({
+		// 				...conversation,
+		// 				peers: conversation.peers.map((peer: IViewUser) => {
+		// 					console.log(
+		// 						peer.id === data.peers.id,
+		// 						data.peers.isOnline,
+		// 					);
+		// 					return peer.id === data.peers.id
+		// 						? { ...peer, isOnline: data.peers.isOnline }
+		// 						: peer;
+		// 				}),
+		// 			}));
+		// 		},
+		// 	);
+		// });
 		return () => {
 			if (id) {
 				// Avoid emitting "isOnline: false" during re-renders
