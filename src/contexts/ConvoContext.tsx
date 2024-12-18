@@ -110,8 +110,8 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		}
 
 		socket.on("peersStatus", (data) => {
-			console.log("someone is active: ", data);
 			// Update cached conversation data
+			console.log("Online peers", data.onlinePeers);
 			queryClient.setQueryData(
 				["convo"],
 				(oldData: IConversation[] | undefined) => {
