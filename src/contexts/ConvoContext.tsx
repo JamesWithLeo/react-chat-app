@@ -89,21 +89,16 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 
 	const refreshStatus = (value: boolean) => {
 		if (!id) return;
-
-		// socket.emit("peersStatus", {
-		// 	sender_id: id,
-		// 	isOnline: true,
-		// });
 	};
 
 	useEffect(() => {
 		if (!id) return;
 		isUnmountingRef.current = false;
-		socket.emit("userCameOnline", { id });
-		// socket.emit("peersStatus", {
-		// 	sender_id: id,
-		// 	isOnline: true,
-		// });
+		// socket.emit("userCameOnline", { id });
+		socket.emit("peersStatus", {
+			sender_id: id,
+			isOnline: true,
+		});
 		if (isSuccess) {
 			socket.emit("joinConvo", {
 				conversationIds: conversation.map(
@@ -111,66 +106,43 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				),
 			});
 		}
-		socket.on("currentOnlinePeers", (data) => {
-			const { peers } = data;
-			console.log("current online peers: ", peers);
-			queryClient.setQueriesData(
+
+		socket.on("peersStatus", (data) => {
+			console.log("someone is active: ", data);
+			// Update cached conversation data
+			queryClient.setQueryData(
 				["convo"],
 				(oldData: IConversation[] | undefined) => {
 					if (!oldData) return oldData;
 
+					// Map through the conversations and peers to update isOnline status
 					return oldData.map((conversation: IConversation) => ({
 						...conversation,
 						peers: conversation.peers.map((peer: IViewUser) => {
-							return data.peers.includes({ id: peer.id })
-								? { ...peer, isOnline: true }
-								: { ...peer, isOnline: false };
+							console.log(
+								peer.id === data.peers.id,
+								data.peers.isOnline,
+							);
+							return peer.id === data.peers.id
+								? { ...peer, isOnline: data.peers.isOnline }
+								: peer;
 						}),
 					}));
 				},
 			);
 		});
-		// socket.on("peersStatus", (data) => {
-		// 	console.log("someone is active: ", data);
-		// 	// Update cached conversation data
-		// 	queryClient.setQueryData(
-		// 		["convo"],
-		// 		(oldData: IConversation[] | undefined) => {
-		// 			if (!oldData) return oldData;
-
-		// 			// Map through the conversations and peers to update isOnline status
-		// 			return oldData.map((conversation: IConversation) => ({
-		// 				...conversation,
-		// 				peers: conversation.peers.map((peer: IViewUser) => {
-		// 					console.log(
-		// 						peer.id === data.peers.id,
-		// 						data.peers.isOnline,
-		// 					);
-		// 					return peer.id === data.peers.id
-		// 						? { ...peer, isOnline: data.peers.isOnline }
-		// 						: peer;
-		// 				}),
-		// 			}));
-		// 		},
-		// 	);
-		// });
 		return () => {
 			if (id) {
 				// Avoid emitting "isOnline: false" during re-renders
 				if (isUnmountingRef.current) {
 					console.log("User going offline...");
-					socket.emit("userCameOffline", { id });
-					// socket.emit("peersStatus", {
-					// 	sender_id: id,
-					// 	isOnline: false,
-					// });
 				}
 
 				// Mark as unmounting
 				isUnmountingRef.current = true;
 
 				// Remove the listener
-				socket.off("currentOnlinePeers");
+				socket.off("peersStatus");
 			}
 		};
 	}, [queryClient, conversation, isSuccess, id]);
