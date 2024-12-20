@@ -213,6 +213,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	};
 
 	useEffect(() => {
+		if (!id) return;
 		socket.emit("joinMessage", { conversationId: conversationId });
 		socket.on("toClientMessage", (messageData) => {
 			console.log("New Message recieved:", messageData);
@@ -253,10 +254,12 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			]);
 			console.log("Updated Peers Data:", updatedPeers);
 		});
+		socket.emit("userCameOnline", { id });
 		socket.on("currentOnlinePeers", (data) => {
 			queryClient.setQueriesData(
 				["peers", conversationId],
 				(oldData: ChatContextType | undefined) => {
+					console.log(oldData);
 					if (!oldData) return oldData;
 
 					return {
