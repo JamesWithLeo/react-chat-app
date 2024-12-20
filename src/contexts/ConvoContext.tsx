@@ -116,6 +116,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		};
 		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 			console.log("beforeunload event fired / user going offlne");
+			socket.emit("userCameOnline", { id });
 		};
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 		window.addEventListener("beforeunload", handleBeforeUnload);
