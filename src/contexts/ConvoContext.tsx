@@ -61,7 +61,6 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 }) => {
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const [senderId, setSenderId] = useState<string>(id ?? "");
-	const isUnmountingRef = useRef(false);
 
 	const queryClient = useQueryClient();
 
@@ -105,16 +104,27 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				),
 			});
 		}
-		isUnmountingRef.current = false;
-		// socket.emit("peersStatus", {
-		// 	sender_id: id,
-		// 	isOnline: true,
-		// });
+
+		const handleVisibilityChange = () => {
+			console.log("visibility chnange fired!");
+			if (document.visibilityState === "hidden") {
+				console.log("User left the tab or minimized the browser");
+				socket.emit("userCameOnline", { id });
+			} else if (document.visibilityState === "visible") {
+				console.log("User returned to the tab");
+				socket.emit("userCameOffline", { id });
+			}
+		};
+		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+			console.log("beforeunload event fired / user going offlne");
+		};
+		document.addEventListener("visibilitychange", handleVisibilityChange);
+		window.addEventListener("beforeunload", handleBeforeUnload);
+
 		socket.emit("userCameOnline", { id });
 
 		socket.on("currentOnlinePeers", (data) => {
 			console.log("Current online users:", data);
-
 			queryClient.setQueryData(
 				["convo"],
 				(oldData: IConversation[] | undefined) => {
@@ -123,53 +133,23 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 					}
 					return oldData.map((conversation) => ({
 						...conversation,
-						peers: conversation.peers.map((peer) =>
-							data.includes(peer.id)
+						peers: conversation.peers.map((peer) => {
+							return data.includes(peer.id)
 								? { ...peer, isOnline: true }
-								: peer,
-						),
+								: peer;
+						}),
 					}));
 				},
 			);
 		});
 
-		// socket.on("peersStatus", (data) => {
-		// 	// Update cached conversation data
-		// 	console.log("Online peers", data.onlinePeers);
-		// 	queryClient.setQueryData(
-		// 		["convo"],
-		// 		(oldData: IConversation[] | undefined) => {
-		// 			if (!oldData) return oldData;
-
-		// 			// Map through the conversations and peers to update isOnline status
-		// 			return oldData.map((conversation: IConversation) => ({
-		// 				...conversation,
-		// 				peers: conversation.peers.map((peer: IViewUser) => {
-		// 					console.log(
-		// 						peer.id === data.peers.id,
-		// 						data.peers.isOnline,
-		// 					);
-		// 					return peer.id === data.peers.id
-		// 						? { ...peer, isOnline: data.peers.isOnline }
-		// 						: peer;
-		// 				}),
-		// 			}));
-		// 		},
-		// 	);
-		// });
 		return () => {
-			if (id) {
-				// Avoid emitting "isOnline: false" during re-renders
-				if (isUnmountingRef.current) {
-					console.log("User going offline...");
-				}
-
-				// Mark as unmounting
-				isUnmountingRef.current = true;
-
-				// Remove the listener
-				socket.off("peersStatus");
-			}
+			document.removeEventListener(
+				"visibilitychange",
+				handleVisibilityChange,
+			);
+			window.removeEventListener("beforeunload", handleBeforeUnload);
+			socket.off("currentOnlinePeers");
 		};
 	}, [queryClient, conversation, isSuccess, id]);
 	return (

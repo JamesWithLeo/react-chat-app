@@ -59,6 +59,7 @@ interface ClientToServerEvents {
 		isOnline: boolean;
 	}) => void;
 	userCameOnline: ({ id }: { id: string }) => void;
+	userCameOffline: ({ id }: { id: string }) => void;
 }
 
 export interface InterServerEvents {
