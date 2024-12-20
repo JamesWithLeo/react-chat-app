@@ -43,14 +43,7 @@ interface ChatContextType {
 		conversationId,
 	}: {
 		conversationId: string;
-		peers: {
-			id: string;
-			photoUrl: string;
-			firstName: string;
-			lastName: string;
-			isOnline: boolean;
-			isTyping: boolean;
-		}[];
+		peers: IViewUser[];
 	}) => void;
 
 	isTyping: boolean; // for user, to check if the user is typing
@@ -143,7 +136,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		{
 			enabled: !!conversationId,
 			onSuccess: (data) => {
-				console.log("success peers in useQuery");
+				// console.log("success peers in useQuery", data);
 			},
 		},
 	);
@@ -258,21 +251,23 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		socket.on("currentOnlinePeers", (data) => {
 			queryClient.setQueriesData(
 				["peers", conversationId],
-				(oldData: ChatContextType | null | undefined) => {
+				(oldData: IViewUser[] | null | undefined) => {
 					console.log(oldData);
 					if (!oldData) return oldData;
 
-					return {
-						...oldData,
-						peers:
-							oldData.peers?.map((p) => {
-								if (data.includes(p.id)) {
-									return { ...p, isOnline: true };
-								} else {
-									return { ...p, isOnline: false };
-								}
-							}) ?? oldData.peers,
-					};
+					return oldData.map((p) => {
+						if (data.includes(p.id)) {
+							return {
+								...p,
+								isOnline: true,
+							};
+						} else {
+							return {
+								...p,
+								isOnline: false,
+							};
+						}
+					});
 				},
 			);
 		});
@@ -282,7 +277,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			socket.off("peerTyping");
 			socket.off("currentOnlinePeers");
 		};
-	}, [conversationId, queryClient, id]);
+	}, [conversationId, peers, queryClient, id]);
 	return (
 		<ChatContext.Provider
 			value={{
