@@ -268,7 +268,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 								} else {
 									return { ...p, isOnline: false };
 								}
-							}) ?? null,
+							}) ?? oldData.peers,
 					};
 				},
 			);
