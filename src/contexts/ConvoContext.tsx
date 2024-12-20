@@ -108,15 +108,15 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 			console.log("visibility chnange fired!");
 			if (document.visibilityState === "hidden") {
 				console.log("User left the tab or minimized the browser");
-				socket.emit("userCameOnline", { id });
+				socket.emit("userCameOffline", { id });
 			} else if (document.visibilityState === "visible") {
 				console.log("User returned to the tab");
-				socket.emit("userCameOffline", { id });
+				socket.off("currentOnlinePeers");
 			}
 		};
 		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
 			console.log("beforeunload event fired / user going offlne");
-			socket.emit("userCameOnline", { id });
+			socket.emit("userCameOffline", { id });
 		};
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 		window.addEventListener("beforeunload", handleBeforeUnload);
