@@ -258,7 +258,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		socket.on("currentOnlinePeers", (data) => {
 			queryClient.setQueriesData(
 				["peers", conversationId],
-				(oldData: ChatContextType | undefined) => {
+				(oldData: ChatContextType | null | undefined) => {
 					console.log(oldData);
 					if (!oldData) return oldData;
 

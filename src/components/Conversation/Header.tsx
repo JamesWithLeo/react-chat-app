@@ -65,7 +65,9 @@ const Header = () => {
 						/>
 					</IconButton>
 					<Box alignContent={"center"} component={"div"}>
-						{peers?.some((p) => p.isOnline) ? (
+						{peers &&
+						peers.length &&
+						peers.some((p) => p.isOnline) ? (
 							<StyledBadge
 								onClick={() => {
 									dispatch(ToggleConvobar());
