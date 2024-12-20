@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "../redux/store";
 
 import socket from "../services/sockets";
+import { IChatMessage } from "../components/Conversation/MsgTypes";
 
 export type IMessage_type = "text" | "reply" | "doc" | "link" | "media";
 
@@ -252,10 +253,31 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			]);
 			console.log("Updated Peers Data:", updatedPeers);
 		});
+		socket.on("currentOnlinePeers", (data) => {
+			queryClient.setQueriesData(
+				["peers", conversationId],
+				(oldData: ChatContextType | undefined) => {
+					if (!oldData) return oldData;
+
+					return {
+						...oldData,
+						peers:
+							oldData.peers?.map((p) => {
+								if (data.includes(p.id)) {
+									return { ...p, isOnline: true };
+								} else {
+									return { ...p, isOnline: false };
+								}
+							}) ?? null,
+					};
+				},
+			);
+		});
 
 		return () => {
 			socket.off("toClientMessage");
 			socket.off("peerTyping");
+			socket.off("currentOnlinePeers");
 		};
 	}, [conversationId, queryClient, id]);
 	return (
