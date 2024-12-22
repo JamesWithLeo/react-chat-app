@@ -46,23 +46,24 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 				<Stack spacing={3}>
 					{isSuccessMessages ? (
 						<>
-							{messages.map((message, index) => {
-								switch (message.message_type) {
-									case "text":
-										return (
-											<TextMsg
-												isFromOther={
-													id !== message.sender_id
-												}
-												key={message.message_id}
-												message={message}
-												isOptionOpen={isOptionOpen}
-											/>
-										);
-									default:
-										return <></>;
-								}
-							})}
+							{messages &&
+								messages.map((message, index) => {
+									switch (message.message_type) {
+										case "text":
+											return (
+												<TextMsg
+													isFromOther={
+														id !== message.sender_id
+													}
+													key={message.message_id}
+													message={message}
+													isOptionOpen={isOptionOpen}
+												/>
+											);
+										default:
+											return <></>;
+									}
+								})}
 						</>
 					) : (
 						<Typography>No messages</Typography>

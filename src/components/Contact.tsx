@@ -32,9 +32,10 @@ import "../css/global.css";
 
 import { SlideProps } from "@mui/material";
 import { AppDispatch } from "../redux/store";
-import { ToggleConvobar } from "../redux/slices/app";
+// import { ToggleConvobar } from "../redux/slices/app";
 import { useChatContext } from "../contexts/ChatContext";
 import StyledBadge from "./StyledBadge";
+import { ToggleSidebarOff } from "../redux/slices/app";
 
 // Define the ref and props types for the Transition component using forwardRef
 const Transition = React.forwardRef<unknown, SlideProps>(
@@ -149,7 +150,7 @@ const Contact = () => {
 						</Typography>
 						<IconButton
 							onClick={() => {
-								dispatch(ToggleConvobar());
+								dispatch(ToggleSidebarOff());
 							}}
 						>
 							<X />
@@ -171,9 +172,9 @@ const Contact = () => {
 					<Stack alignItems={"center"} direction="row" spacing={2}>
 						{peers?.some((p) => p.isOnline) ? (
 							<StyledBadge
-								onClick={() => {
-									dispatch(ToggleConvobar());
-								}}
+								// onClick={() => {
+								// 	dispatch(ToggleConvobar());
+								// }}
 								overlap="circular"
 								anchorOrigin={{
 									vertical: "bottom",
@@ -205,9 +206,9 @@ const Contact = () => {
 							</StyledBadge>
 						) : (
 							<StyledBadge
-								onClick={() => {
-									dispatch(ToggleConvobar());
-								}}
+								// onClick={() => {
+								// 	dispatch(ToggleConvobar());
+								// }}
 								overlap="circular"
 								anchorOrigin={{
 									vertical: "bottom",

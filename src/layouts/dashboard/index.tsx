@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import SlideBar from "../../components/navbar";
 import ConvoSlideBar from "../../components/ConvoSlideBar";
+import InstantMessageBar from "../../components/InstantMessageBar";
 
 const DashboardLayout = () => {
 	const user = useSelector((state: AppState) => state.auth.user);
@@ -31,6 +32,10 @@ const DashboardLayout = () => {
 
 			{sidebar.type === "CONVO_MINI_SETTING" && sidebar.isOpen ? (
 				<ConvoSlideBar />
+			) : null}
+
+			{sidebar.type === "INSTANTMESSAGEPEER" && sidebar.isOpen ? (
+				<InstantMessageBar />
 			) : null}
 
 			<Outlet />

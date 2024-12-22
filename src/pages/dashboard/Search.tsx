@@ -1,6 +1,5 @@
 import {
 	Box,
-	Divider,
 	IconButton,
 	Stack,
 	Theme,
@@ -22,9 +21,11 @@ import { AppState } from "../../redux/store";
 import { debounce } from "lodash";
 import { ChangeEvent, useEffect, useState } from "react";
 import { FetchSearch } from "../../services/fetch";
-import PeopleCard from "../../components/PeopleCard";
+import PeopleCard from "../../components/card/search/PeopleCard";
 import { IViewUser } from "../../redux/slices/auth";
 import { useQuery } from "@tanstack/react-query";
+import ChatCard from "../../components/card/search/ChatCard";
+import { IConversation } from "../../contexts/ConvoContext";
 
 export default function Search() {
 	const theme = useTheme();
@@ -153,20 +154,45 @@ export default function Search() {
 						<Spinner />
 					) : (
 						<>
-							{isSuccess && searchData && searchData.users ? (
+							{isSuccess && searchData ? (
 								<>
-									{searchData.users.map((user: IViewUser) => {
-										return (
-											<PeopleCard
-												// Todo: Include the block id
-												readOnly={[id].includes(
-													user.id,
-												)}
-												user={user}
-												key={user.id}
-											/>
-										);
-									})}
+									{scope === "all" || scope === "people" ? (
+										<Typography py={2}>User</Typography>
+									) : null}
+
+									{searchData.users &&
+										searchData.users.map(
+											(user: IViewUser) => {
+												return (
+													<PeopleCard
+														// Todo: Include the block id
+														readOnly={[id].includes(
+															user.id,
+														)}
+														user={user}
+														key={user.id}
+													/>
+												);
+											},
+										)}
+
+									{scope === "all" || scope === "chats" ? (
+										<Typography py={2}>Chats</Typography>
+									) : null}
+
+									{searchData.chats &&
+										searchData.chats.map(
+											(chat: IConversation) => {
+												return (
+													<ChatCard
+														convo={chat}
+														key={
+															chat.conversation_id
+														}
+													/>
+												);
+											},
+										)}
 								</>
 							) : (
 								<Typography>No result</Typography>

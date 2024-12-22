@@ -15,7 +15,7 @@ import { useChatContext } from "../contexts/ChatContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SetConversation, ToggleSidebarOn } from "../redux/slices/app";
+import { SetConversation } from "../redux/slices/app";
 import { AppState } from "../redux/store";
 
 dayjs.extend(relativeTime);
@@ -41,8 +41,10 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 	const HandleOpenChat = () => {
 		if (convo.conversation_type === "direct") {
 			setChat({
-				conversationId: convo.conversation_id,
-				peers: convo.peers,
+				initialConvoId: convo.conversation_id,
+				InitialPeersData: convo.peers,
+				conversationType: "direct",
+				thumbnail: convo.peers[0].photoUrl,
 			});
 			navigate("/chat");
 		} else {
@@ -62,8 +64,6 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 				is_pinned: convo.is_pinned,
 			}),
 		);
-		// setIsOptionVisible(true);
-		dispatch(ToggleSidebarOn("CONVO_MINI_SETTING"));
 	};
 
 	const HandleLongPressStart = () => {

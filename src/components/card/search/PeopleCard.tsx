@@ -14,9 +14,13 @@ import {
 } from "@mui/material";
 import { DotsThreeVertical } from "@phosphor-icons/react";
 import { useState } from "react";
-import { IViewUser } from "../redux/slices/auth";
+import { IViewUser } from "../../../redux/slices/auth";
 import { useNavigate } from "react-router-dom";
-import { useChatContext } from "../contexts/ChatContext";
+import { useChatContext } from "../../../contexts/ChatContext";
+import { useDispatch, useSelector } from "react-redux";
+import { FetchConversationId } from "../../../services/fetch";
+import { AppState } from "../../../redux/store";
+import { SetInstantMessage } from "../../../redux/slices/app";
 
 export default function PeopleCard({
 	user,
@@ -29,8 +33,10 @@ export default function PeopleCard({
 }) {
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 	const theme = useTheme();
+	const id = useSelector((state: AppState) => state.auth.user?.id);
+	const { setChat } = useChatContext();
 	const navigate = useNavigate();
-	// const { fetchPeer } = useChatContext();
+	const dispatch = useDispatch();
 
 	const isNotSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.up("sm"),
@@ -43,9 +49,30 @@ export default function PeopleCard({
 		setAnchorEl(null);
 	};
 
-	const handleMessage = () => {
-		// fetchPeer(user.id);
-		navigate("/chat");
+	const handleMessage = async () => {
+		handleCloseDotMenu();
+		if (!id) return;
+
+		const response = await FetchConversationId({
+			userId: id,
+			peerId: user.id,
+		});
+
+		if (
+			response &&
+			response.conversationId &&
+			typeof response.conversationId === "string"
+		) {
+			setChat({
+				initialConvoId: response.conversationId,
+				InitialPeersData: [user],
+				conversationType: "direct",
+				thumbnail: user.photoUrl,
+			});
+			navigate("/chat");
+		} else {
+			console.log("Can't create or find conversation");
+		}
 	};
 
 	return (
@@ -53,6 +80,7 @@ export default function PeopleCard({
 			component={"span"}
 			sx={{
 				display: "flex",
+				alignItems: "center",
 				justifyContent: "space-between",
 				p: "0.7rem",
 				width: "100%",
@@ -109,7 +137,6 @@ export default function PeopleCard({
 											Message
 										</MenuItem>
 									) : null}
-									<MenuItem>Add friend</MenuItem>
 									<MenuItem>Block</MenuItem>
 								</Stack>
 							</Menu>

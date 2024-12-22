@@ -1,6 +1,6 @@
-import { IMessage_type } from "../contexts/ChatContext";
 import { Gender } from "../sections/auth/SetupForm";
 import { apiUrl } from "../config";
+import { IMessage_type } from "../contexts/ChatContext";
 
 export async function SigninFetch({ uid }: { uid: string }) {
 	const response = await fetch(`${apiUrl}auth/signin`, {
@@ -123,23 +123,18 @@ export async function FetchPeers(
 	return await response.json();
 }
 
-export async function SendChat(
-	senderId: string,
-	recipientId: string,
-	message: string,
-	messageType: IMessage_type,
-) {
-	const body = JSON.stringify({
-		message,
-		recipientId,
-		messageType,
-	});
-	const url = `${apiUrl}chat/${senderId}`;
-	console.log("POST fetching for", url);
-
+export async function FetchConversationId({
+	userId,
+	peerId,
+}: {
+	userId: string;
+	peerId: string;
+}) {
+	const url = `${apiUrl}convo/${userId}/getId`;
+	console.log("(Fetch API) GET fetching:", url);
 	const response = await fetch(url, {
 		method: "POST",
-		body,
+		body: JSON.stringify({ peerId }),
 		headers: {
 			"Content-type": "application/json",
 		},
@@ -149,6 +144,7 @@ export async function SendChat(
 	}
 	return await response.json();
 }
+
 export async function DeleteChat(messageId: string) {
 	const url = `${apiUrl}messages/${messageId}`;
 
@@ -180,6 +176,35 @@ export async function FetchMessages(conversationId: string) {
 
 	const response = await fetch(url, {
 		method: "GET",
+	});
+
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+export async function SendInitialMessage({
+	userId,
+	message,
+	messageType,
+	recipientId,
+}: {
+	userId: string;
+	message: string;
+	messageType: IMessage_type;
+	recipientId: string;
+}) {
+	const url = `${apiUrl}messages/${userId}`;
+	const response = await fetch(url, {
+		method: "POST",
+		body: JSON.stringify({
+			message,
+			messageType,
+			recipientId,
+		}),
+		headers: {
+			"Content-type": "application/json",
+		},
 	});
 
 	if (!response.ok) {

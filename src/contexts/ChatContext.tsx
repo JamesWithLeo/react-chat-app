@@ -17,7 +17,7 @@ import { useSelector } from "react-redux";
 import { AppState } from "../redux/store";
 
 import socket from "../services/sockets";
-import { IChatMessage } from "../components/Conversation/MsgTypes";
+import { useNavigate } from "react-router-dom";
 
 export type IMessage_type = "text" | "reply" | "doc" | "link" | "media";
 
@@ -40,10 +40,15 @@ interface ChatContextType {
 	conversation_thumbnail: string;
 	peers: IViewUser[] | null; // Store peer user information
 	setChat: ({
-		conversationId,
+		initialConvoId,
+		InitialPeersData,
+		conversationType,
+		thumbnail,
 	}: {
-		conversationId: string;
-		peers: IViewUser[];
+		initialConvoId: string;
+		InitialPeersData: IViewUser[];
+		conversationType: "direct" | "group";
+		thumbnail: string;
 	}) => void;
 
 	isTyping: boolean; // for user, to check if the user is typing
@@ -66,7 +71,7 @@ interface ChatContextType {
 	removeMessage: (messageId: string) => Promise<void>;
 	isSuccessMessages: boolean;
 	isLoadingMessages: boolean;
-	conversation_id: string | null;
+	conversation_id: string;
 }
 
 const defaultContextValue: ChatContextType = {
@@ -76,7 +81,7 @@ const defaultContextValue: ChatContextType = {
 	isTyping: false,
 	setIsTyping: () => {},
 	setChat: () => {},
-	conversation_id: null,
+	conversation_id: "",
 	insertMessage: async () => {},
 	createMessage: async () => {},
 
@@ -96,6 +101,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	children,
 }) => {
 	const queryClient = useQueryClient();
+	const navigate = useNavigate();
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
@@ -108,6 +114,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	const [conversationThumbnail, setConversationThumbnail] =
 		useState<string>("");
 	const [isTyping, setIsTyping] = useState<boolean>(false);
+	const [initialPeers, setInitialPeers] = useState<IViewUser[]>([]);
 
 	const {
 		data: messages,
@@ -117,34 +124,45 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		["messages", conversationId],
 		async () => {
 			const fetchMessageResponse = await FetchMessages(conversationId);
-			if (fetchMessageResponse.ok) {
-				return fetchMessageResponse.messages;
-			}
-			return null;
+			return fetchMessageResponse.ok ? fetchMessageResponse.messages : [];
 		},
 		{
 			enabled: !!conversationId,
+			initialData: [],
 		},
 	);
 	// Query for peers: can be used if you want to refresh peers on each conversationId change
 	const { data: peers } = useQuery(
 		["peers", conversationId],
 		async () => {
+			if (!conversationId) return initialPeers ?? []; // Fallback to initialPeers
+
 			const response = await FetchPeers(id, conversationId);
 			return response.ok ? response.peers : [];
 		},
 		{
-			enabled: !!conversationId,
-			onSuccess: (data) => {
-				// console.log("success peers in useQuery", data);
-			},
+			enabled: !!conversationId || !!initialPeers,
+			initialData: initialPeers ?? [],
 		},
 	);
 
-	const setChat = async ({ conversationId }: { conversationId: string }) => {
-		sessionStorage.setItem("conversationId", conversationId);
-		setConversationId(conversationId);
-		// socket.emit("joinMessage", { conversationId: conversationId });
+	const setChat = async ({
+		initialConvoId,
+		InitialPeersData,
+		conversationType,
+		thumbnail,
+	}: {
+		initialConvoId: string;
+		InitialPeersData: IViewUser[];
+		conversationType: "direct" | "group";
+		thumbnail: string;
+	}) => {
+		sessionStorage.setItem("conversationId", initialConvoId);
+		setConversationId(initialConvoId);
+		setInitialPeers(InitialPeersData);
+		setConversationType(conversationType);
+		setConversationThumbnail(thumbnail);
+		navigate("/chat");
 	};
 
 	const insertMessage = async (
@@ -207,7 +225,33 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 	useEffect(() => {
 		if (!id) return;
-		socket.emit("joinMessage", { conversationId: conversationId });
+
+		if (conversationId) {
+			socket.emit("joinMessage", { conversationId: conversationId });
+
+			socket.on("currentOnlinePeers", (data) => {
+				queryClient.setQueriesData(
+					["peers", conversationId],
+					(oldData: IViewUser[] | null | undefined) => {
+						if (!oldData) return oldData;
+
+						return oldData.map((p) => {
+							if (data.includes(p.id)) {
+								return {
+									...p,
+									isOnline: true,
+								};
+							} else {
+								return {
+									...p,
+									isOnline: false,
+								};
+							}
+						});
+					},
+				);
+			});
+		}
 		socket.on("toClientMessage", (messageData) => {
 			console.log("New Message recieved:", messageData);
 			queryClient.setQueryData(

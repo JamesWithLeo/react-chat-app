@@ -12,17 +12,71 @@ import React from "react";
 import { Theme, useTheme } from "@mui/material/styles";
 import StyledBadge from "../StyledBadge";
 import { useDispatch } from "react-redux";
-import { ToggleConvobar } from "../../redux/slices/app";
+// import { ToggleConvobar } from "../../redux/slices/app";
 import { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { useChatContext } from "../../contexts/ChatContext";
+import { ToggleSidebarOn } from "../../redux/slices/app";
+
+const HeadInfo = ({
+	isOnline,
+	thumbnail,
+	conversation_name,
+}: {
+	isOnline: boolean;
+	thumbnail?: string;
+	conversation_name: string;
+}) => {
+	const dispatch = useDispatch<AppDispatch>();
+
+	return (
+		<>
+			<Box alignContent={"center"} component={"div"}>
+				<StyledBadge
+					onClick={() => {
+						dispatch(ToggleSidebarOn("CONTACT"));
+					}}
+					overlap="circular"
+					anchorOrigin={{
+						vertical: "bottom",
+						horizontal: "right",
+					}}
+					variant="dot"
+					sx={
+						isOnline
+							? {
+									"& .MuiBadge-dot": {
+										backgroundColor: "#44b700",
+										color: "#44b700",
+									},
+								}
+							: {}
+					}
+				>
+					{thumbnail ? (
+						// to do : apply default theme
+						<Avatar src={thumbnail} />
+					) : (
+						<Avatar />
+					)}
+				</StyledBadge>
+			</Box>
+			<Stack spacing={0.2}>
+				<Typography variant="subtitle2">{conversation_name}</Typography>
+
+				<Typography variant="caption">
+					{isOnline ? "Online" : "Offline"}
+				</Typography>
+			</Stack>
+		</>
+	);
+};
 
 const Header = () => {
-	const dispatch = useDispatch<AppDispatch>();
 	const theme = useTheme();
 	const {
 		peers,
-		// isOtherOnline,
+		messages,
 		conversation_type,
 		conversation_thumbnail,
 		conversation_id,
@@ -64,88 +118,31 @@ const Header = () => {
 							fontSize={isSmallScreen ? "small" : "large"}
 						/>
 					</IconButton>
-					<Box alignContent={"center"} component={"div"}>
-						{peers &&
-						peers.length &&
-						peers.some((p) => p.isOnline) ? (
-							<StyledBadge
-								onClick={() => {
-									dispatch(ToggleConvobar());
-								}}
-								overlap="circular"
-								anchorOrigin={{
-									vertical: "bottom",
-									horizontal: "right",
-								}}
-								variant="dot"
-								sx={{
-									"& .MuiBadge-dot": {
-										backgroundColor: "#44b700",
-										color: "#44b700",
-									},
-								}}
-							>
-								{peers?.length ? (
-									// to do : apply default theme
-									<Avatar
-										src={
-											conversation_type === "group"
-												? (conversation_thumbnail ?? "")
-												: peers[0].photoUrl
-										}
-									/>
-								) : (
-									<Avatar />
-								)}
-							</StyledBadge>
-						) : (
-							<StyledBadge
-								onClick={() => {
-									dispatch(ToggleConvobar());
-								}}
-								overlap="circular"
-								anchorOrigin={{
-									vertical: "bottom",
-									horizontal: "right",
-								}}
-								variant="dot"
-							>
-								{peers?.length ? (
-									// to do : apply default theme
-									<Avatar
-										src={
-											conversation_type === "group"
-												? (conversation_thumbnail ?? "")
-												: peers[0].photoUrl
-										}
-									/>
-								) : (
-									<Avatar />
-								)}
-							</StyledBadge>
-						)}
-					</Box>
-					<Stack spacing={0.2}>
-						{conversation_type === "direct" ? (
-							<Typography variant="subtitle2">
-								{peers?.length
-									? `${peers[0].firstName} ${peers[0].lastName}`
-									: conversation_id}
-							</Typography>
-						) : (
-							<Typography variant="subtitle2">
-								{peers?.map((p) => p.firstName).join(", ")}
-							</Typography>
-						)}
-
-						<Typography variant="caption">
-							{!peers
-								? "Offline"
-								: peers.some((p) => p.isOnline)
-									? "Online"
-									: "Offline"}
-						</Typography>
-					</Stack>
+					{messages && messages.length ? (
+						<HeadInfo
+							isOnline={
+								peers ? peers.some((p) => p.isOnline) : false
+							}
+							conversation_name={
+								conversation_type === "group"
+									? peers
+										? peers
+												.map((p) => p.firstName)
+												.join(", ")
+										: conversation_id
+									: peers
+										? `${peers[0].firstName} ${peers[0].lastName}`
+										: conversation_id
+							}
+							thumbnail={
+								conversation_type === "group"
+									? conversation_thumbnail
+									: peers
+										? peers[0].photoUrl
+										: undefined
+							}
+						/>
+					) : null}
 				</Stack>
 
 				<Stack

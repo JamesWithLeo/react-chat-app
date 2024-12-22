@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IViewUser } from "./auth";
 
 const sessionStorageAppKey = "WeChatConfig";
 const appWeChat = sessionStorage.getItem(sessionStorageAppKey);
@@ -10,7 +11,8 @@ type SideBarType =
 	| "SHARED"
 	| "NAVBAR"
 	| "THEME"
-	| "CONVO_MINI_SETTING";
+	| "CONVO_MINI_SETTING"
+	| "INSTANTMESSAGEPEER";
 
 export type SearchScope = "all" | "people" | "chats";
 // define initial state
@@ -18,19 +20,16 @@ interface ISiderBar {
 	isOpen: boolean;
 	type: SideBarType;
 }
-interface IConvoBar {
-	isOpen: boolean;
-}
+
 interface IApp {
 	sidebar: ISiderBar;
-	convobar: IConvoBar;
 	search: SearchScope | null;
 	conversation: null | {
 		id: string;
 		is_pinned?: boolean;
 		is_archived?: boolean;
 	};
-	peerId: string | null;
+	instantMessagePeer: IViewUser | null;
 }
 const initialState: IApp = currentApp
 	? currentApp
@@ -39,12 +38,10 @@ const initialState: IApp = currentApp
 				isOpen: false,
 				type: "THEME", // can be CONTACT, STARRED,SHARED
 			},
-			convobar: {
-				isOpen: false,
-			},
+
 			search: "all",
 			conversation: null,
-			peerId: null,
+			instantMessagePeer: null,
 		};
 
 // create slice
@@ -61,21 +58,26 @@ const appSlice = createSlice({
 			}>,
 		) {
 			sessionStorage.setItem("conversationId", action.payload.id);
-
 			return {
 				...state,
+				sidebar: {
+					isOpen: true,
+					type: "CONVO_MINI_SETTING",
+				},
 				conversation: action.payload,
 			};
 		},
-
-		SetPeerId(state, action: PayloadAction<string>) {
-			sessionStorage.setItem("peerId", action.payload);
+		SetInstantMessage(state, action: PayloadAction<IViewUser>) {
 			return {
 				...state,
-				peerId: action.payload,
+				sidebar: {
+					isOpen: true,
+					type: "INSTANTMESSAGEPEER",
+				},
+				instantMessagePeer: action.payload,
 			};
 		},
-		//Toggle sidebar
+
 		ToggleSidebarOff(state) {
 			return {
 				...state,
@@ -83,6 +85,8 @@ const appSlice = createSlice({
 					isOpen: !state.sidebar.isOpen,
 					type: "THEME",
 				},
+				conversation: null,
+				instantMessagePeer: null,
 			};
 		},
 		ToggleSidebarOn(state, action: PayloadAction<SideBarType>) {
@@ -93,14 +97,6 @@ const appSlice = createSlice({
 					type: action.payload,
 				},
 			};
-		},
-
-		UpdateSidebarType(state, action: PayloadAction<SideBarType>) {
-			state.sidebar.type = action.payload;
-			state.sidebar.isOpen = true;
-		},
-		ToggleConvobar(state) {
-			state.convobar.isOpen = !state.convobar.isOpen;
 		},
 
 		setSearchRoute: (state, action: PayloadAction<SearchScope>) => {
@@ -122,11 +118,10 @@ export default appSlice.reducer;
 
 export const {
 	ToggleSidebarOff,
-	UpdateSidebarType,
-	ToggleConvobar,
+
 	ToggleSidebarOn,
 	setSearchRoute,
 
 	SetConversation,
-	SetPeerId,
+	SetInstantMessage,
 } = appSlice.actions;

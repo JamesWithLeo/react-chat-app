@@ -26,7 +26,7 @@ export interface IConversation {
 		created_at: string;
 		is_read: boolean;
 		message_type: IMessage_type;
-	};
+	} | null;
 
 	// to add ff:
 	is_pinned: boolean;
@@ -79,9 +79,9 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		},
 		{
 			enabled: !!senderId,
-			refetchOnWindowFocus: false, // Disable auto-refetch on window focus
-			refetchOnReconnect: false, // Disable auto-refetch on reconnect
-			refetchInterval: false, // No periodic polling
+			// refetchOnWindowFocus: false, // Disable auto-refetch on window focus
+			// refetchOnReconnect: false, // Disable auto-refetch on reconnect
+			// refetchInterval: false, // No periodic polling
 		},
 	);
 	const fetchConversation = async (userId: string) => {

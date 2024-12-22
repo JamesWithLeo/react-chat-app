@@ -6,15 +6,20 @@ import { useTheme } from "@mui/material/styles";
 import Contact from "../../components/Contact";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
+import { useChatContext } from "../../contexts/ChatContext";
+import { Navigate } from "react-router-dom";
 
 const Chat = () => {
 	const theme = useTheme();
 
-	const { convobar } = useSelector((store: AppState) => store.app);
-
+	const { sidebar } = useSelector((store: AppState) => store.app);
+	const { conversation_id } = useChatContext();
+	if (!conversation_id) {
+		return <Navigate to={"/"} />;
+	}
 	return (
 		<Stack direction="row" sx={{ width: "100%" }}>
-			{convobar.isOpen ? (
+			{sidebar.isOpen && sidebar.type === "CONTACT" ? (
 				<Contact />
 			) : (
 				<Box

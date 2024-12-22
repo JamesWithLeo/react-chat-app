@@ -132,7 +132,11 @@ const Chats = () => {
 								{isSuccess ? (
 									<>
 										{conversation.map((convo) => {
-											if (convo.is_pinned) return null;
+											if (
+												convo.is_pinned ||
+												!convo.last_message
+											)
+												return null;
 											return (
 												<ChatElement
 													convo={convo}
