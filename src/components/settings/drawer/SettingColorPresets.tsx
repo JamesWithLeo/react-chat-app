@@ -1,6 +1,6 @@
 import { alpha, styled } from "@mui/material/styles";
 import { Box, Grid, RadioGroup, CardActionArea } from "@mui/material";
-import useSettings from "../../../hooks/useSettings";
+import { useSettingsContext } from "../../../contexts/SettingsContext";
 import BoxMask from "./BoxMask";
 
 const BoxStyle = styled(CardActionArea)(({ theme }) => ({
@@ -14,7 +14,8 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 }));
 
 export default function SettingColorPresets() {
-	const { themeColorPresets, onChangeColor, colorOption } = useSettings();
+	const { themeColorPresets, onChangeColor, colorOption } =
+		useSettingsContext();
 
 	return (
 		<RadioGroup

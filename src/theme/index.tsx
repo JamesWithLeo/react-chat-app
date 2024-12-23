@@ -8,7 +8,7 @@ import {
 	ThemeOptions,
 } from "@mui/material/styles";
 // hooks
-import useSettings from "../hooks/useSettings";
+import { useSettingsContext } from "../contexts/SettingsContext";
 //
 import palette from "./palette";
 import typography from "./typography";
@@ -105,7 +105,7 @@ declare module "@mui/material/styles" {
 }
 
 export default function ThemeProvider({ children }: { children: ReactNode }) {
-	const { themeMode, themeDirection } = useSettings();
+	const { themeMode, themeDirection } = useSettingsContext();
 
 	const isLight = themeMode === "light";
 
@@ -129,7 +129,7 @@ export default function ThemeProvider({ children }: { children: ReactNode }) {
 	return (
 		<StyledEngineProvider injectFirst>
 			<MUIThemeProvider theme={theme}>
-				<CssBaseline />
+				<CssBaseline enableColorScheme />
 				{children}
 			</MUIThemeProvider>
 		</StyledEngineProvider>

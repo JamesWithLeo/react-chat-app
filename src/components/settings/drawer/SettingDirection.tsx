@@ -1,8 +1,8 @@
 import { styled } from "@mui/material/styles";
 import { Grid, RadioGroup, CardActionArea } from "@mui/material";
-import useSettings from "../../../hooks/useSettings";
 import Iconify from "../../Iconify";
 import BoxMask from "./BoxMask";
+import { useSettingsContext } from "../../../contexts/SettingsContext";
 
 const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 	height: 72,
@@ -15,7 +15,7 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 }));
 
 export default function SettingDirection() {
-	const { themeDirection, onChangeDirection } = useSettings();
+	const { themeDirection, onChangeDirection } = useSettingsContext();
 
 	return (
 		<RadioGroup

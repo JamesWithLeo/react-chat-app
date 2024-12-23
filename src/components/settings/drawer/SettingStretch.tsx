@@ -2,7 +2,7 @@
 import { styled } from "@mui/material/styles";
 import { CardActionArea, Stack } from "@mui/material";
 // hooks
-import useSettings from "../../../hooks/useSettings";
+import { useSettingsContext } from "../../../contexts/SettingsContext";
 //
 import Iconify from "../../Iconify";
 
@@ -15,7 +15,7 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 }));
 
 export default function SettingStretch() {
-	const { themeStretch, onToggleStretch } = useSettings();
+	const { themeStretch, onToggleStretch } = useSettingsContext();
 
 	const ICON_SIZE = {
 		width: themeStretch ? 24 : 18,

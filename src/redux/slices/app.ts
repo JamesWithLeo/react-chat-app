@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IViewUser } from "./auth";
+import { SearchScope } from "../../contexts/SearchContext";
 
 const sessionStorageAppKey = "WeChatConfig";
 const appWeChat = sessionStorage.getItem(sessionStorageAppKey);
@@ -11,10 +11,8 @@ type SideBarType =
 	| "SHARED"
 	| "NAVBAR"
 	| "THEME"
-	| "CONVO_MINI_SETTING"
-	| "INSTANTMESSAGEPEER";
+	| "CONVO_MINI_SETTING";
 
-export type SearchScope = "all" | "people" | "chats";
 // define initial state
 interface ISiderBar {
 	isOpen: boolean;
@@ -29,7 +27,6 @@ interface IApp {
 		is_pinned?: boolean;
 		is_archived?: boolean;
 	};
-	instantMessagePeer: IViewUser | null;
 }
 const initialState: IApp = currentApp
 	? currentApp
@@ -41,7 +38,6 @@ const initialState: IApp = currentApp
 
 			search: "all",
 			conversation: null,
-			instantMessagePeer: null,
 		};
 
 // create slice
@@ -65,16 +61,6 @@ const appSlice = createSlice({
 					type: "CONVO_MINI_SETTING",
 				},
 				conversation: action.payload,
-			};
-		},
-		SetInstantMessage(state, action: PayloadAction<IViewUser>) {
-			return {
-				...state,
-				sidebar: {
-					isOpen: true,
-					type: "INSTANTMESSAGEPEER",
-				},
-				instantMessagePeer: action.payload,
 			};
 		},
 
@@ -123,5 +109,4 @@ export const {
 	setSearchRoute,
 
 	SetConversation,
-	SetInstantMessage,
 } = appSlice.actions;

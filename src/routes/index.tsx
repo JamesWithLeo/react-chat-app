@@ -10,6 +10,7 @@ import { DEFAULT_PATH } from "../config";
 import DefaultSpinner from "../components/skeletons/DefaultSpinner";
 import ChatContextProvider from "../contexts/ChatContext";
 import ConvoContextProvider from "../contexts/ConvoContext";
+import { SearchContextProvider } from "../contexts/SearchContext";
 
 const Loadable = (Component: ComponentType) => {
 	return (props: { [key: string]: any }) => {
@@ -71,9 +72,11 @@ export default function Router() {
 				{
 					path: "search",
 					element: (
-						<ChatContextProvider>
-							<SearchPage />
-						</ChatContextProvider>
+						<SearchContextProvider>
+							<ChatContextProvider>
+								<SearchPage />
+							</ChatContextProvider>
+						</SearchContextProvider>
 					),
 				},
 				{ path: "settings", element: <Settings /> },

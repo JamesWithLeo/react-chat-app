@@ -6,7 +6,7 @@ import App from "./App";
 // import reportWebVitals from "./reportWebVitals";
 
 // contexts
-import SettingsProvider from "./contexts/SettingsContext";
+import SettingsContextProvider from "./contexts/SettingsContext";
 import { store } from "./redux/store";
 
 import { Provider as ReduxProvider } from "react-redux";
@@ -22,13 +22,13 @@ root.render(
 	<React.StrictMode>
 		<HelmetProvider>
 			<ReduxProvider store={store}>
-				<SettingsProvider>
+				<SettingsContextProvider>
 					<BrowserRouter>
 						<QueryClientProvider client={queryClient}>
 							<App />
 						</QueryClientProvider>
 					</BrowserRouter>
-				</SettingsProvider>
+				</SettingsContextProvider>
 			</ReduxProvider>
 		</HelmetProvider>
 	</React.StrictMode>,

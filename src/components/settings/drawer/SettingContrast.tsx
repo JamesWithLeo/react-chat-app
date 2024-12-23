@@ -2,7 +2,7 @@
 import { styled } from "@mui/material/styles";
 import { Grid, RadioGroup, CardActionArea } from "@mui/material";
 // hooks
-import useSettings from "../../../hooks/useSettings";
+import { useSettingsContext } from "../../../contexts/SettingsContext";
 //
 import Iconify from "../../Iconify";
 import BoxMask from "./BoxMask";
@@ -20,7 +20,7 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 }));
 
 export default function SettingContrast() {
-	const { themeContrast, onChangeContrast } = useSettings();
+	const { themeContrast, onChangeContrast } = useSettingsContext();
 
 	return (
 		<RadioGroup

@@ -1,7 +1,7 @@
 import { styled, alpha } from "@mui/material/styles";
 import { Grid, RadioGroup, CardActionArea, Box, Stack } from "@mui/material";
 // hooks
-import useSettings from "../../../hooks/useSettings";
+import { useSettingsContext } from "../../../contexts/SettingsContext";
 //
 import BoxMask from "./BoxMask";
 
@@ -15,7 +15,7 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 }));
 
 export default function SettingLayout() {
-	const { themeLayout, onChangeLayout } = useSettings();
+	const { themeLayout, onChangeLayout } = useSettingsContext();
 
 	return (
 		<RadioGroup

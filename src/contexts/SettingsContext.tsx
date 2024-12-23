@@ -1,4 +1,10 @@
-import { createContext, useEffect, ReactNode, ChangeEvent } from "react";
+import {
+	createContext,
+	useEffect,
+	ReactNode,
+	ChangeEvent,
+	useContext,
+} from "react";
 import { defaultSettings } from "../config";
 import useLocalStorage from "../hooks/useLocalStorage";
 import getColorPresets, {
@@ -59,7 +65,7 @@ interface SettingsProviderProps {
 }
 
 // SettingsProvider component
-const SettingsProvider = ({ children }: SettingsProviderProps) => {
+const SettingsContextProvider = ({ children }: SettingsProviderProps) => {
 	const [settings, setSettings] = useLocalStorage("settings", initialState);
 
 	const isArabic = localStorage.getItem("i18nextLng") === "ar";
@@ -151,4 +157,17 @@ const SettingsProvider = ({ children }: SettingsProviderProps) => {
 };
 
 export { SettingsContext, ISettingsContextProps };
-export default SettingsProvider;
+export default SettingsContextProvider;
+
+export const useSettingsContext = () => {
+	const context = useContext(SettingsContext);
+	if (!context) {
+		console.error(
+			"useSettingsContext must be used with a SettingsContextProvider",
+		);
+		throw new Error(
+			"useSettingsContext must be used with a SettingsContextProvider",
+		);
+	}
+	return context;
+};

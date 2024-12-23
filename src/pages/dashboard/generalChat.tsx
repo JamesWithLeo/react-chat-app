@@ -44,6 +44,7 @@ const Chats = () => {
 			>
 				<Stack
 					p={isSmallScreen ? 2 : 3}
+					pb={0}
 					spacing={2}
 					sx={{ height: "100vh" }}
 				>
@@ -89,66 +90,69 @@ const Chats = () => {
 						</Search>
 					</Stack>
 
-					<Stack
-						height={"100%"}
-						spacing={2}
-						direction="column"
-						sx={{ flexGrow: 1, overflow: "scroll", height: "100%" }}
-					>
-						<Stack spacing={2.4}>
-							<Typography
-								variant="subtitle2"
-								sx={{ color: "#676767" }}
-							>
-								Pinned
-							</Typography>
+					<Stack spacing={2.4}>
+						<Typography
+							variant="subtitle2"
+							sx={{ color: "#676767" }}
+						>
+							Pinned
+						</Typography>
 
-							<>
-								{isSuccess ? (
-									<>
-										{conversation.map((convo) => {
-											if (!convo.is_pinned) return null;
-											return (
-												<ChatElement
-													convo={convo}
-													key={convo.conversation_id}
-												/>
-											);
-										})}
-									</>
-								) : null}
-							</>
-						</Stack>
-
-						<Stack spacing={2.4}>
-							<Typography
-								variant="subtitle2"
-								sx={{ color: "#676767" }}
-							>
-								All Chats
-							</Typography>
-
-							<>
-								{isSuccess ? (
-									<>
-										{conversation.map((convo) => {
-											if (
-												convo.is_pinned ||
-												!convo.last_message
-											)
-												return null;
-											return (
-												<ChatElement
-													convo={convo}
-													key={convo.conversation_id}
-												/>
-											);
-										})}
-									</>
-								) : null}
-							</>
-						</Stack>
+						<>
+							{isSuccess ? (
+								<>
+									{conversation.map((convo) => {
+										if (!convo.is_pinned) return null;
+										return (
+											<ChatElement
+												convo={convo}
+												key={convo.conversation_id}
+											/>
+										);
+									})}
+								</>
+							) : null}
+						</>
 					</Stack>
+
+					<Box
+						className="scrollbar"
+						component={"div"}
+						sx={{
+							flexGrow: 1,
+							overflowY: "scroll",
+							height: "100%",
+							width: "100%",
+						}}
+					>
+						<Typography
+							variant="subtitle2"
+							sx={{ color: "#676767" }}
+						>
+							All Chats
+						</Typography>
+						<Stack spacing={1} pb={2}>
+							{isSuccess ? (
+								<>
+									{conversation.map((convo) => {
+										if (
+											convo.is_pinned ||
+											!convo.last_message
+										)
+											return null;
+										return (
+											<>
+												<ChatElement
+													convo={convo}
+													key={convo.conversation_id}
+												/>
+											</>
+										);
+									})}
+								</>
+							) : null}
+						</Stack>
+					</Box>
 				</Stack>
 			</Box>
 		</>

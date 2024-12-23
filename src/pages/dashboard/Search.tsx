@@ -16,16 +16,14 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import { CaretLeft, Spinner } from "phosphor-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { SearchScope, setSearchRoute } from "../../redux/slices/app";
+import { setSearchRoute } from "../../redux/slices/app";
 import { AppState } from "../../redux/store";
-import { debounce } from "lodash";
-import { ChangeEvent, useEffect, useState } from "react";
-import { FetchSearch } from "../../services/fetch";
+import { ChangeEvent } from "react";
 import PeopleCard from "../../components/card/search/PeopleCard";
 import { IViewUser } from "../../redux/slices/auth";
-import { useQuery } from "@tanstack/react-query";
 import ChatCard from "../../components/card/search/ChatCard";
 import { IConversation } from "../../contexts/ConvoContext";
+import useSearchContext from "../../contexts/SearchContext";
 
 export default function Search() {
 	const theme = useTheme();
@@ -33,14 +31,18 @@ export default function Search() {
 	const dispatch = useDispatch();
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
-	const searchScope = useSelector((state: AppState) => state.app.search);
 
 	const isSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.down("sm"),
 	);
-	const [searchQuery, setSearchQuery] = useState<string>("");
-	const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
-	const [scope, setScope] = useState<SearchScope>(searchScope ?? "all");
+	const {
+		setSearchQuery,
+		isLoading,
+		isSuccess,
+		searchData,
+		scope,
+		setScope,
+	} = useSearchContext();
 
 	const HandleSearch = (
 		event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -48,27 +50,6 @@ export default function Search() {
 		const { value } = event.target;
 		setSearchQuery(value);
 	};
-
-	useEffect(() => {
-		const handler = debounce(() => {
-			setDebouncedSearchTerm(searchQuery);
-		}, 800);
-		handler();
-		return () => {
-			handler.cancel();
-		};
-	}, [searchQuery]);
-
-	const query = useQuery(
-		["people", debouncedSearchTerm, scope],
-		() => {
-			console.log("searching! scope:", scope);
-			return FetchSearch(id!, debouncedSearchTerm, scope);
-		},
-		{ enabled: true },
-	);
-
-	const { isLoading, isSuccess, data: searchData } = query;
 
 	return (
 		<>
@@ -112,7 +93,7 @@ export default function Search() {
 					</Stack>
 
 					<ToggleButtonGroup
-						value={searchScope ?? scope}
+						value={scope}
 						size="small"
 						exclusive
 						sx={{
@@ -123,7 +104,6 @@ export default function Search() {
 						<ToggleButton
 							value={"all"}
 							onClick={() => {
-								dispatch(setSearchRoute("all"));
 								setScope("all");
 							}}
 						>
@@ -132,7 +112,6 @@ export default function Search() {
 						<ToggleButton
 							value={"people"}
 							onClick={() => {
-								dispatch(setSearchRoute("people"));
 								setScope("people");
 							}}
 						>
@@ -141,7 +120,6 @@ export default function Search() {
 						<ToggleButton
 							value={"chats"}
 							onClick={() => {
-								dispatch(setSearchRoute("chats"));
 								setScope("chats");
 							}}
 						>
@@ -183,6 +161,8 @@ export default function Search() {
 									{searchData.chats &&
 										searchData.chats.map(
 											(chat: IConversation) => {
+												if (!chat.last_message)
+													return null;
 												return (
 													<ChatCard
 														convo={chat}

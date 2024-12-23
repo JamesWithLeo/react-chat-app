@@ -71,6 +71,7 @@ export default function Scrollbar({
 			<RootStyle>
 				<SimpleBarStyle
 					timeout={500}
+					autoHide={true}
 					clickOnTrack={false}
 					sx={sx}
 					{...other}

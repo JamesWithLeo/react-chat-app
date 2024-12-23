@@ -2,7 +2,7 @@
 import { styled } from "@mui/material/styles";
 import { Grid, RadioGroup, CardActionArea } from "@mui/material";
 // hooks
-import useSettings from "../../../hooks/useSettings";
+import { useSettingsContext } from "../../../contexts/SettingsContext";
 //
 import Iconify from "../../Iconify";
 import BoxMask from "./BoxMask";
@@ -18,7 +18,7 @@ const BoxStyle = styled(CardActionArea)(({ theme }) => ({
 }));
 
 export default function SettingMode() {
-	const { themeMode, onChangeMode } = useSettings();
+	const { themeMode, onChangeMode } = useSettingsContext();
 
 	return (
 		<RadioGroup name="themeMode" value={themeMode} onChange={onChangeMode}>

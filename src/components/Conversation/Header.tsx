@@ -7,7 +7,7 @@ import {
 	Stack,
 	useMediaQuery,
 } from "@mui/material";
-import { CaretDown, CaretLeft, Phone, VideoCamera } from "phosphor-react";
+import { CaretLeft, Phone, VideoCamera } from "phosphor-react";
 import React from "react";
 import { Theme, useTheme } from "@mui/material/styles";
 import StyledBadge from "../StyledBadge";
@@ -17,6 +17,7 @@ import { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { useChatContext } from "../../contexts/ChatContext";
 import { ToggleSidebarOn } from "../../redux/slices/app";
+import { Info } from "@phosphor-icons/react";
 
 const HeadInfo = ({
 	isOnline,
@@ -31,7 +32,7 @@ const HeadInfo = ({
 
 	return (
 		<>
-			<Box alignContent={"center"} component={"div"}>
+			<Box alignContent={"center"} component={"main"}>
 				<StyledBadge
 					onClick={() => {
 						dispatch(ToggleSidebarOn("CONTACT"));
@@ -62,7 +63,18 @@ const HeadInfo = ({
 				</StyledBadge>
 			</Box>
 			<Stack spacing={0.2}>
-				<Typography variant="subtitle2">{conversation_name}</Typography>
+				<Typography
+					variant="subtitle2"
+					textOverflow={"ellipsis"}
+					overflow={"hidden"}
+					sx={{
+						display: "-webkit-box",
+						WebkitLineClamp: "1",
+						WebkitBoxOrient: "vertical",
+					}}
+				>
+					{conversation_name}
+				</Typography>
 
 				<Typography variant="caption">
 					{isOnline ? "Online" : "Offline"}
@@ -92,7 +104,8 @@ const Header = () => {
 			p={isSmallScreen ? 1 : 2}
 			sx={{
 				width: "100%",
-				maxHeight: "16rem",
+				maxHeight: "4rem",
+				minHeight: "4rem",
 				backgroundColor:
 					theme.palette.mode === "light"
 						? "#F8FAFF"
@@ -103,20 +116,18 @@ const Header = () => {
 			<Stack
 				alignItems={"center"}
 				direction="row"
-				gap={2}
+				gap={0}
 				justifyContent={"space-between"}
-				sx={{ width: "100%", height: "100%" }}
+				sx={{ width: "100%", height: "100%", gap: 1 }}
 			>
 				<Stack direction={"row"} spacing={2}>
 					<IconButton
-						sx={{ fontSize: isSmallScreen ? 20 : 30 }}
+						sx={{ fontSize: 30 }}
 						onClick={() => {
 							navigate("/chats", { replace: true });
 						}}
 					>
-						<CaretLeft
-							fontSize={isSmallScreen ? "small" : "large"}
-						/>
+						<CaretLeft fontSize={"large"} />
 					</IconButton>
 					{messages && messages.length ? (
 						<HeadInfo
@@ -150,21 +161,17 @@ const Header = () => {
 					alignItems="center"
 					spacing={isSmallScreen ? 1 : 3}
 				>
-					<IconButton sx={{ fontSize: isSmallScreen ? 20 : 30 }}>
-						<Phone fontSize={isSmallScreen ? "small" : "large"} />
+					<IconButton sx={{ fontSize: 30 }}>
+						<Phone fontSize={"large"} />
 					</IconButton>
 					<IconButton
-						sx={{ fontSize: isSmallScreen ? 20 : 30 }} // Adjust the size based on screen size
+						sx={{ fontSize: 30 }} // Adjust the size based on screen size
 					>
-						<VideoCamera
-							fontSize={isSmallScreen ? "small" : "large"}
-						/>
+						<VideoCamera fontSize={"large"} />
 					</IconButton>
 					<Divider orientation="vertical" flexItem />
-					<IconButton sx={{ fontSize: isSmallScreen ? 20 : 30 }}>
-						<CaretDown
-							fontSize={isSmallScreen ? "small" : "large"}
-						/>
+					<IconButton sx={{ fontSize: 30 }}>
+						<Info fontSize={"large"} />
 					</IconButton>
 				</Stack>
 			</Stack>

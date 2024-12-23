@@ -17,10 +17,9 @@ import { useState } from "react";
 import { IViewUser } from "../../../redux/slices/auth";
 import { useNavigate } from "react-router-dom";
 import { useChatContext } from "../../../contexts/ChatContext";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { FetchConversationId } from "../../../services/fetch";
 import { AppState } from "../../../redux/store";
-import { SetInstantMessage } from "../../../redux/slices/app";
 
 export default function PeopleCard({
 	user,
@@ -36,7 +35,6 @@ export default function PeopleCard({
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const { setChat } = useChatContext();
 	const navigate = useNavigate();
-	const dispatch = useDispatch();
 
 	const isNotSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.up("sm"),

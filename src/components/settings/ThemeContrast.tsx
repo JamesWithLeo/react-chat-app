@@ -7,7 +7,7 @@ import {
 	useTheme,
 } from "@mui/material/styles";
 // hooks
-import useSettings from "../../hooks/useSettings";
+import { useSettingsContext } from "../../contexts/SettingsContext";
 //
 import componentsOverride from "../../theme/overrides";
 import { ThemeOptions } from "@mui/material/styles/createTheme";
@@ -20,7 +20,7 @@ export default function ThemeColorPresets({
 }) {
 	const defaultTheme = useTheme();
 
-	const { setColor, themeMode } = useSettings();
+	const { setColor, themeMode } = useSettingsContext();
 	const isDarkMode = themeMode === "dark";
 	const themeOptions: ThemeOptions = useMemo(
 		() => ({

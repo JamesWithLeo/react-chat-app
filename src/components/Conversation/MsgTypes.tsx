@@ -10,8 +10,9 @@ import {
 } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import { DotsThreeVertical, DownloadSimple, Image } from "phosphor-react";
-import React, { MouseEvent, useState } from "react";
+import React, { useState } from "react";
 import { IMessages, useChatContext } from "../../contexts/ChatContext";
+import { useSettingsContext } from "../../contexts/SettingsContext";
 
 interface IMessageBase {
 	type: "msg" | "divider";
@@ -291,6 +292,8 @@ const TextMsg = ({
 	isOptionOpen: boolean;
 }) => {
 	const theme = useTheme();
+	const { themeMode } = useSettingsContext();
+
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
@@ -328,7 +331,9 @@ const TextMsg = ({
 						border: "none",
 						backgroundColor: !isFromOther
 							? theme.palette.primary.main
-							: theme.palette.background.default,
+							: themeMode === "light"
+								? theme.palette.background.default
+								: theme.palette.background.neutral,
 						borderRadius: 1.5,
 						width: "max-content",
 					}}

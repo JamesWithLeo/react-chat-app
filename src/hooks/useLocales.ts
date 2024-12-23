@@ -1,14 +1,12 @@
 import { useTranslation } from "react-i18next";
-import useSettings from "./useSettings";
+import { useSettingsContext } from "../contexts/SettingsContext";
 // config
 import { allLangs, defaultLang } from "../config";
-
-// ----------------------------------------------------------------------
 
 export default function useLocales() {
 	const { i18n, t: translate } = useTranslation();
 
-	const { onChangeDirectionByLang } = useSettings();
+	const { onChangeDirectionByLang } = useSettingsContext();
 
 	const langStorage = localStorage.getItem("i18nextLng");
 

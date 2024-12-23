@@ -12,7 +12,7 @@ import {
 	IconButton,
 } from "@mui/material";
 // hooks
-import useSettings from "../../../hooks/useSettings";
+import { useSettingsContext } from "../../../contexts/SettingsContext";
 // utils
 import cssStyles from "../../../utils/cssStyles";
 // config
@@ -64,7 +64,7 @@ export default function SettingsDrawer() {
 		themeDirection,
 		themeColorPresets,
 		onResetSetting,
-	} = useSettings();
+	} = useSettingsContext();
 
 	const [open, setOpen] = useState(false);
 	const sidebar = useSelector((state: AppState) => state.app.sidebar);

@@ -9,7 +9,7 @@ import {
 	Stack,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import useSettings from "../../hooks/useSettings";
+import { useSettingsContext } from "../../contexts/SettingsContext";
 import AntSwitch from "../AntSwitch";
 import Logo from "../../assets/Images/logo.ico";
 import { useNavigate } from "react-router-dom";
@@ -76,7 +76,7 @@ export default function NavBar() {
 	// state for selected button
 	const [selected, setSelected] = useState(0);
 	//switch themes
-	const { onToggleMode } = useSettings();
+	const { onToggleMode } = useSettingsContext();
 	const user = useSelector((state: AppState) => state.auth.user);
 	return (
 		<Box
