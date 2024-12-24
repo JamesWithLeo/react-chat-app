@@ -37,7 +37,11 @@ export default function Router() {
 		},
 		{
 			path: "/",
-			element: <DashboardLayout />,
+			element: (
+				<ConvoContextProvider>
+					<DashboardLayout />
+				</ConvoContextProvider>
+			),
 			children: [
 				{
 					element: <Navigate to={DEFAULT_PATH} replace />,
@@ -47,9 +51,7 @@ export default function Router() {
 					path: "chats",
 					element: (
 						<ChatContextProvider>
-							<ConvoContextProvider>
-								<GeneralChats />
-							</ConvoContextProvider>
+							<GeneralChats />
 						</ChatContextProvider>
 					),
 				},
@@ -63,11 +65,7 @@ export default function Router() {
 				},
 				{
 					path: "archived",
-					element: (
-						<ConvoContextProvider>
-							<ArchivePage />
-						</ConvoContextProvider>
-					),
+					element: <ArchivePage />,
 				},
 				{
 					path: "search",

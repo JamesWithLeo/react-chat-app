@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import StyledBadge from "./StyledBadge";
-import { IConversation } from "../contexts/ConvoContext";
+import { IConversation, useConvoContext } from "../contexts/ConvoContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useChatContext } from "../contexts/ChatContext";
@@ -29,6 +29,7 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 		//	fetchPeer
 		setChat,
 	} = useChatContext();
+	const { setSelectedConvo } = useConvoContext();
 
 	const isSmallScreen = useMediaQuery((state: Theme) =>
 		state.breakpoints.up("sm"),
@@ -70,6 +71,11 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 		setIsLongPress(false);
 		const timeoutId = setTimeout(() => {
 			setIsLongPress(true);
+			setSelectedConvo({
+				conversation_id: convo.conversation_id,
+				is_archived: convo.is_archived,
+				is_pinned: convo.is_pinned,
+			});
 			HandleOpenConvoSetting();
 		}, 800);
 		setPressTimeoutId(timeoutId);

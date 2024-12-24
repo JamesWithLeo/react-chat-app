@@ -22,11 +22,6 @@ interface ISiderBar {
 interface IApp {
 	sidebar: ISiderBar;
 	search: SearchScope | null;
-	conversation: null | {
-		id: string;
-		is_pinned?: boolean;
-		is_archived?: boolean;
-	};
 }
 const initialState: IApp = currentApp
 	? currentApp
@@ -37,7 +32,6 @@ const initialState: IApp = currentApp
 			},
 
 			search: "all",
-			conversation: null,
 		};
 
 // create slice

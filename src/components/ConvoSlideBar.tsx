@@ -13,41 +13,57 @@ import { PushPin, Archive, Trash } from "@phosphor-icons/react";
 import { AppState } from "../redux/store";
 
 import { PinConvoRequest, ArchiveConvoRequest } from "../services/fetch";
+import { useConvoContext } from "../contexts/ConvoContext";
 
 export default function ConvoSlideBar() {
 	const theme = useTheme();
 	const dispatch = useDispatch();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
-	const { conversation: conversationSlice } = useSelector(
-		(store: AppState) => store.app,
-	);
+	const { archivedConversation, pinConversation, selectedConvo } =
+		useConvoContext();
 
 	const HandleDeleteConvo = () => {
 		console.log("Deleting Convo!");
 	};
 
 	const HandlePinConvo = async () => {
-		if (!id || !conversationSlice) return;
-		console.log("Pinning Convo!", conversationSlice);
+		if (!id || !selectedConvo) return;
+		console.log("Pinning Convo!", selectedConvo);
 		const pinResponse = await PinConvoRequest(
 			id,
-			conversationSlice.id,
-			!conversationSlice.is_pinned,
+			selectedConvo.conversation_id,
+			!selectedConvo.is_pinned,
 		);
 		console.log(pinResponse);
+		if (
+			pinResponse.ok &&
+			pinResponse.conversation_id &&
+			"is_pinned" in pinResponse
+		) {
+			pinConversation(pinResponse.is_pinned);
+			dispatch(ToggleSidebarOff());
+		}
 	};
 
 	const HandleArchiveConvo = async () => {
-		if (!id || !conversationSlice) return;
-		console.log("Archiving Convo!", conversationSlice.id);
+		if (!id || !selectedConvo) return;
+		console.log("Archiving Convo!", selectedConvo);
 
 		const archiveResponse = await ArchiveConvoRequest(
 			id,
-			conversationSlice.id,
-			!conversationSlice.is_archived,
+			selectedConvo.conversation_id,
+			selectedConvo.is_archived,
 		);
 		console.log(archiveResponse);
+		if (
+			archiveResponse.ok &&
+			archiveResponse.conversation_id &&
+			"is_archived" in archiveResponse
+		) {
+			archivedConversation(archiveResponse.is_archived);
+			dispatch(ToggleSidebarOff());
+		}
 	};
 
 	return (
@@ -83,41 +99,47 @@ export default function ConvoSlideBar() {
 					>
 						<List>
 							<ListItem>
-								<ListItemButton
-									disableGutters
-									onClick={HandleArchiveConvo}
-								>
-									<ListItemIcon>
-										<Archive />
-									</ListItemIcon>
-									<ListItemText
-										secondary={`${conversationSlice?.is_archived ? "Unarchive" : "Archive"}`}
-									/>
-								</ListItemButton>
+								{selectedConvo ? (
+									<ListItemButton
+										disableGutters
+										onClick={HandleArchiveConvo}
+									>
+										<ListItemIcon>
+											<Archive />
+										</ListItemIcon>
+										<ListItemText
+											secondary={`${selectedConvo.is_archived ? "Unarchive" : "Archive"}`}
+										/>
+									</ListItemButton>
+								) : null}
 							</ListItem>
 							<ListItem>
-								<ListItemButton
-									disableGutters
-									onClick={HandlePinConvo}
-								>
-									<ListItemIcon>
-										<PushPin />
-									</ListItemIcon>
-									<ListItemText
-										secondary={`${conversationSlice?.is_pinned ? "unpin" : "pin"} conversation`}
-									/>
-								</ListItemButton>
+								{selectedConvo ? (
+									<ListItemButton
+										disableGutters
+										onClick={HandlePinConvo}
+									>
+										<ListItemIcon>
+											<PushPin />
+										</ListItemIcon>
+										<ListItemText
+											secondary={`${selectedConvo.is_pinned ? "unpin" : "pin"} conversation`}
+										/>
+									</ListItemButton>
+								) : null}
 							</ListItem>
 							<ListItem>
-								<ListItemButton
-									disableGutters
-									onClick={HandleDeleteConvo}
-								>
-									<ListItemIcon>
-										<Trash />
-									</ListItemIcon>
-									<ListItemText secondary="Delete conversation" />
-								</ListItemButton>
+								{selectedConvo ? (
+									<ListItemButton
+										disableGutters
+										onClick={HandleDeleteConvo}
+									>
+										<ListItemIcon>
+											<Trash />
+										</ListItemIcon>
+										<ListItemText secondary="Delete conversation" />
+									</ListItemButton>
+								) : null}
 							</ListItem>
 						</List>
 					</Box>

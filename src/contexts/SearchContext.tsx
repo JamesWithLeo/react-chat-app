@@ -14,7 +14,7 @@ import { AppState } from "../redux/store";
 import { debounce } from "lodash";
 import { setSearchRoute } from "../redux/slices/app";
 
-export type SearchScope = "all" | "people" | "chats";
+export type SearchScope = "all" | "people" | "chats" | "groups";
 interface ISearchContext {
 	searchData: { ok: 1 | 0; users: IViewUser[]; chats: IConversation[] };
 	scope: SearchScope;

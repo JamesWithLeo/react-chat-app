@@ -38,8 +38,22 @@ interface IConvoContext {
 	isLoading: boolean;
 	isSuccess: boolean;
 	isError: boolean;
+
+	selectedConvo: {
+		conversation_id: string;
+		is_pinned: boolean;
+		is_archived: boolean;
+	} | null;
+	setSelectedConvo: (
+		convo: {
+			conversation_id: string;
+			is_pinned: boolean;
+			is_archived: boolean;
+		} | null,
+	) => void;
 	fetchConversation: (userId: string) => void;
-	refreshStatus: (value: boolean) => void;
+	archivedConversation: (isArchived: boolean) => void;
+	pinConversation: (isPinned: boolean) => void;
 }
 
 const defaultContextValue: IConvoContext = {
@@ -47,7 +61,10 @@ const defaultContextValue: IConvoContext = {
 	isLoading: true,
 	isSuccess: false,
 	isError: false,
-	refreshStatus: () => {},
+	selectedConvo: null,
+	setSelectedConvo: () => {},
+	pinConversation: () => {},
+	archivedConversation: () => {},
 	fetchConversation: async (userId: string) => {},
 };
 
@@ -64,6 +81,11 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 	const [senderId, setSenderId] = useState<string>(id ?? "");
 
 	const queryClient = useQueryClient();
+	const [selectedConvo, setSelectedConvo] = useState<{
+		conversation_id: string;
+		is_pinned: boolean;
+		is_archived: boolean;
+	} | null>(null);
 
 	const {
 		data: conversation,
@@ -91,10 +113,48 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		setSenderId(userId);
 	};
 
-	// const pinConversation = async () => {};
+	const pinConversation = (isPinned: boolean) => {
+		console.log("Convo cached changing!");
+		if (selectedConvo) {
+			queryClient.setQueryData(
+				["convo"],
+				(oldData: IConversation[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((c) =>
+						c.conversation_id === selectedConvo.conversation_id
+							? { ...c, is_pinned: !selectedConvo.is_pinned }
+							: c,
+					);
+				},
+			);
+		}
+	};
 
-	const refreshStatus = (value: boolean) => {
-		if (!id) return;
+	const archivedConversation = (isArchived: boolean) => {
+		console.log("Convo cached changing!");
+		if (selectedConvo) {
+			queryClient.setQueryData(
+				["convo"],
+				(oldData: IConversation[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((c) =>
+						c.conversation_id === selectedConvo.conversation_id
+							? { ...c, is_archived: !selectedConvo.is_archived }
+							: c,
+					);
+				},
+			);
+		}
+	};
+
+	const handleSetSelectedConvo = (
+		convo: {
+			conversation_id: string;
+			is_pinned: boolean;
+			is_archived: boolean;
+		} | null,
+	) => {
+		setSelectedConvo(convo);
 	};
 
 	useEffect(() => {
@@ -160,10 +220,13 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 			value={{
 				conversation,
 				fetchConversation,
+				selectedConvo,
+				setSelectedConvo: handleSetSelectedConvo,
+				archivedConversation,
+				pinConversation,
 				isLoading,
 				isSuccess,
 				isError,
-				refreshStatus,
 			}}
 		>
 			{children}

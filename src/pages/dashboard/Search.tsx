@@ -125,6 +125,15 @@ export default function Search() {
 						>
 							chats
 						</ToggleButton>
+
+						<ToggleButton
+							value={"groups"}
+							onClick={() => {
+								setScope("groups");
+							}}
+						>
+							groups
+						</ToggleButton>
 					</ToggleButtonGroup>
 				</Stack>
 				<Box p={isSmallScreen ? 2 : 3}>
