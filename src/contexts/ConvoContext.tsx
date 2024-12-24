@@ -37,14 +37,16 @@ interface IConvoContext {
 	conversation: IConversation[];
 	isLoading: boolean;
 	isSuccess: boolean;
+	isError: boolean;
 	fetchConversation: (userId: string) => void;
 	refreshStatus: (value: boolean) => void;
 }
 
 const defaultContextValue: IConvoContext = {
 	conversation: [],
-	isLoading: false,
+	isLoading: true,
 	isSuccess: false,
+	isError: false,
 	refreshStatus: () => {},
 	fetchConversation: async (userId: string) => {},
 };
@@ -67,6 +69,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 		data: conversation,
 		isLoading,
 		isSuccess,
+		isError,
 	} = useQuery(
 		["convo"],
 		async () => {
@@ -159,6 +162,7 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 				fetchConversation,
 				isLoading,
 				isSuccess,
+				isError,
 				refreshStatus,
 			}}
 		>

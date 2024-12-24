@@ -8,17 +8,17 @@ import {
 import { CircleDashed, MagnifyingGlass } from "phosphor-react";
 import { Theme, useTheme } from "@mui/material/styles";
 import React from "react";
-// import {ChatList} from '../../data';
 import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
-import { List } from "@phosphor-icons/react";
+import { CloudX, List } from "@phosphor-icons/react";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { ToggleSidebarOn } from "../../redux/slices/app";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
+import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
 
 const Chats = () => {
 	const theme = useTheme();
@@ -27,7 +27,7 @@ const Chats = () => {
 	);
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
-	const { conversation, isSuccess } = useConvoContext();
+	const { conversation, isSuccess, isError, isLoading } = useConvoContext();
 
 	return (
 		<>
@@ -90,50 +90,98 @@ const Chats = () => {
 						</Search>
 					</Stack>
 
-					<Stack spacing={2.4}>
-						<Typography
-							variant="subtitle2"
-							sx={{ color: "#676767" }}
-						>
-							Pinned
-						</Typography>
+					{isSuccess ? (
+						<Stack spacing={2.4}>
+							<>
+								{conversation.some((c) => c.is_pinned) ? (
+									<Typography
+										variant="subtitle2"
+										sx={{ color: "#676767" }}
+									>
+										Pinned
+									</Typography>
+								) : null}
 
+								{conversation.map((convo) => {
+									if (!convo.is_pinned) return null;
+									return (
+										<ChatElement
+											convo={convo}
+											key={convo.conversation_id}
+										/>
+									);
+								})}
+							</>
+						</Stack>
+					) : null}
+
+					{isError && !isSuccess ? (
 						<>
-							{isSuccess ? (
-								<>
-									{conversation.map((convo) => {
-										if (!convo.is_pinned) return null;
-										return (
-											<ChatElement
-												convo={convo}
-												key={convo.conversation_id}
-											/>
-										);
-									})}
-								</>
-							) : null}
+							<Box
+								sx={{
+									display: "flex",
+									flexDirection: "column",
+									alignItems: "center",
+									justifyContent: "center",
+									height: "100%",
+								}}
+							>
+								<CloudX
+									fontSize={"4rem"}
+									weight="duotone"
+									color={theme.palette.grey[400]}
+								/>
+								<Typography
+									pb={4}
+									textAlign={"center"}
+									variant="caption"
+									fontSize={"12px"}
+									color={theme.palette.grey[600]}
+								>
+									Sorry, We're having a problem <br />
+									with the database.
+								</Typography>
+							</Box>
 						</>
-					</Stack>
+					) : null}
 
-					<Box
-						className="scrollbar"
-						component={"div"}
-						sx={{
-							flexGrow: 1,
-							overflowY: "scroll",
-							height: "100%",
-							width: "100%",
-						}}
-					>
-						<Typography
-							variant="subtitle2"
-							sx={{ color: "#676767" }}
-						>
-							All Chats
-						</Typography>
-						<Stack spacing={1} pb={2}>
-							{isSuccess ? (
-								<>
+					{isLoading && !isSuccess ? (
+						<>
+							<Stack spacing={2} pb={2} height={"100%"}>
+								<Typography
+									variant="subtitle2"
+									sx={{ color: "#676767" }}
+								>
+									All Chat
+								</Typography>
+								<ConvoCardSkeleton opacity={1} />
+								<ConvoCardSkeleton opacity={0.8} />
+								<ConvoCardSkeleton opacity={0.4} />
+								<ConvoCardSkeleton opacity={0.3} />
+							</Stack>
+						</>
+					) : null}
+
+					{isSuccess ? (
+						<>
+							<Box
+								className="scrollbar"
+								component={"div"}
+								sx={{
+									flexGrow: 1,
+									overflowY: "scroll",
+									height: "100%",
+									width: "100%",
+								}}
+							>
+								<Stack spacing={2} pb={2}>
+									<Typography
+										variant="subtitle2"
+										sx={{ color: "#676767" }}
+									>
+										All Chat
+									</Typography>
+
 									{conversation.map((convo) => {
 										if (
 											convo.is_pinned ||
@@ -149,10 +197,10 @@ const Chats = () => {
 											</>
 										);
 									})}
-								</>
-							) : null}
-						</Stack>
-					</Box>
+								</Stack>
+							</Box>
+						</>
+					) : null}
 				</Stack>
 			</Box>
 		</>
