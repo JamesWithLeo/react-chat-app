@@ -42,7 +42,7 @@ export default function ConvoSlideBar() {
 			"is_pinned" in pinResponse
 		) {
 			pinConversation(pinResponse.is_pinned);
-			dispatch(ToggleSidebarOff());
+			// dispatch(ToggleSidebarOff());
 		}
 	};
 

@@ -1,9 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+	act,
 	createContext,
 	ReactNode,
 	useContext,
 	useEffect,
+	useReducer,
 	useState,
 } from "react";
 import { FetchConvo } from "../services/fetch";
@@ -12,6 +14,25 @@ import { AppState } from "../redux/store";
 import socket from "../services/sockets";
 import { IMessage_type } from "./ChatContext";
 import { IViewUser } from "../redux/slices/auth";
+
+type SelectedConvoState = {
+	conversation_id: string;
+	is_pinned: boolean;
+	is_archived: boolean;
+};
+type SelectedConvoActionReducer =
+	| {
+			type: "initialize";
+			payload: {
+				conversation_id: string;
+				is_pinned: boolean;
+				is_archived: boolean;
+			};
+	  }
+	| {
+			type: "set";
+			payload: { is_pinned?: boolean; is_archived?: boolean };
+	  };
 
 export interface IConversation {
 	conversation_id: string;
@@ -44,13 +65,7 @@ interface IConvoContext {
 		is_pinned: boolean;
 		is_archived: boolean;
 	} | null;
-	setSelectedConvo: (
-		convo: {
-			conversation_id: string;
-			is_pinned: boolean;
-			is_archived: boolean;
-		} | null,
-	) => void;
+	setSelectedConvo: (convo: SelectedConvoState) => void;
 	fetchConversation: (userId: string) => void;
 	archivedConversation: (isArchived: boolean) => void;
 	pinConversation: (isPinned: boolean) => void;
@@ -70,22 +85,92 @@ const defaultContextValue: IConvoContext = {
 
 export const ConvoContext = createContext(defaultContextValue);
 
-interface ConvoContextProviderProps {
-	children: ReactNode;
-}
-
-const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
+const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 	children,
 }) => {
+	const queryClient = useQueryClient();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const [senderId, setSenderId] = useState<string>(id ?? "");
 
-	const queryClient = useQueryClient();
-	const [selectedConvo, setSelectedConvo] = useState<{
-		conversation_id: string;
-		is_pinned: boolean;
-		is_archived: boolean;
-	} | null>(null);
+	const selectedConvoReducer = (
+		state: SelectedConvoState | null,
+		action: SelectedConvoActionReducer,
+	): SelectedConvoState | null => {
+		switch (action.type) {
+			case "initialize":
+				return {
+					...action.payload,
+				};
+			case "set":
+				return state
+					? {
+							...state,
+							is_archived:
+								action.payload.is_archived ?? state.is_archived,
+							is_pinned:
+								action.payload.is_pinned ?? state.is_pinned,
+						}
+					: null;
+			default:
+				return state;
+		}
+	};
+	const [selectedConvo, setSelectedConvoReducer] = useReducer(
+		selectedConvoReducer,
+		null,
+	);
+
+	const pinConversation = (isPinned: boolean) => {
+		console.log("Convo cached changing!");
+		if (selectedConvo) {
+			queryClient.setQueryData(
+				["convo"],
+				(oldData: IConversation[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((c) =>
+						c.conversation_id === selectedConvo.conversation_id
+							? { ...c, is_pinned: !selectedConvo.is_pinned }
+							: c,
+					);
+				},
+			);
+
+			setSelectedConvoReducer({
+				type: "set",
+				payload: { is_pinned: isPinned },
+			});
+		}
+	};
+
+	const archivedConversation = (isArchived: boolean) => {
+		console.log("Convo cached changing!");
+		if (selectedConvo) {
+			queryClient.setQueryData(
+				["convo"],
+				(oldData: IConversation[] | undefined) => {
+					if (!oldData) return oldData;
+					return oldData.map((c) =>
+						c.conversation_id === selectedConvo.conversation_id
+							? { ...c, is_archived: !selectedConvo.is_archived }
+							: c,
+					);
+				},
+			);
+
+			setSelectedConvoReducer({
+				type: "set",
+				payload: { is_archived: isArchived },
+			});
+		}
+	};
+
+	const fetchConversation = async (userId: string) => {
+		setSenderId(userId);
+	};
+
+	const handleSetSelectedConvo = (convo: SelectedConvoState) => {
+		setSelectedConvoReducer({ type: "initialize", payload: convo });
+	};
 
 	const {
 		data: conversation,
@@ -109,53 +194,6 @@ const ConvoContextProvider: React.FC<ConvoContextProviderProps> = ({
 			// refetchInterval: false, // No periodic polling
 		},
 	);
-	const fetchConversation = async (userId: string) => {
-		setSenderId(userId);
-	};
-
-	const pinConversation = (isPinned: boolean) => {
-		console.log("Convo cached changing!");
-		if (selectedConvo) {
-			queryClient.setQueryData(
-				["convo"],
-				(oldData: IConversation[] | undefined) => {
-					if (!oldData) return oldData;
-					return oldData.map((c) =>
-						c.conversation_id === selectedConvo.conversation_id
-							? { ...c, is_pinned: !selectedConvo.is_pinned }
-							: c,
-					);
-				},
-			);
-		}
-	};
-
-	const archivedConversation = (isArchived: boolean) => {
-		console.log("Convo cached changing!");
-		if (selectedConvo) {
-			queryClient.setQueryData(
-				["convo"],
-				(oldData: IConversation[] | undefined) => {
-					if (!oldData) return oldData;
-					return oldData.map((c) =>
-						c.conversation_id === selectedConvo.conversation_id
-							? { ...c, is_archived: !selectedConvo.is_archived }
-							: c,
-					);
-				},
-			);
-		}
-	};
-
-	const handleSetSelectedConvo = (
-		convo: {
-			conversation_id: string;
-			is_pinned: boolean;
-			is_archived: boolean;
-		} | null,
-	) => {
-		setSelectedConvo(convo);
-	};
 
 	useEffect(() => {
 		if (!id) return;

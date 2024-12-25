@@ -105,6 +105,8 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 				component={"span"}
 				onMouseDown={HandleLongPressStart}
 				onMouseUp={HandlePressEnd}
+				onTouchStart={HandleLongPressStart}
+				onTouchEnd={HandlePressEnd}
 			>
 				<Stack
 					direction="row"
