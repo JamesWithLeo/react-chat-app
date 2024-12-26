@@ -21,8 +21,7 @@ export default function ThemeColorPresets({
 	const defaultTheme = useTheme();
 
 	const { setColor, themeMode } = useSettingsContext();
-	const isDarkMode = themeMode === "dark";
-	console.log(setColor);
+
 	const themeOptions: ThemeOptions = useMemo(
 		() => ({
 			...defaultTheme,
@@ -32,17 +31,18 @@ export default function ThemeColorPresets({
 					...setColor,
 				},
 			},
-			customShadows: isDarkMode
-				? {
-						...customShadows.dark,
-						primary: `0 8px 16px 0 ${alpha(setColor.main, 0.24)}`,
-					}
-				: {
-						...customShadows.light,
-						primary: `0 8px 16px 0 ${alpha(setColor.main, 0.24)}`,
-					},
+			customShadows:
+				themeMode === "dark"
+					? {
+							...customShadows.dark,
+							primary: `0 8px 16px 0 ${alpha(setColor.main, 0.24)}`,
+						}
+					: {
+							...customShadows.light,
+							primary: `0 8px 16px 0 ${alpha(setColor.main, 0.24)}`,
+						},
 		}),
-		[setColor, defaultTheme, isDarkMode],
+		[setColor, defaultTheme, themeMode],
 	);
 
 	const theme = createTheme(themeOptions);

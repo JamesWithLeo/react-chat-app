@@ -12,35 +12,16 @@ import { ToggleSidebarOn } from "../../redux/slices/app";
 import { List } from "@phosphor-icons/react";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
-import { useState, useEffect } from "react";
-import ConvoSkeleton from "../../components/skeletons/skeleton";
+import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
 
 export default function ArchivePage() {
 	const theme = useTheme();
 	const dispatch = useDispatch();
 
-	const [skeletonCount, setSkeletonCount] = useState<number>(0);
-
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
-	const { conversation, isSuccess } = useConvoContext();
-
-	useEffect(() => {
-		function setSkeleton() {
-			if (isSuccess && conversation.length) {
-				const archivedConvo = conversation.filter(
-					(convo) => convo.is_archived,
-				);
-
-				setSkeletonCount(archivedConvo.length);
-				setTimeout(() => {
-					setSkeletonCount(0);
-				}, 3000);
-			} else return;
-		}
-		setSkeleton();
-	}, [isSuccess, conversation]);
+	const { conversation, isSuccess, isLoading } = useConvoContext();
 
 	return (
 		<Box
@@ -73,31 +54,28 @@ export default function ArchivePage() {
 				</Stack>
 
 				<Stack spacing={2.4}>
-					{skeletonCount ? (
+					{isLoading && !isSuccess ? (
 						<>
-							{Array.from({ length: skeletonCount }).map(
-								(_, index) => {
-									return <ConvoSkeleton key={index} />;
-								},
-							)}
+							<ConvoCardSkeleton opacity={1} />
+							<ConvoCardSkeleton opacity={0.8} />
+							<ConvoCardSkeleton opacity={0.4} />
+							<ConvoCardSkeleton opacity={0.3} />
 						</>
-					) : (
+					) : null}
+
+					{isSuccess ? (
 						<>
-							{isSuccess ? (
-								<>
-									{conversation.map((convo) => {
-										if (!convo.is_archived) return null;
-										return (
-											<ChatElement
-												convo={convo}
-												key={convo.conversation_id}
-											/>
-										);
-									})}
-								</>
-							) : null}
+							{conversation.map((convo) => {
+								if (!convo.is_archived) return null;
+								return (
+									<ChatElement
+										convo={convo}
+										key={convo.conversation_id}
+									/>
+								);
+							})}
 						</>
-					)}
+					) : null}
 				</Stack>
 			</Stack>
 		</Box>

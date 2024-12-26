@@ -11,15 +11,26 @@ import DefaultSpinner from "../components/skeletons/DefaultSpinner";
 import ChatContextProvider from "../contexts/ChatContext";
 import ConvoContextProvider from "../contexts/ConvoContext";
 import { SearchContextProvider } from "../contexts/SearchContext";
+import ArchivedLoader from "../components/skeletons/ArchivedLoader";
+import GeneralChatLoader from "../components/skeletons/GeneralChatLoader";
+import ChatLoader from "../components/skeletons/ChatLoader";
+import LoginLoader from "../components/skeletons/LoginLoader";
+import RegisterLoader from "../components/skeletons/RegisterLoader";
 
-const Loadable = (Component: ComponentType) => {
+const Loadable = (Component: ComponentType, Loader?: ComponentType) => {
 	return (props: { [key: string]: any }) => {
 		return (
-			<Suspense fallback={<DefaultSpinner />}>
+			<Suspense fallback={Loader ? <Loader /> : <DefaultSpinner />}>
 				<Component {...props} />
 			</Suspense>
 		);
 	};
+};
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const withDelay = async (importFunc: () => Promise<any>, ms: number) => {
+	await delay(ms);
+	return importFunc();
 };
 
 export default function Router() {
@@ -89,14 +100,30 @@ export default function Router() {
 	]);
 }
 
-const Chat = Loadable(lazy(() => import("../pages/dashboard/Chat")));
+const Chat = Loadable(
+	lazy(() => withDelay(() => import("../pages/dashboard/Chat"), 8000)),
+	ChatLoader,
+);
+
 const GeneralChats = Loadable(
 	lazy(() => import("../pages/dashboard/generalChat")),
+	GeneralChatLoader,
 );
-const ArchivePage = Loadable(lazy(() => import("../pages/dashboard/Archived")));
-const LoginPage = Loadable(lazy(() => import("../pages/auth/Login")));
 
-const RegisterPage = Loadable(lazy(() => import("../pages/auth/Register")));
+const ArchivePage = Loadable(
+	lazy(() => import("../pages/dashboard/Archived")),
+	ArchivedLoader,
+);
+
+const LoginPage = Loadable(
+	lazy(() => withDelay(() => import("../pages/auth/Login"), 6000)),
+	LoginLoader,
+);
+const RegisterPage = Loadable(
+	lazy(() => withDelay(() => import("../pages/auth/Register"), 6000)),
+	RegisterLoader,
+);
+
 const SetupPage = Loadable(lazy(() => import("../pages/auth/SetUp")));
 
 const ResetPasswordPage = Loadable(

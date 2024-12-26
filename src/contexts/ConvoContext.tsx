@@ -1,6 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-	act,
 	createContext,
 	ReactNode,
 	useContext,

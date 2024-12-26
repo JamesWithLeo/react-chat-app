@@ -33,7 +33,7 @@ export default function ConvoSlideBar() {
 		const pinResponse = await PinConvoRequest(
 			id,
 			selectedConvo.conversation_id,
-			!selectedConvo.is_pinned,
+			!selectedConvo.is_pinned, // flipped the value
 		);
 		console.log(pinResponse);
 		if (
@@ -53,7 +53,7 @@ export default function ConvoSlideBar() {
 		const archiveResponse = await ArchiveConvoRequest(
 			id,
 			selectedConvo.conversation_id,
-			selectedConvo.is_archived,
+			!selectedConvo.is_archived, // flipped the value
 		);
 		console.log(archiveResponse);
 		if (
@@ -62,7 +62,6 @@ export default function ConvoSlideBar() {
 			"is_archived" in archiveResponse
 		) {
 			archivedConversation(archiveResponse.is_archived);
-			dispatch(ToggleSidebarOff());
 		}
 	};
 

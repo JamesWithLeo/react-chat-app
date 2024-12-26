@@ -30,7 +30,6 @@ const initialState: IApp = currentApp
 				isOpen: false,
 				type: "THEME", // can be CONTACT, STARRED,SHARED
 			},
-
 			search: "all",
 		};
 
