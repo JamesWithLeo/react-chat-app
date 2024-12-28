@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { CircleDashed, MagnifyingGlass } from "phosphor-react";
 import { Theme, useTheme } from "@mui/material/styles";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { ToggleSidebarOn } from "../../redux/slices/app";
-import { useConvoContext } from "../../contexts/ConvoContext";
+import { IConversation, useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/ConvoCard";
 import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
 
@@ -28,6 +28,28 @@ const Chats = () => {
 	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 	const { conversation, isSuccess, isError, isLoading } = useConvoContext();
+	const [sortedConversation, setSortedConversation] = useState<
+		IConversation[]
+	>([]);
+	useEffect(() => {
+		if (conversation && Array.isArray(conversation)) {
+			setSortedConversation(
+				conversation.sort((a, b) => {
+					if (
+						a.last_message?.created_at &&
+						b.last_message?.created_at
+					) {
+						return (
+							new Date(a.last_message.created_at).getTime() -
+							new Date(b.last_message.created_at).getTime()
+						);
+					} else {
+						return 0;
+					}
+				}),
+			);
+		}
+	}, [conversation]);
 
 	return (
 		<>
@@ -184,7 +206,7 @@ const Chats = () => {
 										All Chat
 									</Typography>
 
-									{conversation.map((convo) => {
+									{sortedConversation.map((convo) => {
 										if (
 											convo.is_pinned ||
 											!convo.last_message
