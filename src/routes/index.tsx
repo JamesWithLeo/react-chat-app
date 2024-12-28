@@ -101,7 +101,7 @@ export default function Router() {
 }
 
 const Chat = Loadable(
-	lazy(() => withDelay(() => import("../pages/dashboard/Chat"), 8000)),
+	lazy(() => import("../pages/dashboard/Chat")),
 	ChatLoader,
 );
 
@@ -116,11 +116,11 @@ const ArchivePage = Loadable(
 );
 
 const LoginPage = Loadable(
-	lazy(() => withDelay(() => import("../pages/auth/Login"), 6000)),
+	lazy(() => import("../pages/auth/Login")),
 	LoginLoader,
 );
 const RegisterPage = Loadable(
-	lazy(() => withDelay(() => import("../pages/auth/Register"), 6000)),
+	lazy(() => import("../pages/auth/Register")),
 	RegisterLoader,
 );
 

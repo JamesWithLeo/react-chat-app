@@ -96,6 +96,7 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 					borderRadius: 1,
 					height: "100%",
 					maxHeight: "5rem",
+					userSelect: "none",
 					backgroundColor:
 						theme.palette.mode === "light"
 							? "#fff"

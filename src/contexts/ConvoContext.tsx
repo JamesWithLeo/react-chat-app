@@ -243,6 +243,29 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 			);
 		});
 
+		socket.on("toClientMessage", (data) => {
+			console.log("New message received in convo ");
+			queryClient.setQueryData(
+				["convo"],
+				(prevConvo: IConversation[] | undefined) => {
+					if (!prevConvo) return [];
+					return prevConvo.map((p) =>
+						p.conversation_id === data.conversation_id
+							? {
+									...p,
+									last_message: {
+										content: data.content,
+										is_read: data.is_read,
+										created_at: data.created_at,
+										message_type: data.message_type,
+									},
+								}
+							: { ...p },
+					);
+				},
+			);
+		});
+
 		return () => {
 			document.removeEventListener(
 				"visibilitychange",

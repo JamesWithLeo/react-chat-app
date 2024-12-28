@@ -81,7 +81,9 @@ const Chats = () => {
 							}}
 						>
 							<SearchIconWrapper>
-								<MagnifyingGlass color="#709CE6" />
+								<MagnifyingGlass
+									color={theme.palette.primary.main}
+								/>
 							</SearchIconWrapper>
 							<StyledInputBase
 								placeholder="Search..."
