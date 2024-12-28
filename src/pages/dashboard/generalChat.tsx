@@ -40,8 +40,8 @@ const Chats = () => {
 						b.last_message?.created_at
 					) {
 						return (
-							new Date(a.last_message.created_at).getTime() -
-							new Date(b.last_message.created_at).getTime()
+							new Date(b.last_message.created_at).getTime() -
+							new Date(a.last_message.created_at).getTime()
 						);
 					} else {
 						return 0;
