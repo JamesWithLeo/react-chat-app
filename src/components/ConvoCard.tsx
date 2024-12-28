@@ -200,7 +200,8 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 								{dayjs(convo.last_message.created_at).fromNow()}
 							</Typography>
 						) : null}
-						<Badge color="primary" badgeContent={1}></Badge>
+
+						<Badge color="primary" variant="dot" />
 					</Stack>
 				</Stack>
 			</Box>

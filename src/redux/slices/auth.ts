@@ -16,6 +16,7 @@ export interface IViewUser {
 	lastName: string;
 	isOnline: boolean;
 	isTyping: boolean;
+	lastSeen: { messageId: string; seenAt: string };
 }
 
 interface IUser {

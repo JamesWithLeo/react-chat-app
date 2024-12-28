@@ -23,10 +23,34 @@ interface ServerToClientEvents {
 		conversation_id: string;
 	}) => void;
 	currentOnlinePeers: (ids: string[]) => void;
+	currentSeen: ({
+		user_id,
+		conversation_id,
+		message_id,
+		seen_at,
+	}: {
+		seen_at: string;
+		message_id: string;
+		user_id: string;
+		conversation_id: string;
+	}) => void;
 }
 
 interface ClientToServerEvents {
 	joinMessage: ({ conversationId }: { conversationId: string }) => void;
+
+	messageSeen: ({
+		conversationId,
+		messageId,
+		userId,
+		seenAt,
+	}: {
+		conversationId: string;
+		messageId: string;
+		userId: string;
+		seenAt: string;
+	}) => void;
+
 	insertMessage: (messageData: {
 		userId: string;
 		conversation_id: string;

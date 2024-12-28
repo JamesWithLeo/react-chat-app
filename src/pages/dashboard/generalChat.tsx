@@ -187,43 +187,37 @@ const Chats = () => {
 					) : null}
 
 					{isSuccess ? (
-						<>
-							<Box
-								className="scrollbar"
-								component={"div"}
-								sx={{
-									flexGrow: 1,
-									overflowY: "scroll",
-									height: "100%",
-									width: "100%",
-								}}
-							>
-								<Stack spacing={2} pb={2}>
-									<Typography
-										variant="subtitle2"
-										sx={{ color: "#676767" }}
-									>
-										All Chat
-									</Typography>
+						<Box
+							className="scrollbar"
+							sx={{
+								flexGrow: 1,
+								overflowY: "scroll",
+								height: "100%",
+								width: "100%",
+							}}
+						>
+							<Stack spacing={2} pb={2}>
+								<Typography
+									variant="subtitle2"
+									sx={{ color: "#676767" }}
+								>
+									All Chat
+								</Typography>
 
-									{sortedConversation.map((convo) => {
-										if (
-											convo.is_pinned ||
-											!convo.last_message
-										)
-											return null;
-										return (
-											<>
-												<ChatElement
-													convo={convo}
-													key={convo.conversation_id}
-												/>
-											</>
-										);
-									})}
-								</Stack>
-							</Box>
-						</>
+								{sortedConversation.map((convo) => {
+									if (convo.is_pinned || !convo.last_message)
+										return null;
+									return (
+										<>
+											<ChatElement
+												convo={convo}
+												key={convo.conversation_id}
+											/>
+										</>
+									);
+								})}
+							</Stack>
+						</Box>
 					) : null}
 				</Stack>
 			</Box>

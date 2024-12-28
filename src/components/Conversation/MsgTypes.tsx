@@ -7,6 +7,8 @@ import {
 	Menu,
 	MenuItem,
 	useMediaQuery,
+	Avatar,
+	AvatarGroup,
 } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
 import { DotsThreeVertical, DownloadSimple, Image } from "phosphor-react";
@@ -286,10 +288,17 @@ const TextMsg = ({
 	message,
 	isFromOther,
 	isOptionOpen,
+	peers,
 }: {
 	message: IMessages;
 	isFromOther: boolean;
 	isOptionOpen: boolean;
+	peers:
+		| {
+				id: string;
+				photoUrl: string;
+		  }[]
+		| undefined;
 }) => {
 	const theme = useTheme();
 	const { themeMode } = useSettingsContext();
@@ -315,49 +324,71 @@ const TextMsg = ({
 
 	return (
 		<>
-			<Stack
-				direction="row"
-				justifyContent={!isFromOther ? "end" : "start"}
-			>
-				<Box
-					component={"span"}
-					id={message.message_id}
-					onMouseDown={isSmallScreen ? HandleLongPress : undefined}
-					onMouseUp={isSmallScreen ? HandlePressEnd : undefined}
-					onTouchStart={isSmallScreen ? HandleLongPress : undefined}
-					onTouchEnd={isSmallScreen ? HandlePressEnd : undefined}
-					p={1.5}
-					sx={{
-						border: "none",
-						backgroundColor: !isFromOther
-							? theme.palette.primary.main
-							: themeMode === "light"
-								? theme.palette.background.default
-								: theme.palette.background.neutral,
-						borderRadius: 1.5,
-						width: "max-content",
-					}}
+			<Stack gap={0.6}>
+				<Stack
+					direction="row"
+					justifyContent={!isFromOther ? "end" : "start"}
 				>
-					<Typography
-						variant="body2"
-						style={{ userSelect: "none" }}
-						color={
-							!isFromOther ? "#fff" : theme.palette.text.primary
+					<Box
+						component={"span"}
+						id={message.message_id}
+						onMouseDown={
+							isSmallScreen ? HandleLongPress : undefined
 						}
-					>
-						{message.content}
-					</Typography>
-				</Box>
-
-				{isOptionOpen && (
-					<MessageOptions
-						messageId={message.message_id}
-						isFromOther
-						isOpen={isOpen}
-						setVisibility={(value: boolean) => {
-							setIsOpen(value);
+						onMouseUp={isSmallScreen ? HandlePressEnd : undefined}
+						onTouchStart={
+							isSmallScreen ? HandleLongPress : undefined
+						}
+						onTouchEnd={isSmallScreen ? HandlePressEnd : undefined}
+						p={1.5}
+						sx={{
+							border: "none",
+							backgroundColor: !isFromOther
+								? theme.palette.primary.main
+								: themeMode === "light"
+									? theme.palette.background.default
+									: theme.palette.background.neutral,
+							borderRadius: 1.5,
+							width: "max-content",
 						}}
-					/>
+					>
+						<Typography
+							variant="body2"
+							style={{ userSelect: "none" }}
+							color={
+								!isFromOther
+									? "#fff"
+									: theme.palette.text.primary
+							}
+						>
+							{message.content}
+						</Typography>
+					</Box>
+
+					{isOptionOpen && (
+						<MessageOptions
+							messageId={message.message_id}
+							isFromOther
+							isOpen={isOpen}
+							setVisibility={(value: boolean) => {
+								setIsOpen(value);
+							}}
+						/>
+					)}
+				</Stack>
+
+				{peers && peers.length !== 0 && (
+					<Stack direction={"row"}>
+						<AvatarGroup max={10}>
+							{peers.map((p) => (
+								<Avatar
+									key={`MessageSeenAvatar-${p.id}`}
+									sx={{ width: 16, height: 16 }}
+									src={p.photoUrl}
+								/>
+							))}
+						</AvatarGroup>
+					</Stack>
 				)}
 			</Stack>
 		</>

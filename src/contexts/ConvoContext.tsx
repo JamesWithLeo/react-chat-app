@@ -44,7 +44,6 @@ export interface IConversation {
 	last_message: {
 		content: string;
 		created_at: string;
-		is_read: boolean;
 		message_type: IMessage_type;
 	} | null;
 
@@ -255,7 +254,6 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 									...p,
 									last_message: {
 										content: data.content,
-										is_read: data.is_read,
 										created_at: data.created_at,
 										message_type: data.message_type,
 									},

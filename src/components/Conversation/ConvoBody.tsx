@@ -21,6 +21,7 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import StyledBadge from "../StyledBadge";
+import socket from "../../services/sockets";
 
 const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
@@ -38,7 +39,18 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 	useEffect(() => {
 		const body = document.getElementById("body") as HTMLDivElement;
 		if (body) body.scrollTop = body.scrollHeight;
-	}, [messages]);
+
+		if (id && messages && messages.length) {
+			const seenAt = new Date().toISOString();
+			console.log("messages seen by:", id);
+			socket.emit("messageSeen", {
+				conversationId: conversation_id,
+				messageId: messages[messages.length - 1].message_id,
+				userId: id,
+				seenAt,
+			});
+		}
+	}, [messages, id, conversation_id]);
 
 	return (
 		<Box
@@ -58,107 +70,113 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 				alignContent={"flex-end"}
 			>
 				<Stack spacing={3}>
-					{isSuccessMessages && (
-						<>
-							{messages && messages.length ? (
-								messages.map((message, index) => {
-									switch (message.message_type) {
-										case "text":
-											return (
-												<TextMsg
-													isFromOther={
-														id !== message.sender_id
-													}
-													key={message.message_id}
-													message={message}
-													isOptionOpen={isOptionOpen}
-												/>
-											);
-										default:
-											return <></>;
-									}
-								})
-							) : (
-								<Box
+					{isSuccessMessages && messages && messages.length ? (
+						messages.map((message, index) => {
+							switch (message.message_type) {
+								case "text":
+									return (
+										<TextMsg
+											isFromOther={
+												id !== message.sender_id
+											}
+											key={message.message_id}
+											message={message}
+											isOptionOpen={isOptionOpen}
+											peers={peers?.flatMap((p) =>
+												p.lastSeen.messageId ===
+												message.message_id
+													? [
+															{
+																id: p.id,
+																photoUrl:
+																	p.photoUrl,
+															},
+														]
+													: [],
+											)}
+										/>
+									);
+								default:
+									return <></>;
+							}
+						})
+					) : (
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								py: "4rem",
+							}}
+						>
+							<Stack sx={{ gap: "1rem" }}>
+								<StyledBadge
+									overlap="circular"
+									anchorOrigin={{
+										vertical: "bottom",
+										horizontal: "right",
+									}}
+									variant="dot"
+									sx={{
+										"& .MuiBadge-dot": {
+											backgroundColor: "#44b700",
+											color: "#44b700",
+										},
+									}}
+								>
+									{conversation_type === "group" ? (
+										<AvatarGroup
+											sx={{
+												height: 128,
+												width: 128,
+											}}
+										/>
+									) : (
+										<Avatar
+											src={
+												peers
+													? peers[0].photoUrl
+													: undefined
+											}
+											sx={{
+												height: 128,
+												width: 128,
+											}}
+										/>
+									)}
+								</StyledBadge>
+
+								<Stack
+									spacing={0.2}
 									sx={{
 										display: "flex",
 										alignItems: "center",
-										justifyContent: "center",
-										py: "4rem",
 									}}
 								>
-									<Stack sx={{ gap: "1rem" }}>
-										<StyledBadge
-											overlap="circular"
-											anchorOrigin={{
-												vertical: "bottom",
-												horizontal: "right",
-											}}
-											variant="dot"
-											sx={{
-												"& .MuiBadge-dot": {
-													backgroundColor: "#44b700",
-													color: "#44b700",
-												},
-											}}
-										>
-											{conversation_type === "group" ? (
-												<AvatarGroup
-													sx={{
-														height: 128,
-														width: 128,
-													}}
-												/>
-											) : (
-												<Avatar
-													src={
-														peers
-															? peers[0].photoUrl
-															: undefined
-													}
-													sx={{
-														height: 128,
-														width: 128,
-													}}
-												/>
-											)}
-										</StyledBadge>
-
-										<Stack
-											spacing={0.2}
-											sx={{
-												display: "flex",
-												alignItems: "center",
-											}}
-										>
-											<Typography
-												sx={{
-													flexGrow: 1,
-													fontWeight: 800,
-													fontSize: "16px",
-												}}
-												variant="caption"
-											>
-												{conversation_type === "group"
-													? peers
-														? peers
-																.map(
-																	(p) =>
-																		p.firstName,
-																)
-																.join(", ")
-														: conversation_id
-													: peers
-														? `${peers[0].firstName} ${peers[0].lastName}`
-														: conversation_id}
-											</Typography>
-										</Stack>
-									</Stack>
-								</Box>
-							)}
-						</>
+									<Typography
+										sx={{
+											flexGrow: 1,
+											fontWeight: 800,
+											fontSize: "16px",
+										}}
+										variant="caption"
+									>
+										{conversation_type === "group"
+											? peers
+												? peers
+														.map((p) => p.firstName)
+														.join(", ")
+												: conversation_id
+											: peers
+												? `${peers[0].firstName} ${peers[0].lastName}`
+												: conversation_id}
+									</Typography>
+								</Stack>
+							</Stack>
+						</Box>
 					)}
 				</Stack>
+
 				{conversation_type === "direct" ? (
 					<>
 						{peers?.some((p) => p.isTyping) && (

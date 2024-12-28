@@ -28,11 +28,9 @@ export interface IMessages {
 	content: string;
 	created_at: string;
 	message_type: IMessage_type;
-	is_read: boolean;
 	is_edited: boolean;
 
 	// todo: add read and receive features
-	// read_by: [];
 }
 export interface ITypist {
 	id: string;
@@ -132,8 +130,12 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		{
 			enabled: !!conversationId,
 			initialData: [],
+			onSuccess: (data) => {
+				console.log("messsage:", data);
+			},
 		},
 	);
+
 	// Query for peers: can be used if you want to refresh peers on each conversationId change
 	const { data: peers } = useQuery(
 		["peers", conversationId],
@@ -146,6 +148,9 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		{
 			enabled: !!conversationId || !!initialPeers,
 			initialData: initialPeers ?? [],
+			onSuccess: (data) => {
+				console.log("peers:", data);
+			},
 		},
 	);
 
@@ -230,30 +235,32 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		if (!id) return;
 
 		if (conversationId) {
+			socket.emit("userCameOnline", { id });
+
 			socket.emit("joinMessage", { conversationId: conversationId });
 
-			socket.on("currentOnlinePeers", (data) => {
-				queryClient.setQueriesData(
-					["peers", conversationId],
-					(oldData: IViewUser[] | null | undefined) => {
-						if (!oldData) return oldData;
+			// socket.on("currentOnlinePeers", (data) => {
+			// 	queryClient.setQueriesData(
+			// 		["peers", conversationId],
+			// 		(oldData: IViewUser[] | null | undefined) => {
+			// 			if (!oldData) return oldData;
 
-						return oldData.map((p) => {
-							if (data.includes(p.id)) {
-								return {
-									...p,
-									isOnline: true,
-								};
-							} else {
-								return {
-									...p,
-									isOnline: false,
-								};
-							}
-						});
-					},
-				);
-			});
+			// 			return oldData.map((p) => {
+			// 				if (data.includes(p.id)) {
+			// 					return {
+			// 						...p,
+			// 						isOnline: true,
+			// 					};
+			// 				} else {
+			// 					return {
+			// 						...p,
+			// 						isOnline: false,
+			// 					};
+			// 				}
+			// 			});
+			// 		},
+			// 	);
+			// });
 		}
 		socket.on("toClientMessage", (messageData) => {
 			console.log("New Message recieved:", messageData);
@@ -263,6 +270,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 					prevMessages ? [...prevMessages, messageData] : [],
 			);
 		});
+
 		socket.on("peerTyping", (data) => {
 			console.log("Received typing event:", data);
 			if (data.id === id) return;
@@ -294,7 +302,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			]);
 			console.log("Updated Peers Data:", updatedPeers);
 		});
-		socket.emit("userCameOnline", { id });
+
 		socket.on("currentOnlinePeers", (data) => {
 			queryClient.setQueriesData(
 				["peers", conversationId],
@@ -317,6 +325,9 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 					});
 				},
 			);
+		});
+		socket.on("currentSeen", (data) => {
+			console.log(data);
 		});
 
 		return () => {
