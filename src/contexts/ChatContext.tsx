@@ -30,6 +30,9 @@ export interface IMessages {
 	message_type: IMessage_type;
 	is_read: boolean;
 	is_edited: boolean;
+
+	// todo: add read and receive features
+	// read_by: [];
 }
 export interface ITypist {
 	id: string;

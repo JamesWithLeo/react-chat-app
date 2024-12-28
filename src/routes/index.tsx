@@ -16,6 +16,7 @@ import GeneralChatLoader from "../components/skeletons/GeneralChatLoader";
 import ChatLoader from "../components/skeletons/ChatLoader";
 import LoginLoader from "../components/skeletons/LoginLoader";
 import RegisterLoader from "../components/skeletons/RegisterLoader";
+import SearchLoader from "../components/skeletons/SearchLoader";
 
 const Loadable = (Component: ComponentType, Loader?: ComponentType) => {
 	return (props: { [key: string]: any }) => {
@@ -124,6 +125,11 @@ const RegisterPage = Loadable(
 	RegisterLoader,
 );
 
+const SearchPage = Loadable(
+	lazy(() => withDelay(() => import("../pages/dashboard/Search"), 0)),
+	SearchLoader,
+);
+
 const SetupPage = Loadable(lazy(() => import("../pages/auth/SetUp")));
 
 const ResetPasswordPage = Loadable(
@@ -141,5 +147,3 @@ const CallPage = Loadable(lazy(() => import("../pages/dashboard/Call")));
 
 const ProfilePage = Loadable(lazy(() => import("../pages/dashboard/Profile")));
 const Page404 = Loadable(lazy(() => import("../pages/Page404")));
-
-const SearchPage = Loadable(lazy(() => import("../pages/dashboard/Search")));

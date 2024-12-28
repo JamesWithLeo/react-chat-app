@@ -42,6 +42,7 @@ export default function Search() {
 		searchData,
 		scope,
 		setScope,
+		searchQuery,
 	} = useSearchContext();
 
 	const HandleSearch = (
@@ -136,59 +137,71 @@ export default function Search() {
 						</ToggleButton>
 					</ToggleButtonGroup>
 				</Stack>
-				<Box p={isSmallScreen ? 2 : 3}>
-					{isLoading ? (
-						<Spinner />
-					) : (
+
+				{isLoading && !isSuccess && (
+					<Stack
+						direction={"row"}
+						sx={{
+							justifyContent: "center",
+							alignItems: "center",
+							mt: "8rem",
+							gap: "1rem",
+						}}
+					>
+						{searchQuery ? (
+							<Typography>
+								Searching for "{searchQuery}"
+							</Typography>
+						) : (
+							<Spinner size={"1.4rem"} />
+						)}
+					</Stack>
+				)}
+
+				<>
+					{isSuccess && searchData ? (
 						<>
-							{isSuccess && searchData ? (
-								<>
-									{scope === "all" || scope === "people" ? (
-										<Typography py={2}>User</Typography>
-									) : null}
+							<Box p={isSmallScreen ? 2 : 3} height={"100%"}>
+								{scope === "all" || scope === "people" ? (
+									<Typography py={2}>User</Typography>
+								) : null}
 
-									{searchData.users &&
-										searchData.users.map(
-											(user: IViewUser) => {
-												return (
-													<PeopleCard
-														// Todo: Include the block id
-														readOnly={[id].includes(
-															user.id,
-														)}
-														user={user}
-														key={user.id}
-													/>
-												);
-											},
-										)}
+								{searchData.users &&
+									searchData.users.map((user: IViewUser) => {
+										return (
+											<PeopleCard
+												// Todo: Include the block id
+												readOnly={[id].includes(
+													user.id,
+												)}
+												user={user}
+												key={user.id}
+											/>
+										);
+									})}
 
-									{scope === "all" || scope === "chats" ? (
-										<Typography py={2}>Chats</Typography>
-									) : null}
+								{scope === "all" || scope === "chats" ? (
+									<Typography py={2}>Chats</Typography>
+								) : null}
 
-									{searchData.chats &&
-										searchData.chats.map(
-											(chat: IConversation) => {
-												if (!chat.last_message)
-													return null;
-												return (
-													<ChatCard
-														convo={chat}
-														key={
-															chat.conversation_id
-														}
-													/>
-												);
-											},
-										)}
-								</>
-							) : (
-								<Typography>No result</Typography>
-							)}
+								{searchData.chats &&
+									searchData.chats.map(
+										(chat: IConversation) => {
+											if (!chat.last_message) return null;
+											return (
+												<ChatCard
+													convo={chat}
+													key={chat.conversation_id}
+												/>
+											);
+										},
+									)}
+							</Box>
 						</>
+					) : (
+						<Typography>No result</Typography>
 					)}
-				</Box>
+				</>
 			</Box>
 		</>
 	);
