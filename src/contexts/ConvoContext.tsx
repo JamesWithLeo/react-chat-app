@@ -243,7 +243,6 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 		});
 
 		socket.on("toClientMessage", (data) => {
-			console.log("New message received in convo ");
 			queryClient.setQueryData(
 				["convo"],
 				(prevConvo: IConversation[] | undefined) => {
@@ -271,6 +270,7 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 			);
 			window.removeEventListener("beforeunload", handleBeforeUnload);
 			socket.off("currentOnlinePeers");
+			socket.off("toClientMessage");
 		};
 	}, [queryClient, conversation, isSuccess, id]);
 	return (

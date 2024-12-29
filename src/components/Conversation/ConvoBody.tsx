@@ -8,7 +8,6 @@ import {
 	useMediaQuery,
 } from "@mui/material";
 import React, { useEffect } from "react";
-import { IMessages } from "../../contexts/ChatContext";
 import {
 	// DocMsg,
 	// IChatMessage,
@@ -48,6 +47,7 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 			seenMessage({ messageId: undefined });
 		}
 	}, [messages, id, seenMessage]);
+
 	useEffect(() => {
 		socket.on("toClientMessage", (messageData) => {
 			console.log("New Message seen: ", messageData);
