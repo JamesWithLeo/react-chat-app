@@ -243,6 +243,7 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 		});
 
 		socket.on("toClientMessage", (data) => {
+			console.log("(socket) Recieved a meesage in ConvoContext:", data);
 			queryClient.setQueryData(
 				["convo"],
 				(prevConvo: IConversation[] | undefined) => {
