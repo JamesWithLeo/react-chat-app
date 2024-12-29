@@ -255,14 +255,15 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 			socket.emit("joinMessage", { conversationId: conversationId });
 		}
-		socket.on("toClientMessage", (messageData) => {
+		const handleUpdateMessages = (messageData: any) => {
 			console.log("New Message recieved and seen: ", messageData);
 			queryClient.setQueryData(
 				["messages", messageData.conversation_id],
 				(prevMessages: IMessages[] | undefined) =>
 					prevMessages ? [...prevMessages, messageData] : [],
 			);
-		});
+		};
+		socket.on("toClientMessage", handleUpdateMessages);
 
 		socket.on("peerTyping", (data) => {
 			console.log("Received typing event:", data);
@@ -344,7 +345,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		});
 
 		return () => {
-			socket.off("toClientMessage");
+			socket.off("toClientMessage", handleUpdateMessages);
 			socket.off("peerTyping");
 			socket.off("currentOnlinePeers");
 			socket.off("currentSeen");

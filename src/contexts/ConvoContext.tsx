@@ -187,6 +187,7 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 		},
 		{
 			enabled: !!senderId,
+
 			// refetchOnWindowFocus: false, // Disable auto-refetch on window focus
 			// refetchOnReconnect: false, // Disable auto-refetch on reconnect
 			// refetchInterval: false, // No periodic polling
@@ -223,8 +224,7 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 		window.addEventListener("beforeunload", handleBeforeUnload);
 
-		// Listen for current online peers
-		socket.on("currentOnlinePeers", (data) => {
+		const handleUpdateStatus = (data: string[]) => {
 			console.log("Current online users:", data);
 			queryClient.setQueryData(
 				["convo"],
@@ -240,10 +240,11 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 					}));
 				},
 			);
-		});
+		};
+		// Listen for current online peers
+		socket.on("currentOnlinePeers", handleUpdateStatus);
 
-		// Listen for incoming messages
-		socket.on("toClientMessage", (data) => {
+		const handleUpdateConversation = (data: any) => {
 			console.log("Message received:", data);
 			queryClient.setQueryData(
 				["convo"],
@@ -263,7 +264,9 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 					);
 				},
 			);
-		});
+		};
+		// Listen for incoming messages
+		socket.on("toClientMessage", handleUpdateConversation);
 
 		return () => {
 			document.removeEventListener(
@@ -271,8 +274,8 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 				handleVisibilityChange,
 			);
 			window.removeEventListener("beforeunload", handleBeforeUnload);
-			socket.off("currentOnlinePeers");
-			socket.off("toClientMessage");
+			socket.off("currentOnlinePeers", handleUpdateStatus);
+			socket.off("toClientMessage", handleUpdateConversation);
 		};
 	}, [queryClient, conversation, isSuccess, id]);
 
