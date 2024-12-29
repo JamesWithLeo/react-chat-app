@@ -8,6 +8,7 @@ import {
 	useMediaQuery,
 } from "@mui/material";
 import React, { useEffect } from "react";
+import { IMessages } from "../../contexts/ChatContext";
 import {
 	// DocMsg,
 	// IChatMessage,
@@ -21,8 +22,11 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import StyledBadge from "../StyledBadge";
+import socket from "../../services/sockets";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
+	const queryClient = useQueryClient();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
@@ -44,6 +48,15 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 			seenMessage({ messageId: undefined });
 		}
 	}, [messages, id, seenMessage]);
+	useEffect(() => {
+		socket.on("toClientMessage", (messageData) => {
+			console.log("New Message seen: ", messageData);
+			seenMessage({ messageId: messageData.message_id });
+		});
+		return () => {
+			socket.off("toClientMessage");
+		};
+	}, [queryClient, seenMessage]);
 
 	return (
 		<Box

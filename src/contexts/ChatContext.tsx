@@ -262,7 +262,6 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				(prevMessages: IMessages[] | undefined) =>
 					prevMessages ? [...prevMessages, messageData] : [],
 			);
-			seenMessage({ messageId: messageData.message_id });
 		});
 
 		socket.on("peerTyping", (data) => {

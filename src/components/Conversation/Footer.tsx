@@ -139,6 +139,7 @@ const Footer = () => {
 		insertMessage,
 		setIsTyping,
 		peers,
+		seenMessage,
 	} = useChatContext();
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 
