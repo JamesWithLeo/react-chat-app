@@ -21,7 +21,6 @@ import { useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import StyledBadge from "../StyledBadge";
-import socket from "../../services/sockets";
 
 const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
@@ -34,6 +33,7 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 		peers,
 		conversation_type,
 		conversation_id,
+		seenMessage,
 	} = useChatContext();
 
 	useEffect(() => {
@@ -41,16 +41,9 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 		if (body) body.scrollTop = body.scrollHeight;
 
 		if (id && messages && messages.length) {
-			const seenAt = new Date().toISOString();
-			console.log("messages seen by:", id);
-			socket.emit("messageSeen", {
-				conversationId: conversation_id,
-				messageId: messages[messages.length - 1].message_id,
-				userId: id,
-				seenAt,
-			});
+			seenMessage({ messageId: undefined });
 		}
-	}, [messages, id, conversation_id]);
+	}, [messages, id, seenMessage]);
 
 	return (
 		<Box
