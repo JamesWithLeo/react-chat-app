@@ -7,16 +7,16 @@ import {
 	useMediaQuery,
 } from "@mui/material";
 import { Theme, useTheme } from "@mui/material/styles";
-import StyledBadge from "./StyledBadge";
-import { IConversation, useConvoContext } from "../contexts/ConvoContext";
+import StyledBadge from "../StyledBadge";
+import { IConversation, useConvoContext } from "../../contexts/ConvoContext";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useChatContext } from "../contexts/ChatContext";
+import { useChatContext } from "../../contexts/ChatContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { SetConversation } from "../redux/slices/app";
-import { AppState } from "../redux/store";
+import { SetConversation } from "../../redux/slices/app";
+import { AppState } from "../../redux/store";
 
 dayjs.extend(relativeTime);
 const ChatElement = ({ convo }: { convo: IConversation }) => {

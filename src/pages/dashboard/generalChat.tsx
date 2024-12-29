@@ -17,7 +17,7 @@ import { AppDispatch } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
 import { ToggleSidebarOn } from "../../redux/slices/app";
 import { IConversation, useConvoContext } from "../../contexts/ConvoContext";
-import ChatElement from "../../components/ConvoCard";
+import ChatElement from "../../components/card/ConvoCard";
 import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
 
 const Chats = () => {

@@ -8,7 +8,7 @@ import ConvoSlideBar from "../../components/ConvoSlideBar";
 
 const DashboardLayout = () => {
 	const user = useSelector((state: AppState) => state.auth.user);
-	const sidebar = useSelector((state: AppState) => state.app.sidebar);
+	const sidebar = useSelector((state: AppState) => state.app.navbar);
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);

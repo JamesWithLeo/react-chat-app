@@ -1,35 +1,37 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SearchScope } from "../../contexts/SearchContext";
 
-const sessionStorageAppKey = "WeChatConfig";
+export const sessionStorageAppKey = "WeChatConfig";
 const appWeChat = sessionStorage.getItem(sessionStorageAppKey);
 const currentApp: IApp | null = appWeChat ? JSON.parse(appWeChat) : null;
 
-type SideBarType =
+type navbarType =
 	| "CONTACT"
 	| "STARRED"
 	| "SHARED"
 	| "NAVBAR"
 	| "THEME"
 	| "CONVO_MINI_SETTING";
-
+export type SidebarType = "chats" | "archived" | "group" | "settings";
 // define initial state
-interface ISiderBar {
+interface INavbar {
 	isOpen: boolean;
-	type: SideBarType;
+	type: navbarType;
 }
 
 interface IApp {
-	sidebar: ISiderBar;
+	navbar: INavbar;
+	sidebar: SidebarType;
 	search: SearchScope | null;
 }
 const initialState: IApp = currentApp
 	? currentApp
 	: {
-			sidebar: {
+			navbar: {
 				isOpen: false,
 				type: "THEME", // can be CONTACT, STARRED,SHARED
 			},
+			sidebar: "chats",
 			search: "all",
 		};
 
@@ -49,10 +51,11 @@ const appSlice = createSlice({
 			sessionStorage.setItem("conversationId", action.payload.id);
 			return {
 				...state,
-				sidebar: {
+				navbar: {
 					isOpen: true,
 					type: "CONVO_MINI_SETTING",
 				},
+
 				conversation: action.payload,
 			};
 		},
@@ -60,19 +63,19 @@ const appSlice = createSlice({
 		ToggleSidebarOff(state) {
 			return {
 				...state,
-				sidebar: {
-					isOpen: !state.sidebar.isOpen,
+				navbar: {
+					isOpen: !state.navbar.isOpen,
 					type: "THEME",
 				},
 				conversation: null,
 				instantMessagePeer: null,
 			};
 		},
-		ToggleSidebarOn(state, action: PayloadAction<SideBarType>) {
+		ToggleSidebarOn(state, action: PayloadAction<navbarType>) {
 			return {
 				...state,
-				sidebar: {
-					isOpen: !state.sidebar.isOpen,
+				navbar: {
+					isOpen: !state.navbar.isOpen,
 					type: action.payload,
 				},
 			};
@@ -88,6 +91,16 @@ const appSlice = createSlice({
 				search: action.payload,
 			};
 		},
+		setSidebar: (state, action: PayloadAction<SidebarType>) => {
+			sessionStorage.setItem(
+				sessionStorageAppKey,
+				JSON.stringify({ ...state, sidebar: action.payload } as IApp),
+			);
+			return {
+				...state,
+				sidebar: action.payload,
+			};
+		},
 	},
 	extraReducers: {},
 });
@@ -97,9 +110,8 @@ export default appSlice.reducer;
 
 export const {
 	ToggleSidebarOff,
-
 	ToggleSidebarOn,
 	setSearchRoute,
-
 	SetConversation,
+	setSidebar,
 } = appSlice.actions;

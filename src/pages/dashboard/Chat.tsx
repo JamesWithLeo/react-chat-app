@@ -12,7 +12,7 @@ import { Navigate } from "react-router-dom";
 const Chat = () => {
 	const theme = useTheme();
 
-	const { sidebar } = useSelector((store: AppState) => store.app);
+	const { navbar: sidebar } = useSelector((store: AppState) => store.app);
 	const { conversation_id } = useChatContext();
 	if (!conversation_id) {
 		return <Navigate to={"/"} />;

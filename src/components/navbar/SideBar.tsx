@@ -9,39 +9,37 @@ import {
 	Stack,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import { useSettingsContext } from "../../contexts/SettingsContext";
-import AntSwitch from "../AntSwitch";
 import Logo from "../../assets/Images/logo.ico";
 import { useNavigate } from "react-router-dom";
-import { ChatCircleDots, User, Gear } from "@phosphor-icons/react";
-import { useSelector } from "react-redux";
+import {
+	ChatCircleDots,
+	User,
+	Gear,
+	Archive,
+	UsersFour,
+} from "@phosphor-icons/react";
+import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
+import { setSidebar, SidebarType } from "../../redux/slices/app";
 
-const Nav_Buttons = [{ index: 0, icon: <ChatCircleDots /> }];
+const Nav_Buttons: { icon: any; target: SidebarType }[] = [
+	{ icon: <ChatCircleDots />, target: "chats" },
+	{
+		icon: <Archive />,
+		target: "archived",
+	},
+	{
+		icon: <UsersFour />,
+		target: "group",
+	},
+];
+
 const Profile_Menu = [
 	{
 		title: "Profile",
 		icon: <User />,
 	},
 ];
-const getPath = (index: number) => {
-	switch (index) {
-		case 0:
-			return "/chats";
-
-		case 1:
-			return "/group";
-
-		case 2:
-			return "/call";
-
-		case 3:
-			return "/settings";
-
-		default:
-			return "/home";
-	}
-};
 
 const getMenuPath = (index: number) => {
 	switch (index) {
@@ -73,11 +71,11 @@ export default function NavBar() {
 
 	const theme = useTheme();
 	const navigate = useNavigate();
-	// state for selected button
-	const [selected, setSelected] = useState(0);
-	//switch themes
-	const { onToggleMode } = useSettingsContext();
+	const dispatch = useDispatch();
+
 	const user = useSelector((state: AppState) => state.auth.user);
+	const sidebar = useSelector((state: AppState) => state.app.sidebar);
+	const [selected, setSelected] = useState<SidebarType>(sidebar);
 	return (
 		<Box
 			p={2}
@@ -114,90 +112,90 @@ export default function NavBar() {
 						alignItems="center"
 						spacing={3}
 					>
-						{Nav_Buttons.map((el) =>
-							el.index === selected ? (
-								<Box
-									onClick={() => {
-										setSelected(el.index);
-										navigate(getPath(el.index));
-									}}
-									key={crypto.randomUUID()}
-									sx={{
-										backgroundColor:
-											theme.palette.primary.main,
-										borderRadius: 1.5,
-									}}
-								>
-									<IconButton
-										sx={{
-											width: "max-content",
-											color: "#fff",
-										}}
-										key={el.index}
-									>
-										{el.icon}
-									</IconButton>
-								</Box>
-							) : (
+						{Nav_Buttons.map((el, index) => (
+							<Box
+								onClick={() => {
+									setSelected(el.target);
+									dispatch(setSidebar(el.target));
+									navigate(el.target);
+								}}
+								key={crypto.randomUUID()}
+								sx={
+									selected === el.target
+										? {
+												backgroundColor:
+													theme.palette.primary.main,
+												borderRadius: 1.5,
+											}
+										: {}
+								}
+							>
 								<IconButton
-									onClick={() => {
-										setSelected(el.index);
-										navigate(getPath(el.index));
-									}}
-									sx={{
-										width: "max-content",
-										color:
-											theme.palette.mode === "light"
-												? "#000"
-												: theme.palette.text.primary,
-									}}
-									key={el.index}
+									sx={
+										selected === el.target
+											? {
+													width: "max-content",
+													color: "#fff",
+												}
+											: {
+													width: "max-content",
+													color:
+														theme.palette.mode ===
+														"light"
+															? "#000"
+															: theme.palette.text
+																	.primary,
+												}
+									}
+									key={index}
 								>
 									{el.icon}
 								</IconButton>
-							),
-						)}
-						<Divider sx={{ width: "48px" }} />
-						{selected === 3 ? (
-							<Box
-								sx={{
-									backgroundColor: theme.palette.primary.main,
-									borderRadius: 1.5,
-								}}
-							>
-								<IconButton
-									sx={{ width: "max-content", color: "#fff" }}
-								>
-									<Gear />
-								</IconButton>
 							</Box>
-						) : (
+						))}
+
+						<Divider sx={{ width: "48px" }} />
+						<Box
+							sx={
+								selected === "settings"
+									? {
+											backgroundColor:
+												theme.palette.primary.main,
+											borderRadius: 1.5,
+										}
+									: {}
+							}
+						>
 							<IconButton
 								onClick={() => {
-									setSelected(3);
-									navigate(getPath(3));
+									setSelected("settings");
+									dispatch(setSidebar("settings"));
+									navigate("settings");
 								}}
-								sx={{
-									width: "max-content",
-									color:
-										theme.palette.mode === "light"
-											? "#000"
-											: theme.palette.text.primary,
-								}}
+								sx={
+									selected === "settings"
+										? {
+												width: "max-content",
+												color: "#fff",
+											}
+										: {
+												width: "max-content",
+												color:
+													theme.palette.mode ===
+													"light"
+														? "#000"
+														: theme.palette.text
+																.primary,
+											}
+								}
 							>
 								<Gear />
 							</IconButton>
-						)}
+						</Box>
 					</Stack>
 				</Stack>
 
 				<Stack spacing={4}>
-					<AntSwitch
-						onChange={() => {
-							onToggleMode();
-						}}
-						defaultChecked
-					/>
 					{user ? (
 						<Avatar
 							sx={{ cursor: "pointer" }}

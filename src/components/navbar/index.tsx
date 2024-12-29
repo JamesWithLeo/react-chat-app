@@ -41,7 +41,7 @@ const Rootstyle = styled(m.div)(({ theme }) => ({
 }));
 
 export default function SlideBar() {
-	const isOpen = useSelector((state: AppState) => state.app.sidebar.isOpen);
+	const isOpen = useSelector((state: AppState) => state.app.navbar.isOpen);
 	const user = useSelector((state: AppState) => state.auth.user);
 	const navigate = useNavigate();
 	const dispatch = useDispatch<AppDispatch>();

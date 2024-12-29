@@ -27,6 +27,7 @@ import SettingFullscreen from "./SettingFullscreen";
 import SettingColorPresets from "./SettingColorPresets";
 import { useSelector } from "react-redux";
 import { AppState } from "../../../redux/store";
+import AntSwitch from "../../AntSwitch";
 
 const RootStyle = styled(m.div)(({ theme }) => ({
 	...cssStyles(theme).bgBlur({
@@ -64,10 +65,11 @@ export default function SettingsDrawer() {
 		themeDirection,
 		themeColorPresets,
 		onResetSetting,
+		onToggleMode,
 	} = useSettingsContext();
 
 	const [open, setOpen] = useState(false);
-	const sidebar = useSelector((state: AppState) => state.app.sidebar);
+	const sidebar = useSelector((state: AppState) => state.app.navbar);
 
 	const notDefault =
 		themeMode !== defaultSettings.themeMode ||
@@ -126,7 +128,7 @@ export default function SettingsDrawer() {
 									variant="subtitle1"
 									sx={{ flexGrow: 1 }}
 								>
-									Settings
+									Theme
 								</Typography>
 
 								<IconButton onClick={onResetSetting}>
@@ -162,6 +164,21 @@ export default function SettingsDrawer() {
 										<SettingColorPresets />
 									</Stack>
 
+									<Stack
+										spacing={1.5}
+										direction={"row"}
+										width={"100%"}
+									>
+										<Typography
+											variant="subtitle2"
+											flexGrow={1}
+										>
+											Darkmode
+										</Typography>
+										<AntSwitch
+											onClick={() => onToggleMode()}
+										/>
+									</Stack>
 									<SettingFullscreen />
 								</Stack>
 							</Scrollbar>
