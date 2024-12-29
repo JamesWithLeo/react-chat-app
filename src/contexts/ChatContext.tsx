@@ -301,7 +301,10 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			queryClient.setQueriesData(
 				["peers", conversationId],
 				(oldData: IViewUser[] | null | undefined) => {
-					console.log("(socket) optimistic update:", oldData);
+					console.log(
+						"(socket.currentOnlinePeers) optimistic update:",
+						oldData,
+					);
 					if (!oldData) return oldData;
 					return oldData.map((p) => {
 						if (data.includes(p.id)) {
@@ -321,7 +324,24 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		});
 
 		socket.on("currentSeen", (data) => {
-			console.log(data);
+			console.log("(socket.currentSeen) optimistic update:", data);
+			queryClient.setQueryData(
+				["peers", data.conversation_id],
+				(oldPeers: IViewUser[] | undefined) => {
+					if (!oldPeers) return oldPeers;
+					return oldPeers.map((p) =>
+						p.id === data.user_id
+							? {
+									...p,
+									lastSeen: {
+										seenAt: data.seen_at,
+										messageId: data.message_id,
+									},
+								}
+							: p,
+					);
+				},
+			);
 		});
 
 		return () => {
