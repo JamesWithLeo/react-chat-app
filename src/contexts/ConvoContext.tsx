@@ -194,60 +194,61 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 	);
 
 	useEffect(() => {
-		if (!id) return;
-		if (isSuccess) {
-			socket.emit("joinConvo", {
-				conversationIds: conversation.map(
-					(c: IConversation) => c.conversation_id,
-				),
-			});
-		}
+		if (!id || !isSuccess || !Array.isArray(conversation)) return;
+
+		// Notify server the user joined conversations
+		socket.emit("joinConvo", {
+			conversationIds: conversation.map((c) => c.conversation_id),
+		});
+
+		// Notify server the user came online
+		socket.emit("userCameOnline", { id });
 
 		const handleVisibilityChange = () => {
-			console.log("visibility chnange fired!");
+			console.log("Visibility change detected!");
 			if (document.visibilityState === "hidden") {
 				console.log("User left the tab or minimized the browser");
 				socket.emit("userCameOffline", { id });
-			} else if (document.visibilityState === "visible") {
+			} else {
 				console.log("User returned to the tab");
-				socket.off("currentOnlinePeers");
+				socket.emit("userCameOnline", { id });
 			}
 		};
-		const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-			console.log("beforeunload event fired / user going offlne");
+
+		const handleBeforeUnload = () => {
+			console.log("User going offline (beforeunload)");
 			socket.emit("userCameOffline", { id });
 		};
+
 		document.addEventListener("visibilitychange", handleVisibilityChange);
 		window.addEventListener("beforeunload", handleBeforeUnload);
 
-		socket.emit("userCameOnline", { id });
-
+		// Listen for current online peers
 		socket.on("currentOnlinePeers", (data) => {
 			console.log("Current online users:", data);
 			queryClient.setQueryData(
 				["convo"],
 				(oldData: IConversation[] | undefined) => {
-					if (!oldData) {
-						return oldData;
-					}
+					if (!oldData) return oldData;
 					return oldData.map((conversation) => ({
 						...conversation,
-						peers: conversation.peers.map((peer) => {
-							return data.includes(peer.id)
+						peers: conversation.peers.map((peer) =>
+							data.includes(peer.id)
 								? { ...peer, isOnline: true }
-								: peer;
-						}),
+								: peer,
+						),
 					}));
 				},
 			);
 		});
 
+		// Listen for incoming messages
 		socket.on("toClientMessage", (data) => {
-			console.log("(socket) Recieved a meesage in ConvoContext:", data);
+			console.log("Message received:", data);
 			queryClient.setQueryData(
 				["convo"],
 				(prevConvo: IConversation[] | undefined) => {
-					if (!prevConvo) return [];
+					if (!prevConvo) return prevConvo;
 					return prevConvo.map((p) =>
 						p.conversation_id === data.conversation_id
 							? {
@@ -258,7 +259,7 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 										message_type: data.message_type,
 									},
 								}
-							: { ...p },
+							: p,
 					);
 				},
 			);
@@ -274,6 +275,7 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 			socket.off("toClientMessage");
 		};
 	}, [queryClient, conversation, isSuccess, id]);
+
 	return (
 		<ConvoContext.Provider
 			value={{
