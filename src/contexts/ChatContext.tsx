@@ -132,7 +132,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			enabled: !!conversationId,
 			initialData: [],
 			onSuccess: (data) => {
-				console.log("messsage:", data);
+				console.log("query messsages:", data);
 			},
 		},
 	);
@@ -156,12 +156,10 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 	const setChat = async ({
 		initialConvoId,
-		InitialPeersData,
 		conversationType,
 		thumbnail,
 	}: {
 		initialConvoId: string;
-		InitialPeersData: IViewUser[];
 		conversationType: "direct" | "group";
 		thumbnail: string;
 	}) => {
@@ -256,7 +254,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			socket.emit("joinMessage", { conversationId: conversationId });
 		}
 		const handleUpdateMessages = (messageData: any) => {
-			console.log("New Message recieved and seen: ", messageData);
+			console.log("New Message recieved:", messageData);
 			queryClient.setQueryData(
 				["messages", messageData.conversation_id],
 				(prevMessages: IMessages[] | undefined) =>

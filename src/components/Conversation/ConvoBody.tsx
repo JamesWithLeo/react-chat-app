@@ -17,7 +17,7 @@ import {
 	// TimeLine,
 	TextMsg,
 } from "./MsgTypes";
-import { useChatContext } from "../../contexts/ChatContext";
+import { IMessages, useChatContext } from "../../contexts/ChatContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import StyledBadge from "../StyledBadge";
@@ -49,12 +49,13 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 	}, [messages, id, seenMessage]);
 
 	useEffect(() => {
-		socket.on("toClientMessage", (messageData) => {
+		const handleUpdateSeen = (messageData: IMessages) => {
 			console.log("New Message seen: ", messageData);
 			seenMessage({ messageId: messageData.message_id });
-		});
+		};
+		socket.on("toClientMessage", handleUpdateSeen);
 		return () => {
-			socket.off("toClientMessage");
+			socket.off("toClientMessage", handleUpdateSeen);
 		};
 	}, [queryClient, seenMessage]);
 

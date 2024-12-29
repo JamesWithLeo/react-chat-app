@@ -245,7 +245,7 @@ const ConvoContextProvider: React.FC<{ children: ReactNode }> = ({
 		socket.on("currentOnlinePeers", handleUpdateStatus);
 
 		const handleUpdateConversation = (data: any) => {
-			console.log("Message received:", data);
+			console.log("(ConvoContext) Message received :", data);
 			queryClient.setQueryData(
 				["convo"],
 				(prevConvo: IConversation[] | undefined) => {
