@@ -7,7 +7,7 @@ import { Stack } from "@mui/system";
 import cssStyles from "../../utils/cssStyles";
 import { NAVBAR } from "../../config";
 import { ToggleSidebarOff } from "../../redux/slices/app";
-import { ChatCircleDots } from "@phosphor-icons/react";
+import { ChatCircleDots, UsersFour } from "@phosphor-icons/react";
 import { ArchiveBox, Gear } from "phosphor-react";
 import { useNavigate } from "react-router-dom";
 
@@ -113,6 +113,15 @@ export default function SlideBar() {
 							Chats
 						</Button>
 
+						<Button
+							onClick={() => {
+								navigate("/group");
+							}}
+							sx={{ width: "100%" }}
+							startIcon={<UsersFour />}
+						>
+							Group
+						</Button>
 						<Button
 							onClick={() => {
 								navigate("/archived");

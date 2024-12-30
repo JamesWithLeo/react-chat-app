@@ -4,10 +4,11 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
-	Slide,
+	// Slide,
 	Stack,
+	useTheme,
 } from "@mui/material";
-import React, { ReactNode } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import * as Yup from "yup";
 import FormProvider from "../../components/hook-form/FormProvider";
@@ -94,14 +95,19 @@ const CreateGroup = ({
 	open: boolean;
 	handleClose: () => void;
 }) => {
+	const theme = useTheme();
 	return (
 		<Dialog
 			fullWidth
 			maxWidth="xs"
 			open={open}
-			// TransitionComponent={Transition}
-			keepMounted
-			sx={{ p: 4 }}
+			sx={{
+				width: "100%",
+				position: "fixed",
+				height: "100%",
+				zIndex: theme.zIndex.modal + 1,
+				backgroundColor: "rgba(0, 0, 0, 0.5)", // 50% transparent black
+			}}
 		>
 			{/* Title */}
 			<DialogTitle sx={{ mb: 3 }}>Create New Group</DialogTitle>

@@ -3,20 +3,21 @@ import React from "react";
 import { AnimatePresence, m } from "framer-motion";
 import { useState, useEffect } from "react";
 // @mui
-import { alpha, styled } from "@mui/material/styles";
+import { alpha, styled, Theme } from "@mui/material/styles";
 import {
 	Stack,
 	Divider,
 	Backdrop,
 	Typography,
 	IconButton,
+	useMediaQuery,
 } from "@mui/material";
 // hooks
 import { useSettingsContext } from "../../../contexts/SettingsContext";
 // utils
 import cssStyles from "../../../utils/cssStyles";
 // config
-import { NAVBAR, defaultSettings } from "../../../config";
+import { NAVBAR } from "../../../config";
 //
 import Iconify from "../../Iconify";
 import Scrollbar from "../../Scrollbar";
@@ -54,31 +55,14 @@ const RootStyle = styled(m.div)(({ theme }) => ({
 	)}`,
 }));
 
-// ----------------------------------------------------------------------
-
 export default function SettingsDrawer() {
-	const {
-		themeMode,
-		themeLayout,
-		themeStretch,
-		themeContrast,
-		themeDirection,
-		themeColorPresets,
-		onResetSetting,
-		onToggleMode,
-	} = useSettingsContext();
+	const { onResetSetting, onToggleMode } = useSettingsContext();
 
 	const [open, setOpen] = useState(false);
 	const sidebar = useSelector((state: AppState) => state.app.navbar);
-
-	const notDefault =
-		themeMode !== defaultSettings.themeMode ||
-		themeLayout !== defaultSettings.themeLayout ||
-		themeStretch !== defaultSettings.themeStretch ||
-		themeContrast !== defaultSettings.themeContrast ||
-		themeDirection !== defaultSettings.themeDirection ||
-		themeColorPresets !== defaultSettings.themeColorPresets;
-
+	const isSmallScreen = useMediaQuery((theme: Theme) =>
+		theme.breakpoints.down("sm"),
+	);
 	useEffect(() => {
 		if (open) {
 			document.body.style.overflow = "hidden";
@@ -106,16 +90,12 @@ export default function SettingsDrawer() {
 				}}
 			/>
 
-			{!open && sidebar.type === "THEME" && (
-				<ToggleButton
-					open={open}
-					notDefault={notDefault}
-					onToggle={handleToggle}
-				/>
+			{!open && sidebar.type === "THEME" && !isSmallScreen && (
+				<ToggleButton onToggle={handleToggle} />
 			)}
 
 			<AnimatePresence>
-				{open && (
+				{open && !isSmallScreen && (
 					<>
 						<RootStyle>
 							<Stack

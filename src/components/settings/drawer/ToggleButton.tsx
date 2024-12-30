@@ -23,29 +23,9 @@ const RootStyle = styled("span")(({ theme }) => ({
 	)}`,
 }));
 
-const DotStyle = styled("span")(({ theme }) => ({
-	top: 8,
-	width: 8,
-	height: 8,
-	right: 10,
-	borderRadius: "50%",
-	position: "absolute",
-	backgroundColor: theme.palette.error.main,
-}));
-
-export default function ToggleButton({
-	notDefault,
-	open,
-	onToggle,
-}: {
-	notDefault: boolean;
-	open: boolean;
-	onToggle: () => void;
-}) {
+export default function ToggleButton({ onToggle }: { onToggle: () => void }) {
 	return (
 		<RootStyle>
-			{/* {notDefault && !open && <DotStyle />} */}
-
 			<Tooltip title="Settings" placement="left">
 				<IconButtonAnimate
 					color="inherit"

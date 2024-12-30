@@ -5,6 +5,8 @@ import {
 	Link,
 	IconButton,
 	Divider,
+	useMediaQuery,
+	Theme,
 } from "@mui/material";
 import React, { useState } from "react";
 import Search from "../../components/Search/Search";
@@ -14,13 +16,19 @@ import { MagnifyingGlass, Plus } from "phosphor-react";
 import { useTheme } from "@mui/material/styles";
 import { SimpleBarStyle } from "../../components/Scrollbar";
 import "../../css/global.css";
-// import { ChatList } from '../../data';
-import ChatElement from "../../components/card/ConvoCard";
+
 import CreateGroup from "../../sections/main/CreateGroup";
+import { useNavigate } from "react-router-dom";
+import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
 
 const Group = () => {
 	const theme = useTheme();
+	const navigate = useNavigate();
 	const [openDialog, setOpenDialog] = useState(false);
+
+	const isSmallScreen = useMediaQuery((theme: Theme) =>
+		theme.breakpoints.down("sm"),
+	);
 
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
@@ -28,27 +36,37 @@ const Group = () => {
 
 	return (
 		<>
-			<Stack direction={"row"} sx={{ width: "100%" }}>
-				{/* Left */}
+			<Stack direction={"row"} sx={{ width: "100%", height: "100dvh" }}>
 				<Box
 					sx={{
-						height: "100vh",
+						height: "100%",
+						width: "100%",
 						backgroundColor: (theme) =>
 							theme.palette.mode === "light"
 								? "#F8FAFF"
 								: theme.palette.background.default,
-						width: 320,
-						boxShadow: "0px 0px 2px rgba(0,0,0,0.25)",
 					}}
 				>
-					<Stack p={3} spacing={2} sx={{ maxHeight: "100vh" }}>
-						<Stack>
+					<Stack
+						p={isSmallScreen ? 2 : 3}
+						spacing={2}
+						sx={{ maxHeight: "100vh" }}
+					>
+						<Stack
+							spacing={2}
+							direction={"row"}
+							alignItems={"center"}
+						>
+							{isSmallScreen && <HamburgerNavbarButton />}
 							<Typography variant="h5">Group</Typography>
 						</Stack>
 						<Stack sx={{ width: "100%" }}>
-							<Search>
+							<Search onClick={() => navigate("/search")}>
 								<SearchIconWrapper>
-									<MagnifyingGlass color="#709CE6" />
+									<MagnifyingGlass
+										color="#709CE6"
+										focusable={false}
+									/>
 								</SearchIconWrapper>
 								<StyledInputBase
 									placeholder="Search..."
@@ -120,10 +138,12 @@ const Group = () => {
 				{/* Right */}
 			</Stack>
 			{openDialog && (
-				<CreateGroup
-					open={openDialog}
-					handleClose={handleCloseDialog}
-				/>
+				<>
+					<CreateGroup
+						open={openDialog}
+						handleClose={handleCloseDialog}
+					/>
+				</>
 			)}
 		</>
 	);

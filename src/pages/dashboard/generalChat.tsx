@@ -19,6 +19,7 @@ import { ToggleSidebarOn } from "../../redux/slices/app";
 import { IConversation, useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/card/ConvoCard";
 import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
+import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
 
 const Chats = () => {
 	const theme = useTheme();
@@ -80,15 +81,7 @@ const Chats = () => {
 							direction={"row"}
 							alignItems={"center"}
 						>
-							{isSmallScreen ? (
-								<IconButton
-									onClick={() => {
-										dispatch(ToggleSidebarOn("NAVBAR"));
-									}}
-								>
-									<List />
-								</IconButton>
-							) : null}
+							{isSmallScreen && <HamburgerNavbarButton />}
 							<Typography variant="h5">Chats</Typography>
 						</Stack>
 						<IconButton>

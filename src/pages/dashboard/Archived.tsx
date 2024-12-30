@@ -1,22 +1,12 @@
-import {
-	Box,
-	IconButton,
-	Stack,
-	Typography,
-	useMediaQuery,
-	useTheme,
-} from "@mui/material";
+import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Theme } from "@mui/material";
-import { useDispatch } from "react-redux";
-import { ToggleSidebarOn } from "../../redux/slices/app";
-import { List } from "@phosphor-icons/react";
 import { useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/card/ConvoCard";
 import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
+import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
 
 export default function ArchivePage() {
 	const theme = useTheme();
-	const dispatch = useDispatch();
 
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
@@ -41,15 +31,7 @@ export default function ArchivePage() {
 				sx={{ height: "100vh" }}
 			>
 				<Stack spacing={2} direction={"row"} alignItems={"center"}>
-					{isSmallScreen ? (
-						<IconButton
-							onClick={() => {
-								dispatch(ToggleSidebarOn("NAVBAR"));
-							}}
-						>
-							<List />
-						</IconButton>
-					) : null}
+					{isSmallScreen && <HamburgerNavbarButton />}
 					<Typography variant="h5">Archived</Typography>
 				</Stack>
 

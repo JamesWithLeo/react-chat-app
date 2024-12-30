@@ -95,6 +95,7 @@ const Header = () => {
 	} = useChatContext();
 
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
@@ -170,7 +171,12 @@ const Header = () => {
 						<VideoCamera fontSize={"large"} />
 					</IconButton>
 					<Divider orientation="vertical" flexItem />
-					<IconButton sx={{ fontSize: 30 }}>
+					<IconButton
+						sx={{ fontSize: 30 }}
+						onClick={() => {
+							dispatch(ToggleSidebarOn("CONTACT"));
+						}}
+					>
 						<Info fontSize={"large"} />
 					</IconButton>
 				</Stack>
