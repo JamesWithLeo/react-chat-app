@@ -51,7 +51,9 @@ export default function Router() {
 			path: "/",
 			element: (
 				<ConvoContextProvider>
-					<DashboardLayout />
+					<SearchContextProvider>
+						<DashboardLayout />
+					</SearchContextProvider>
 				</ConvoContextProvider>
 			),
 			children: [
@@ -82,15 +84,16 @@ export default function Router() {
 				{
 					path: "search",
 					element: (
-						<SearchContextProvider>
-							<ChatContextProvider>
-								<SearchPage />
-							</ChatContextProvider>
-						</SearchContextProvider>
+						<ChatContextProvider>
+							<SearchPage />
+						</ChatContextProvider>
 					),
 				},
 				{ path: "settings", element: <Settings /> },
-				{ path: "group", element: <GroupPage /> },
+				{
+					path: "group",
+					element: <GroupPage />,
+				},
 				{ path: "call", element: <CallPage /> },
 				{ path: "profile", element: <ProfilePage /> },
 				{ path: "404", element: <Page404 /> },

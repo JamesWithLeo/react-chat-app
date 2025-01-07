@@ -1,15 +1,21 @@
 import { useFormContext, Controller } from "react-hook-form";
 import { Autocomplete, TextField } from "@mui/material";
+
 import { ReactNode } from "react";
+import CircularProgress from "@mui/material/CircularProgress";
 
 export default function RHFAutocomplete({
 	name,
 	label,
 	helperText,
+	loading,
+	options,
 	...kwargs
 }: {
 	name: string;
 	label: string;
+	loading: boolean;
+	options: any[];
 	helperText: ReactNode;
 	[key: string]: any;
 }) {
@@ -22,6 +28,7 @@ export default function RHFAutocomplete({
 				<Autocomplete
 					{...field}
 					fullWidth
+					sx={{ overflow: "hidden" }}
 					value={
 						typeof field.value === "number" && field.value === 0
 							? ""
@@ -31,7 +38,8 @@ export default function RHFAutocomplete({
 						setValue(name, newValue, { shouldValidate: true })
 					}
 					//  error={!!error}
-					options={[]}
+					options={options}
+					disablePortal={true}
 					onError={() => {}}
 					{...kwargs}
 					renderInput={(params) => (
@@ -40,6 +48,15 @@ export default function RHFAutocomplete({
 							error={!!error}
 							helperText={error ? error.message : helperText}
 							{...params}
+							InputProps={{
+								...params.InputProps,
+								endAdornment: loading ? (
+									<>
+										<CircularProgress size="20px" />
+										{params.InputProps.endAdornment}
+									</>
+								) : null,
+							}}
 						/>
 					)}
 				/>

@@ -8,6 +8,7 @@ interface RHFTextFieldProps
 	name: string;
 	label?: string;
 	helperText?: React.ReactNode;
+	autoFocus?: boolean;
 }
 
 export default function RHFTextField({
@@ -25,6 +26,7 @@ export default function RHFTextField({
 				render={({ field, fieldState: { error } }) => (
 					<TextField
 						{...field}
+						autoFocus
 						fullWidth
 						error={!!error}
 						helperText={error ? error.message : helperText}

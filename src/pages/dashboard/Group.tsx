@@ -20,12 +20,13 @@ import "../../css/global.css";
 import CreateGroup from "../../sections/main/CreateGroup";
 import { useNavigate } from "react-router-dom";
 import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
+import useSearchContext from "../../contexts/SearchContext";
 
 const Group = () => {
 	const theme = useTheme();
 	const navigate = useNavigate();
+	const { setScope } = useSearchContext();
 	const [openDialog, setOpenDialog] = useState(false);
-
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
@@ -60,8 +61,14 @@ const Group = () => {
 							{isSmallScreen && <HamburgerNavbarButton />}
 							<Typography variant="h5">Group</Typography>
 						</Stack>
+
 						<Stack sx={{ width: "100%" }}>
-							<Search onClick={() => navigate("/search")}>
+							<Search
+								onClick={() => {
+									setScope("groups");
+									navigate("/search");
+								}}
+							>
 								<SearchIconWrapper>
 									<MagnifyingGlass
 										color="#709CE6"
@@ -134,9 +141,8 @@ const Group = () => {
 						</Stack>
 					</Stack>
 				</Box>
-
-				{/* Right */}
 			</Stack>
+
 			{openDialog && (
 				<>
 					<CreateGroup

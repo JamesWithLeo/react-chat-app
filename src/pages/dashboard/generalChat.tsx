@@ -11,24 +11,23 @@ import React, { useEffect, useState } from "react";
 import Search from "../../components/Search/Search";
 import SearchIconWrapper from "../../components/Search/SearchIconWrapper";
 import StyledInputBase from "../../components/Search/StyledInputBase";
-import { CloudX, List } from "@phosphor-icons/react";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../redux/store";
+import { CloudX } from "@phosphor-icons/react";
+
 import { useNavigate } from "react-router-dom";
-import { ToggleSidebarOn } from "../../redux/slices/app";
 import { IConversation, useConvoContext } from "../../contexts/ConvoContext";
 import ChatElement from "../../components/card/ConvoCard";
 import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
 import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
+import useSearchContext from "../../contexts/SearchContext";
 
 const Chats = () => {
 	const theme = useTheme();
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
-	const dispatch = useDispatch<AppDispatch>();
 	const navigate = useNavigate();
 	const { conversation, isSuccess, isError, isLoading } = useConvoContext();
+	const { setScope } = useSearchContext();
 	const [sortedConversation, setSortedConversation] = useState<
 		IConversation[]
 	>([]);
@@ -92,6 +91,7 @@ const Chats = () => {
 					<Stack sx={{ width: "100%" }}>
 						<Search
 							onClick={() => {
+								setScope("people");
 								navigate("/search");
 							}}
 						>

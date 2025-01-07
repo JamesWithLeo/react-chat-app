@@ -56,6 +56,7 @@ export default function Search() {
 		<>
 			<Box
 				sx={{
+					overflowY: "hidden",
 					height: "100dvh",
 					maxHeight: "100dvh",
 					width: "100%",
