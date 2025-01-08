@@ -46,6 +46,7 @@ export default function ChatCard({ convo }: { convo: IConversation }) {
 			conversationType: "direct",
 			InitialPeersData: convo.peers,
 			thumbnail: convo.peers[0].photoUrl,
+			initialConvoName: convo.conversation_name,
 		});
 	};
 	return (

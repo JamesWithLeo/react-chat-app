@@ -145,6 +145,22 @@ export async function FetchConversationId({
 	return await response.json();
 }
 
+export async function FetchConversationInfo({
+	conversationId,
+	userId,
+}: {
+	conversationId: string;
+	userId?: string;
+}) {
+	if (!userId) return;
+	const url = `${apiUrl}convo/${userId}/${conversationId}`;
+	const response = await fetch(url, { method: "GET" });
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
 export async function DeleteChat(messageId: string) {
 	const url = `${apiUrl}messages/${messageId}`;
 
@@ -247,6 +263,37 @@ export async function ArchiveConvoRequest(
 		body: JSON.stringify({
 			conversationId,
 			isArchived,
+		}),
+		headers: {
+			"Content-type": "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		return `${response.status} ${response.statusText}`;
+	}
+	return await response.json();
+}
+
+export async function CreateGroupRequest({
+	userId,
+	members,
+	title,
+	conversationType,
+}: {
+	userId: string;
+	members: string[];
+	title: string;
+	conversationType: "direct" | "group";
+}) {
+	const url = `${apiUrl}convo/${userId}`;
+	const response = await fetch(url, {
+		method: "POST",
+		body: JSON.stringify({
+			members,
+			userId,
+			title,
+			conversationType,
 		}),
 		headers: {
 			"Content-type": "application/json",

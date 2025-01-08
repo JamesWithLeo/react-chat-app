@@ -63,6 +63,7 @@ export default function SettingsDrawer() {
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
+	const settings = useSettingsContext();
 	useEffect(() => {
 		if (open) {
 			document.body.style.overflow = "hidden";
@@ -156,6 +157,9 @@ export default function SettingsDrawer() {
 											Darkmode
 										</Typography>
 										<AntSwitch
+											checked={
+												settings.themeMode === "dark"
+											}
 											onClick={() => onToggleMode()}
 										/>
 									</Stack>

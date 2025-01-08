@@ -19,14 +19,18 @@ import useSearchContext from "../../contexts/SearchContext";
 import { useSelector } from "react-redux";
 import { AppState } from "../../redux/store";
 import { debounce } from "lodash";
+import { CreateGroupRequest } from "../../services/fetch";
 
 const CreateGroupForm = ({ handleClose }: { handleClose: () => void }) => {
 	const { searchData, setSearchQuery, isSuccess, isLoading, setScope } =
 		useSearchContext();
+
 	const id = useSelector((state: AppState) => state.auth.user?.id);
 	const NewGroupSchema = Yup.object().shape({
 		title: Yup.string().required("Title is required"),
-		members: Yup.array().min(2, "Must have at least 2 members"),
+		members: Yup.array()
+			.required("Members are required")
+			.min(2, "Must have at least 2 members"),
 	});
 
 	const defaultValues = {
@@ -44,10 +48,21 @@ const CreateGroupForm = ({ handleClose }: { handleClose: () => void }) => {
 		formState: { errors, isSubmitting, isSubmitSuccessful },
 	} = methods;
 
-	const onSubmit = async (data: any) => {
+	const onSubmit = async (data: {
+		title: string;
+		members: { id: string; firstName: string; lastName: string }[];
+	}) => {
 		try {
 			//api call
+			if (!id) return;
 			console.log("New group date:", data);
+			const response = await CreateGroupRequest({
+				conversationType: "group",
+				userId: id,
+				title: data.title,
+				members: data.members.map((m) => m.id),
+			});
+			console.log(response);
 		} catch (error) {
 			console.log(error);
 		}

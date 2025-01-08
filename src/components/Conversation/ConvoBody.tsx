@@ -59,6 +59,61 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 		};
 	}, [queryClient, seenMessage]);
 
+	const renderPhotoUrl = () => {
+		switch (conversation_type) {
+			case "direct":
+				return (
+					<StyledBadge
+						overlap="circular"
+						anchorOrigin={{
+							vertical: "bottom",
+							horizontal: "right",
+						}}
+						variant="dot"
+						sx={{
+							"& .MuiBadge-dot": {
+								backgroundColor: "#44b700",
+								color: "#44b700",
+							},
+						}}
+					>
+						<Avatar
+							src={peers ? peers[0].photoUrl : undefined}
+							sx={{
+								height: 128,
+								width: 128,
+							}}
+						/>
+					</StyledBadge>
+				);
+			case "group":
+				return (
+					<AvatarGroup
+						total={peers?.length}
+						sx={{
+							height: 64,
+							width: 128,
+						}}
+					>
+						{peers?.map((p, index) => {
+							return (
+								<Avatar
+									key={crypto.randomUUID()}
+									sx={{
+										height: 64,
+										width: 64,
+									}}
+									src={p.photoUrl}
+									alt={p.firstName}
+								/>
+							);
+						})}
+					</AvatarGroup>
+				);
+			default:
+				return <Avatar sx={{ height: 128, width: 128 }} />;
+		}
+	};
 	return (
 		<Box
 			className="scrollbar"
@@ -117,41 +172,7 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 							}}
 						>
 							<Stack sx={{ gap: "1rem" }}>
-								<StyledBadge
-									overlap="circular"
-									anchorOrigin={{
-										vertical: "bottom",
-										horizontal: "right",
-									}}
-									variant="dot"
-									sx={{
-										"& .MuiBadge-dot": {
-											backgroundColor: "#44b700",
-											color: "#44b700",
-										},
-									}}
-								>
-									{conversation_type === "group" ? (
-										<AvatarGroup
-											sx={{
-												height: 128,
-												width: 128,
-											}}
-										/>
-									) : (
-										<Avatar
-											src={
-												peers
-													? peers[0].photoUrl
-													: undefined
-											}
-											sx={{
-												height: 128,
-												width: 128,
-											}}
-										/>
-									)}
-								</StyledBadge>
+								{renderPhotoUrl()}
 
 								<Stack
 									spacing={0.2}
@@ -192,17 +213,14 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 					</>
 				) : (
 					<>
-						<Typography variant="caption">
-							to do : group typing
-						</Typography>
-						{/* {peers?.filter(
+						{peers?.filter(
 							(p) =>
 								p.isTyping && (
 									<Typography variant="caption">
-										{p.firstName} is typing...
+										Someone is typing...
 									</Typography>
 								),
-						)} */}
+						)}
 					</>
 				)}
 			</Box>

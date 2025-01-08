@@ -15,7 +15,7 @@ import { CloudX } from "@phosphor-icons/react";
 
 import { useNavigate } from "react-router-dom";
 import { IConversation, useConvoContext } from "../../contexts/ConvoContext";
-import ChatElement from "../../components/card/ConvoCard";
+import ConvoCard from "../../components/card/ConvoCard";
 import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
 import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
 import useSearchContext from "../../contexts/SearchContext";
@@ -122,7 +122,7 @@ const Chats = () => {
 								{conversation.map((convo) => {
 									if (!convo.is_pinned) return null;
 									return (
-										<ChatElement
+										<ConvoCard
 											convo={convo}
 											key={convo.conversation_id}
 										/>
@@ -202,7 +202,7 @@ const Chats = () => {
 										return null;
 									return (
 										<>
-											<ChatElement
+											<ConvoCard
 												convo={convo}
 												key={convo.conversation_id}
 											/>

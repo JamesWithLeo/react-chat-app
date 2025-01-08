@@ -66,6 +66,7 @@ export default function PeopleCard({
 				InitialPeersData: [user],
 				conversationType: "direct",
 				thumbnail: user.photoUrl,
+				initialConvoName: null,
 			});
 			navigate("/chat");
 		} else {

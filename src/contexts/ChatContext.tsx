@@ -9,6 +9,7 @@ import React, {
 import { IViewUser } from "../redux/slices/auth";
 import {
 	DeleteChat,
+	FetchConversationInfo,
 	FetchMessages,
 	FetchPeers,
 	// FetchPeer,
@@ -18,10 +19,8 @@ import { useSelector } from "react-redux";
 import { AppState } from "../redux/store";
 
 import socket from "../services/sockets";
-import { useNavigate } from "react-router-dom";
 
 export type IMessage_type = "text" | "reply" | "doc" | "link" | "media";
-
 export interface IMessages {
 	conversation_id: string;
 	message_id: string;
@@ -38,24 +37,35 @@ export interface ITypist {
 	photoUrl: string;
 }
 interface ChatContextType {
-	conversation_type: "direct" | "group";
-	conversation_thumbnail: string;
+	conversation_type?: "direct" | "group";
+	conversation_thumbnail: string | null;
+	conversation_name: string | null;
 	peers: IViewUser[] | null; // Store peer user information
+	messages: IMessages[];
+	info: {
+		conversation_id: string;
+		conversation_name: string;
+		conversation_thumbnail: string;
+		conversation_type: "direct" | "group";
+		created_at: string;
+		updated_at: string;
+	};
 	setChat: ({
 		initialConvoId,
 		InitialPeersData,
 		conversationType,
+		initialConvoName,
 		thumbnail,
 	}: {
 		initialConvoId: string;
 		InitialPeersData: IViewUser[];
 		conversationType: "direct" | "group";
-		thumbnail: string;
+		initialConvoName: string | null;
+		thumbnail: string | null;
 	}) => void;
 
 	isTyping: boolean; // for user, to check if the user is typing
 	setIsTyping: (value: boolean) => void;
-	messages: IMessages[];
 	// fetchPeer: (peerId: string) => void; // Function to fetch peer data
 
 	createMessage: (messageData: {
@@ -80,7 +90,16 @@ interface ChatContextType {
 const defaultContextValue: ChatContextType = {
 	conversation_type: "direct",
 	conversation_thumbnail: "",
+	conversation_name: null,
 	peers: null,
+	info: {
+		conversation_id: "",
+		conversation_name: "",
+		conversation_thumbnail: "",
+		conversation_type: "direct",
+		created_at: "",
+		updated_at: "",
+	},
 	isTyping: false,
 	setIsTyping: () => {},
 	setChat: () => {},
@@ -104,18 +123,21 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 	children,
 }) => {
 	const queryClient = useQueryClient();
-	const navigate = useNavigate();
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
-
 	const [conversationId, setConversationId] = useState<string>(
 		sessionStorage.getItem("conversationId") ?? "",
 	);
 	const [conversationType, setConversationType] = useState<
 		"direct" | "group"
-	>("direct");
-	const [conversationThumbnail, setConversationThumbnail] =
-		useState<string>("");
+	>();
+	const [conversationName, setConversationName] = useState<string | null>(
+		null,
+	);
+
+	const [conversationThumbnail, setConversationThumbnail] = useState<
+		string | null
+	>(null);
 	const [isTyping, setIsTyping] = useState<boolean>(false);
 
 	const {
@@ -137,7 +159,6 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		},
 	);
 
-	// Query for peers: can be used if you want to refresh peers on each conversationId change
 	const { data: peers } = useQuery(
 		["peers", conversationId],
 		async () => {
@@ -153,21 +174,57 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			},
 		},
 	);
+	const { data: info } = useQuery(
+		["convo", conversationId],
+		async () => {
+			const response = await FetchConversationInfo({
+				userId: id,
+				conversationId,
+			});
+			return response.info;
+		},
+		{
+			enabled: !!conversationId,
+			onSuccess: (data) => {
+				if (
+					data.conversation_type &&
+					(data.conversation_type === "direct" ||
+						data.conversation_type === "group")
+				) {
+					setConversationType(data.conversation_type);
+				}
+				if (
+					data.conversation_name &&
+					typeof data.conversation_name === "string"
+				) {
+					setConversationName(data.conversation_name);
+				}
+				if (
+					data.conversation_thumbnail &&
+					typeof data.conversation_thumbnail === "string"
+				) {
+					setConversationThumbnail(data.conversation_thumbnail);
+				}
+				console.log("convo info:", data);
+			},
+		},
+	);
 
-	const setChat = async ({
+	const setChat = ({
 		initialConvoId,
 		conversationType,
+		initialConvoName,
 		thumbnail,
 	}: {
 		initialConvoId: string;
+		initialConvoName: string | null;
 		conversationType: "direct" | "group";
-		thumbnail: string;
+		thumbnail: string | null;
 	}) => {
-		sessionStorage.setItem("conversationId", initialConvoId);
 		setConversationId(initialConvoId);
 		setConversationType(conversationType);
+		setConversationName(initialConvoName);
 		setConversationThumbnail(thumbnail);
-		navigate("/chat");
 	};
 
 	const insertMessage = async (
@@ -355,7 +412,9 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 				conversation_id: conversationId,
 				conversation_type: conversationType,
 				conversation_thumbnail: conversationThumbnail,
+				conversation_name: conversationName,
 				peers,
+				info,
 				messages,
 				setChat,
 				createMessage,

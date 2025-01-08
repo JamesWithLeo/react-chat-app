@@ -19,16 +19,13 @@ import { SetConversation } from "../../redux/slices/app";
 import { AppState } from "../../redux/store";
 
 dayjs.extend(relativeTime);
-const ChatElement = ({ convo }: { convo: IConversation }) => {
+const ConvoCard = ({ convo }: { convo: IConversation }) => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const id = useSelector((state: AppState) => state.auth.user?.id);
-	const {
-		//	fetchPeer
-		setChat,
-	} = useChatContext();
+	const { setChat } = useChatContext();
 	const { setSelectedConvo } = useConvoContext();
 
 	const isSmallScreen = useMediaQuery((state: Theme) =>
@@ -40,18 +37,26 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 	);
 
 	const HandleOpenChat = () => {
+		sessionStorage.setItem("conversationId", convo.conversation_id);
+		sessionStorage.setItem("conversationType", convo.conversation_type);
 		if (convo.conversation_type === "direct") {
 			setChat({
 				initialConvoId: convo.conversation_id,
 				InitialPeersData: convo.peers,
 				conversationType: "direct",
+				initialConvoName: convo.conversation_name,
 				thumbnail: convo.peers[0].photoUrl,
 			});
 			navigate("/chat");
-		} else {
-			// Todo add group chat functionality
-			// getMessages(convo.conversation_id);
-			console.log("group chat");
+		} else if (convo.conversation_type === "group") {
+			setChat({
+				initialConvoId: convo.conversation_id,
+				InitialPeersData: convo.peers,
+				initialConvoName: convo.conversation_name,
+				conversationType: "group",
+				thumbnail: convo.conversation_thumbnail,
+			});
+			navigate("/chat");
 		}
 	};
 
@@ -209,4 +214,4 @@ const ChatElement = ({ convo }: { convo: IConversation }) => {
 	);
 };
 
-export default ChatElement;
+export default ConvoCard;

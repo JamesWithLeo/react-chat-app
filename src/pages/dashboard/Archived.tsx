@@ -1,7 +1,7 @@
 import { Box, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
 import { Theme } from "@mui/material";
 import { useConvoContext } from "../../contexts/ConvoContext";
-import ChatElement from "../../components/card/ConvoCard";
+import ConvoCard from "../../components/card/ConvoCard";
 import ConvoCardSkeleton from "../../components/skeletons/ConvoCardSkeleton";
 import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
 
@@ -50,7 +50,7 @@ export default function ArchivePage() {
 							{conversation.map((convo) => {
 								if (!convo.is_archived) return null;
 								return (
-									<ChatElement
+									<ConvoCard
 										convo={convo}
 										key={convo.conversation_id}
 									/>

@@ -25,7 +25,7 @@ const HeadInfo = ({
 	conversation_name,
 }: {
 	isOnline: boolean;
-	thumbnail?: string;
+	thumbnail: string | null;
 	conversation_name: string;
 }) => {
 	const dispatch = useDispatch<AppDispatch>();
@@ -125,7 +125,12 @@ const Header = () => {
 					<IconButton
 						sx={{ fontSize: 30 }}
 						onClick={() => {
-							navigate("/chats", { replace: true });
+							navigate(
+								conversation_type === "direct"
+									? "/chats"
+									: "/group",
+								{ replace: true },
+							);
 						}}
 					>
 						<CaretLeft fontSize={"large"} />
@@ -151,7 +156,7 @@ const Header = () => {
 									? conversation_thumbnail
 									: peers
 										? peers[0].photoUrl
-										: undefined
+										: null
 							}
 						/>
 					) : null}

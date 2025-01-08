@@ -21,6 +21,8 @@ import CreateGroup from "../../sections/main/CreateGroup";
 import { useNavigate } from "react-router-dom";
 import HamburgerNavbarButton from "../../components/Buttons/HamburgerNavbarButton";
 import useSearchContext from "../../contexts/SearchContext";
+import { useConvoContext } from "../../contexts/ConvoContext";
+import ConvoCard from "../../components/card/ConvoCard";
 
 const Group = () => {
 	const theme = useTheme();
@@ -30,7 +32,7 @@ const Group = () => {
 	const isSmallScreen = useMediaQuery((theme: Theme) =>
 		theme.breakpoints.down("sm"),
 	);
-
+	const { conversation, isSuccess } = useConvoContext();
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
 	};
@@ -132,6 +134,26 @@ const Group = () => {
 									>
 										All Groups
 									</Typography>
+									{isSuccess ? (
+										<>
+											{conversation
+												.filter(
+													(c) =>
+														c.conversation_type ===
+														"group",
+												)
+												.map((c) => {
+													return (
+														<ConvoCard
+															key={
+																c.conversation_id
+															}
+															convo={c}
+														/>
+													);
+												})}
+										</>
+									) : null}
 									{/* Chat List */}
 									{/* {ChatList.filter((el) => !el.pinned).map((el) => {
                                         return <ChatElement  {...el} />

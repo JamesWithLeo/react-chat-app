@@ -16,7 +16,7 @@ import { useTheme } from "@mui/material/styles";
 import { SimpleBarStyle } from "../../components/Scrollbar";
 import "../../css/global.css";
 // import { CallLogs, ChatList } from '../../data';
-import ChatElement from "../../components/card/ConvoCard";
+import ConvoCard from "../../components/card/ConvoCard";
 import CreateGroup from "../../sections/main/CreateGroup";
 import { CallLogElement } from "../../components/CallElement";
 import StartCall from "../../sections/main/StartCall";
