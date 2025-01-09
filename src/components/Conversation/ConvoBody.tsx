@@ -127,7 +127,8 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 			id="body"
 		>
 			<Box
-				p={isSmallScreen ? 1 : 3}
+				p={isSmallScreen ? 1 : 0}
+				pl={isSmallScreen ? 1 : 1}
 				height={"100%"}
 				alignContent={"flex-end"}
 			>
@@ -136,8 +137,13 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 						messages.map((message, index) => {
 							switch (message.message_type) {
 								case "text":
+									const sender = peers?.find(
+										(p) => p.id === message.sender_id,
+									);
+
 									return (
 										<TextMsg
+											sender={sender}
 											isFromOther={
 												id !== message.sender_id
 											}

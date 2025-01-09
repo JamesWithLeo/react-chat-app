@@ -15,6 +15,7 @@ import { DotsThreeVertical, DownloadSimple, Image } from "phosphor-react";
 import React, { useState } from "react";
 import { IMessages, useChatContext } from "../../contexts/ChatContext";
 import { useSettingsContext } from "../../contexts/SettingsContext";
+import { IViewUser } from "../../redux/slices/auth";
 
 interface IMessageBase {
 	type: "msg" | "divider";
@@ -223,32 +224,32 @@ const MediaMsg = ({
 	isFromUser: boolean;
 }) => {
 	const theme = useTheme();
-	const Message_options = [
-		{
-			title: "Reply",
-			fn: () => {},
-		},
-		{
-			title: "React to message",
-			fn: () => {},
-		},
-		{
-			title: "Forward message",
-			fn: () => {},
-		},
-		{
-			title: "Star message",
-			fn: () => {},
-		},
-		{
-			title: "Report",
-			fn: () => {},
-		},
-		{
-			title: "Delete Message",
-			fn: () => {},
-		},
-	];
+	// const Message_options = [
+	// 	{
+	// 		title: "Reply",
+	// 		fn: () => {},
+	// 	},
+	// 	{
+	// 		title: "React to message",
+	// 		fn: () => {},
+	// 	},
+	// 	{
+	// 		title: "Forward message",
+	// 		fn: () => {},
+	// 	},
+	// 	{
+	// 		title: "Star message",
+	// 		fn: () => {},
+	// 	},
+	// 	{
+	// 		title: "Report",
+	// 		fn: () => {},
+	// 	},
+	// 	{
+	// 		title: "Delete Message",
+	// 		fn: () => {},
+	// 	},
+	// ];
 	return (
 		<Stack direction="row" justifyContent={!isFromUser ? "start" : "end"}>
 			<Box
@@ -288,17 +289,17 @@ const TextMsg = ({
 	message,
 	isFromOther,
 	isOptionOpen,
+	sender,
 	peers,
 }: {
 	message: IMessages;
 	isFromOther: boolean;
 	isOptionOpen: boolean;
-	peers:
-		| {
-				id: string;
-				photoUrl: string;
-		  }[]
-		| undefined;
+	sender?: IViewUser;
+	peers?: {
+		id: string;
+		photoUrl: string;
+	}[];
 }) => {
 	const theme = useTheme();
 	const { themeMode } = useSettingsContext();
@@ -327,8 +328,17 @@ const TextMsg = ({
 			<Stack gap={0.6}>
 				<Stack
 					direction="row"
+					alignItems={"center"}
+					gap={isFromOther ? 0.6 : 0}
 					justifyContent={!isFromOther ? "end" : "start"}
 				>
+					{isFromOther && (
+						<Avatar
+							sx={{ height: 28, width: 28 }}
+							src={sender?.photoUrl}
+						/>
+					)}
+
 					<Box
 						component={"span"}
 						id={message.message_id}
