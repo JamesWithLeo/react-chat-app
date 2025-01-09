@@ -36,6 +36,24 @@ const Group = () => {
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
 	};
+	const renderPinnedGroupConvo = () => {
+		const PinnedGroupConvo = conversation?.filter(
+			(c) => c.conversation_type === "group" && c.is_pinned,
+		);
+		return (
+			<>
+				{PinnedGroupConvo?.length ? (
+					<Typography variant="subtitle2" sx={{ color: "#676667" }}>
+						Pinned
+					</Typography>
+				) : null}
+
+				{PinnedGroupConvo?.map((c) => (
+					<ConvoCard key={c.conversation_id} convo={c} />
+				))}
+			</>
+		);
+	};
 
 	return (
 		<>
@@ -115,19 +133,7 @@ const Group = () => {
 						>
 							<SimpleBarStyle timeout={500} clickOnTrack={false}>
 								<Stack spacing={2.5}>
-									{/*  */}
-									<Typography
-										variant="subtitle2"
-										sx={{ color: "#676667" }}
-									>
-										Pinned
-									</Typography>
-									{/* Pinned */}
-									{/* {ChatList.filter((el) => el.pinned).map((el) => {
-                                        return <ChatElement  {...el} />
-                                    })} */}
-
-									{/*  */}
+									{renderPinnedGroupConvo()}
 									<Typography
 										variant="subtitle2"
 										sx={{ color: "#676667" }}
@@ -140,7 +146,8 @@ const Group = () => {
 												.filter(
 													(c) =>
 														c.conversation_type ===
-														"group",
+															"group" &&
+														!c.is_pinned,
 												)
 												.map((c) => {
 													return (
@@ -154,10 +161,6 @@ const Group = () => {
 												})}
 										</>
 									) : null}
-									{/* Chat List */}
-									{/* {ChatList.filter((el) => !el.pinned).map((el) => {
-                                        return <ChatElement  {...el} />
-                                    })} */}
 								</Stack>
 							</SimpleBarStyle>
 						</Stack>

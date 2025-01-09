@@ -25,12 +25,12 @@ import { setSidebar, SidebarType } from "../../redux/slices/app";
 const Nav_Buttons: { icon: any; target: SidebarType }[] = [
 	{ icon: <ChatCircleDots />, target: "chats" },
 	{
-		icon: <Archive />,
-		target: "archived",
-	},
-	{
 		icon: <UsersFour />,
 		target: "group",
+	},
+	{
+		icon: <Archive />,
+		target: "archived",
 	},
 ];
 
