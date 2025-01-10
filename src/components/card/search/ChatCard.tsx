@@ -41,13 +41,26 @@ export default function ChatCard({ convo }: { convo: IConversation }) {
 
 	const handleMessage = async () => {
 		handleCloseDotMenu();
-		setChat({
-			initialConvoId: convo.conversation_id,
-			conversationType: "direct",
-			InitialPeersData: convo.peers,
-			thumbnail: convo.peers[0].photoUrl,
-			initialConvoName: convo.conversation_name,
-		});
+
+		if (convo.conversation_type === "direct") {
+			setChat({
+				initialConvoId: convo.conversation_id,
+				InitialPeersData: convo.peers,
+				conversationType: "direct",
+				initialConvoName: convo.conversation_name,
+				thumbnail: convo.peers[0].photoUrl,
+			});
+			navigate("/chat");
+		} else if (convo.conversation_type === "group") {
+			setChat({
+				initialConvoId: convo.conversation_id,
+				InitialPeersData: convo.peers,
+				initialConvoName: convo.conversation_name,
+				conversationType: "group",
+				thumbnail: convo.conversation_thumbnail,
+			});
+			navigate("/chat");
+		}
 	};
 	return (
 		<Box

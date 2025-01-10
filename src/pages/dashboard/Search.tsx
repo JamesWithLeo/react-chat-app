@@ -163,7 +163,7 @@ export default function Search() {
 					{isSuccess && searchData ? (
 						<>
 							<Box p={isSmallScreen ? 2 : 3} height={"100%"}>
-								{scope === "all" || scope === "people" ? (
+								{scope === "all" ? (
 									<Typography py={2}>User</Typography>
 								) : null}
 
@@ -181,22 +181,43 @@ export default function Search() {
 										);
 									})}
 
-								{scope === "all" || scope === "chats" ? (
+								{scope === "all" ? (
 									<Typography py={2}>Chats</Typography>
 								) : null}
 
 								{searchData.chats &&
-									searchData.chats.map(
-										(chat: IConversation) => {
-											if (!chat.last_message) return null;
-											return (
-												<ChatCard
-													convo={chat}
-													key={chat.conversation_id}
-												/>
-											);
-										},
-									)}
+									(scope === "chats" || scope === "all") &&
+									searchData.chats
+										.filter(
+											(chat: IConversation) =>
+												chat.last_message &&
+												chat.conversation_type ===
+													"direct",
+										)
+										.map((c) => (
+											<ChatCard
+												convo={c}
+												key={c.conversation_id}
+											/>
+										))}
+
+								{scope === "all" ? (
+									<Typography py={2}>Group</Typography>
+								) : null}
+								{searchData.chats &&
+									(scope === "groups" || scope === "all") &&
+									searchData.chats
+										.filter(
+											(chat: IConversation) =>
+												chat.conversation_type ===
+												"group",
+										)
+										.map((c) => (
+											<ChatCard
+												convo={c}
+												key={c.conversation_id}
+											/>
+										))}
 							</Box>
 						</>
 					) : (

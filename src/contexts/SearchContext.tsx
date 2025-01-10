@@ -16,7 +16,12 @@ import { setSearchRoute } from "../redux/slices/app";
 
 export type SearchScope = "all" | "people" | "chats" | "groups";
 interface ISearchContext {
-	searchData: { ok: 1 | 0; users: IViewUser[]; chats: IConversation[] };
+	searchData: {
+		ok: 1 | 0;
+		users: IViewUser[];
+		chats: IConversation[];
+		groups: IConversation[];
+	};
 	scope: SearchScope;
 	searchQuery: string;
 	isLoading: boolean;
@@ -35,7 +40,7 @@ export default function useSearchContext() {
 }
 
 const defaultContextValue: ISearchContext = {
-	searchData: { ok: 1, users: [], chats: [] },
+	searchData: { ok: 1, users: [], chats: [], groups: [] },
 	scope: "all",
 	searchQuery: "",
 	isLoading: true,
@@ -71,7 +76,7 @@ export const SearchContextProvider = ({
 		isLoading,
 		isSuccess,
 	} = useQuery(
-		["search", scope, debouncedSearchTerm],
+		["search", scope === "groups" ? "chats" : scope, debouncedSearchTerm],
 		() => {
 			console.log("Searching with the scope of:", scope);
 			return FetchSearch(id!, debouncedSearchTerm, scope);
