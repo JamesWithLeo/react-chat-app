@@ -322,8 +322,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 		socket.on("peerTyping", (data) => {
 			console.log("Received typing event:", data);
-			// if (data.id === userId) return;
-
+			if (data.id === userId) return;
 			queryClient.setQueryData(
 				["peers", data.conversation_id],
 				(oldPeers: IViewUser[] | undefined) => {
