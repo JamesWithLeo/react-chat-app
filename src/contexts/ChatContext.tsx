@@ -124,7 +124,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 }) => {
 	const queryClient = useQueryClient();
 
-	const id = useSelector((state: AppState) => state.auth.user?.id);
+	const userId = useSelector((state: AppState) => state.auth.user?.id);
 	const [conversationId, setConversationId] = useState<string>(
 		sessionStorage.getItem("conversationId") ?? "",
 	);
@@ -164,7 +164,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		async () => {
 			if (!conversationId) return []; // Fallback to initialPeers
 
-			const response = await FetchPeers(id, conversationId);
+			const response = await FetchPeers(userId, conversationId);
 			return response.ok ? response.peers : [];
 		},
 		{
@@ -178,7 +178,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 		["convo", conversationId],
 		async () => {
 			const response = await FetchConversationInfo({
-				userId: id,
+				userId: userId,
 				conversationId,
 			});
 			return response.info;
@@ -288,25 +288,25 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 	const seenMessage = useCallback(
 		({ messageId }: { messageId: string | undefined }) => {
-			if (!id || !conversationId) return;
+			if (!userId || !conversationId) return;
 			const seenAt = new Date().toISOString();
 
 			socket.emit("messageSeen", {
 				conversationId: conversationId,
 				messageId:
 					messageId ?? messages[messages.length - 1].message_id,
-				userId: id,
+				userId: userId,
 				seenAt,
 			});
 		},
-		[id, conversationId, messages],
+		[userId, conversationId, messages],
 	);
 
 	useEffect(() => {
-		if (!id) return;
+		if (!userId) return;
 
 		if (conversationId) {
-			socket.emit("userCameOnline", { id });
+			socket.emit("userCameOnline", { id: userId });
 
 			socket.emit("joinMessage", { conversationId: conversationId });
 		}
@@ -322,34 +322,24 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 
 		socket.on("peerTyping", (data) => {
 			console.log("Received typing event:", data);
-			if (data.id === id) return;
+			// if (data.id === userId) return;
 
 			queryClient.setQueryData(
 				["peers", data.conversation_id],
 				(oldPeers: IViewUser[] | undefined) => {
 					if (!oldPeers) {
 						console.log("No old peers data found");
-						return oldPeers; // Safeguard in case oldPeer is null
+						return []; // Safeguard in case oldPeer is null
 					}
 					return oldPeers.map((peer) => {
 						const isMatchingPeer = peer.id === data.id;
-						console.log(
-							"Is Matching Peer:",
-							isMatchingPeer,
-							"Data.isTyping:",
-							data.isTyping,
-						);
+						console.log(data.id, "is typing:", data.isTyping);
 						return isMatchingPeer
 							? { ...peer, isTyping: data.isTyping } // Update the typing status
 							: peer;
 					});
 				},
 			);
-			const updatedPeers = queryClient.getQueryData([
-				"peers",
-				data.conversation_id,
-			]);
-			console.log("Updated Peers Data:", updatedPeers);
 		});
 
 		socket.on("currentOnlinePeers", (data) => {
@@ -405,7 +395,7 @@ const ChatContextProvider: React.FC<ChatContextProviderProps> = ({
 			socket.off("currentOnlinePeers");
 			socket.off("currentSeen");
 		};
-	}, [conversationId, peers, queryClient, id, seenMessage]);
+	}, [conversationId, peers, queryClient, userId, seenMessage]);
 	return (
 		<ChatContext.Provider
 			value={{

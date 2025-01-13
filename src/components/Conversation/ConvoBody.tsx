@@ -211,13 +211,15 @@ const ConvoBody = ({ isOptionOpen }: { isOptionOpen: boolean }) => {
 					)}
 				</Stack>
 
-				{conversation_type === "direct" ? (
+				{conversation_type === "direct" && (
 					<>
 						{peers?.some((p) => p.isTyping) && (
 							<Typography variant="caption">Typing...</Typography>
 						)}
 					</>
-				) : (
+				)}
+
+				{conversation_type === "group" && (
 					<>
 						{peers?.filter(
 							(p) =>
